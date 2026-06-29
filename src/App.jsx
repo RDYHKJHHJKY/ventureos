@@ -214,31 +214,7 @@ function buildNarrative(asset, r) {
   return `${asset || "This asset"} is conditionally trusted with a ${r.trust}/100 trust score and ${r.confidence}% confidence. Engineering and product signals are strong, led by active maintainers and a healthy release profile. The verdict remains conditional because ${mediumFindings.join(" and ").toLowerCase()} need remediation before unrestricted production use.`;
 }
 
-async function apiJson(path, options = {}) {
-  const opts = { ...options };
-  const workspaceId = opts.workspaceId || (typeof window !== "undefined" ? window.__VENTUREOS_WORKSPACE_ID__ : null);
-  delete opts.workspaceId;
-  const headers = {
-    "Content-Type": "application/json",
-    ...(opts.headers || {}),
-  };
-  const method = (opts.method || "GET").toUpperCase();
-  if (method !== "GET") {
-    const csrfToken = getCsrfToken();
-    if (csrfToken) headers["x-csrf-token"] = csrfToken;
-  }
-  if (workspaceId) {
-    headers["x-workspace-id"] = workspaceId;
-  }
-  const response = await fetch(path, {
-    credentials: "include",
-    ...opts,
-    headers,
-  });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(payload.error || payload.message || "VentureOS API request failed.");
-  return payload;
-}
+import { apiJson } from "./api-client.js";
 
 function timeAgo(value) {
   if (!value) return "Never";
@@ -2402,7 +2378,7 @@ export default function VentureOS() {
     setMemberships(data.memberships || []);
     setMspMemberships(data.mspMemberships || []);
     if (typeof window !== "undefined") {
-      window.__VENTUREOS_WORKSPACE_ID__ = data.workspace?.id || "";
+      window.__VENTUREOS_WORKSPACE_ID__ = data.workspace?.id || null;
     }
     await loadWorkspaces();
     setLoadState("ready");
@@ -2435,7 +2411,7 @@ export default function VentureOS() {
       setRole(null);
       setMemberships([]);
       if (typeof window !== "undefined") {
-        window.__VENTUREOS_WORKSPACE_ID__ = "";
+        window.__VENTUREOS_WORKSPACE_ID__ = null;
       }
       setLoadState("unauthenticated");
     } catch (err) {
@@ -2597,11 +2573,15 @@ export default function VentureOS() {
                 onChange={(event) => handleWorkspaceSwitch(event.target.value)}
                 style={{ background: C.surface, color: C.text, border: `1px solid ${C.border}`, borderRadius: 6, padding: "8px 10px" }}
               >
-                {workspaces.map((item) => (
-                  <option key={item.workspaceId || item.id} value={item.workspaceId || item.id}>
-                    {(item.name || item.workspace?.name || item.name) + (item.role ? ` (${item.role})` : "")}
-                  </option>
-                ))}
+                {workspaces.map((item) => {
+                  const id = String(item.workspaceId || item.id || "");
+                  const label = String(item.name || item.workspace?.name || item.name || id);
+                  return (
+                    <option key={id} value={id}>
+                      {label + (item.role ? ` (${item.role})` : "")}
+                    </option>
+                  );
+                })}
               </select>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 13, color: C.text }}>{user?.name || user?.email}</span>
