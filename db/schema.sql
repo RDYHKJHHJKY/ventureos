@@ -1,7 +1,73 @@
--- VentureOS persistence schema for the first production backend module.
--- The current local implementation uses .data/ventureos-db.json with these same entities.
+-- VentureOS PostgreSQL Database Schema
+-- Production-ready schema with authentication, workspaces, and multi-tenant support
+-- Deploy with: psql $DATABASE_URL -f db/schema.sql
 
-create table assets (
+-- ============================================================================
+-- Users & Authentication
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+-- ============================================================================
+-- Workspaces & Memberships
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS workspaces (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  plan VARCHAR(50) DEFAULT 'starter',
+  active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_workspaces_owner ON workspaces(owner_id);
+
+CREATE TABLE IF NOT EXISTS workspace_members (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  role VARCHAR(50) DEFAULT 'member',
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(workspace_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_workspace_members_workspace ON workspace_members(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_workspace_members_user ON workspace_members(user_id);
+
+-- ============================================================================
+-- Sessions
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS sessions (
+  id VARCHAR(255) PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  data JSONB,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  expires_at TIMESTAMP NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_workspace ON sessions(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
+
+-- ============================================================================
+-- Assets & Analysis
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS assets (
   id text primary key,
   name text not null,
   canonical_url text not null unique,

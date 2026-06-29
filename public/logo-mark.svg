@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 160 160" aria-labelledby="title">
+  <title id="title">SPR Mark - Scales + Band</title>
+  <defs>
+    <path id="bandPath" d="M80 18 a62 62 0 1 1 0 124 a62 62 0 1 1 0 -124" />
+  </defs>
+  <rect width="160" height="160" rx="24" fill="#000" />
+  <circle cx="80" cy="72" r="48" fill="#071018" stroke="#2A2A2A" stroke-width="2" />
+
+  <g transform="translate(80,72) scale(0.9)" fill="none" stroke="#C9A86A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 -18 v-10" />
+    <line x1="-18" y1="-28" x2="18" y2="-28" />
+    <line x1="-18" y1="-28" x2="-6" y2="-6" />
+    <line x1="18" y1="-28" x2="6" y2="-6" />
+    <circle cx="-6" cy="-2" r="5" fill="#071018" stroke="#C9A86A" />
+    <circle cx="6" cy="-2" r="5" fill="#071018" stroke="#C9A86A" />
+  </g>
+
+  <g fill="none" stroke="#C9A86A" stroke-width="4">
+    <use href="#bandPath" fill="none" stroke-opacity="0.06" />
+    <text font-family="Merriweather, Inter, serif" font-size="14" fill="#C9A86A">
+      <textPath href="#bandPath" startOffset="35%">SPR</textPath>
+    </text>
+  </g>
+</svg>

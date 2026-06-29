@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import { handleApiRequest } from "./lib/server/api-router.js";
 
 export default defineConfig({
+  base: "./",
   plugins: [
     react(),
     {

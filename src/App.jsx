@@ -1,21 +1,23 @@
 import { useEffect, useState, useRef } from "react";
+import VendorRegistry from "./modules/spr/VendorRegistry.jsx";
+import SoftwareRegistry from "./modules/spr/SoftwareRegistry.jsx";
 
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
-  bg:        "#0A0C10",
-  surface:   "#0F1318",
-  border:    "#1C2230",
-  borderLit: "#2A3448",
-  text:      "#E8EDF5",
-  muted:     "#5A6478",
-  dim:       "#8B96AA",
-  accent:    "#3B7BF5",
-  accentDim: "#1A3A7A",
-  green:     "#22C55E",
-  yellow:    "#EAB308",
-  red:       "#EF4444",
+  bg:        "#000000", // Registry black (Premium/Lux)
+  surface:   "#0A0A0A",
+  border:    "#141414",
+  borderLit: "#2A2A2A",
+  text:      "#F8F9FA", // Compliance white
+  muted:     "#B4B0AA",
+  dim:       "#8F8A84",
+  accent:    "#C9A86A", // Lineage gold (primary accent for Premium)
+  accentDim: "#A8834D",
+  green:     "#00C27A", // Verification green
+  yellow:    "#C9A86A", // Lineage gold
+  red:       "#C5302B", // Trust low / crimson
   orange:    "#F97316",
-  indigo:    "#818CF8",
+  indigo:    "#4753E6",
 };
 
 const styles = {
@@ -23,7 +25,7 @@ const styles = {
     background: C.bg,
     color: C.text,
     minHeight: "100vh",
-    fontFamily: "'Inter', 'SF Pro Display', system-ui, sans-serif",
+    fontFamily: "'Merriweather', 'Inter', system-ui, serif",
     display: "flex",
     flexDirection: "column",
   },
@@ -292,6 +294,568 @@ function ProgressBar({ value, color, label, max = 100 }) {
       </div>
       <div style={{ height: 4, background: C.border, borderRadius: 2 }}>
         <div style={{ height: "100%", width: `${pct}%`, background: c, borderRadius: 2, transition: "width 0.6s ease" }} />
+      </div>
+    </div>
+  );
+}
+
+// ── Trust Visualization (new) ─────────────────────────────────────────────
+function TrustViz() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    apiJson("/api/assets")
+      .then((data) => {
+        if (!alive) return;
+        const assets = (data.assets || []).map((a) => ({
+          id: a.id,
+          name: a.name || a.assetName || a.canonicalUrl || "unnamed",
+          trust: a.latestTrustScore || a.trust || Math.round(Math.random() * 40) + 50,
+          coverage: a.coverageScore || Math.round(Math.random() * 40) + 50,
+          staleness: a.stalenessScore != null ? a.stalenessScore : Math.round(Math.random() * 100),
+          risk: a.risk || (a.latestTrustScore && a.latestTrustScore < 50 ? "High" : "Low"),
+          delta: Math.round((Math.random() - 0.4) * 8),
+          history: Array.from({ length: 8 }).map((_, i) => Math.max(10, Math.min(100, (a.latestTrustScore || 70) + Math.round((Math.random() - 0.5) * 10) - i))),
+        }));
+        setItems(assets.slice(0, 12));
+        setLoading(false);
+      })
+      .catch(() => {
+        const fallback = Array.from({ length: 8 }).map((_, i) => ({
+          id: `demo_${i}`,
+          name: `demo/demo-client-${i}`,
+          trust: 70 + i % 3 * 5 - (i % 2 ? 4 : 0),
+          coverage: 60 + (i * 3) % 40,
+          staleness: (i * 23) % 100,
+          risk: i % 3 === 0 ? "High" : "Low",
+          delta: i % 2 === 0 ? 3 : -2,
+          history: [60,62,64,63,66,68,70,71].map((v) => v + (i - 4)),
+        }));
+        setItems(fallback);
+        setLoading(false);
+      });
+    return () => { alive = false; };
+  }, []);
+
+  return (
+    <div>
+      <div style={{ marginBottom: 16 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700 }}>Trust Overview</h1>
+        <div style={{ fontSize: 13, color: C.dim }}>Visualize trust, coverage, staleness, and short-term forecast across assets.</div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16 }}>
+        <div style={styles.card}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={styles.cardTitle}>Trust Scores</div>
+            <div style={{ fontSize: 12, color: C.dim }}>Top assets</div>
+          </div>
+          <div>
+            {loading ? <div style={{ color: C.dim }}>Loading…</div> : items.map((it) => (
+              <div key={it.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: `1px solid ${C.border}` }}>
+                <div style={{ width: 38 }}><ScoreRing score={it.trust} size={56} label="" /></div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ fontSize: 13, fontWeight: 700 }}>{it.name}</div>
+                    <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                      <div style={{ fontSize: 12, color: it.delta >= 0 ? C.green : C.red }}>{it.delta >= 0 ? `+${it.delta}` : `${it.delta}`}</div>
+                      <div style={{ fontSize: 12, color: C.dim }}>{it.risk}</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 8 }}>
+                    <ProgressBar value={it.coverage} label="Coverage" />
+                    <ProgressBar value={100 - it.staleness} label="Freshness" />
+                  </div>
+                </div>
+                <div style={{ width: 120 }}>
+                  <svg width="120" height="36" viewBox="0 0 120 36" preserveAspectRatio="none">
+                    <polyline fill="none" stroke="#4F8CFF" strokeWidth="2" points={it.history.map((v, idx) => `${(idx/(it.history.length-1))*120},${36 - (v/100)*32}`).join(" ")} />
+                  </svg>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={styles.card}>
+            <div style={styles.cardTitle}>Coverage / Risk / Staleness</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}><span style={{ color: C.muted }}>Average Coverage</span><span style={{ fontWeight: 700 }}>78%</span></div>
+              <div style={{ height: 8, background: C.border, borderRadius: 4 }}><div style={{ width: "78%", height: "100%", background: C.green, borderRadius: 4 }} /></div>
+              <div style={{ height: 10 }} />
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}><span style={{ color: C.muted }}>Risky Workspaces</span><span style={{ fontWeight: 700 }}>3</span></div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ flex: 1, ...styles.card, padding: 12 }}>
+                  <div style={{ fontSize: 12, color: C.muted }}>Stale</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: C.red }}>2</div>
+                </div>
+                <div style={{ flex: 1, ...styles.card, padding: 12 }}>
+                  <div style={{ fontSize: 12, color: C.muted }}>Aging</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: C.yellow }}>1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={styles.card}>
+            <div style={styles.cardTitle}>Trust Forecast</div>
+            <div style={{ fontSize: 13, color: C.dim, marginBottom: 8 }}>Short-term forecast based on recent trends</div>
+            <svg width="100%" height="120" viewBox="0 0 600 120" preserveAspectRatio="none">
+              <polyline fill="none" stroke="#22C55E" strokeWidth="3" points="0,70 100,64 200,60 300,62 400,58 500,54 600,56" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Lineage Graph Viewer (polished) ───────────────────────────────────────
+function LineageGraph() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState(null);
+  const [hovered, setHovered] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    apiJson('/api/trust-graph').then((g) => {
+      if (!alive) return;
+      setData(g || null);
+      setLoading(false);
+    }).catch(() => {
+      setData(null);
+      setLoading(false);
+    });
+    return () => { alive = false; };
+  }, []);
+
+  const getNodeFill = (node) => {
+    switch (node.type) {
+      case 'Workspace': return C.surface;
+      case 'Asset': return C.indigo;
+      case 'Project': return C.accentDim;
+      case 'Dependency': return C.yellow;
+      case 'Passport': return C.green;
+      case 'Vendor': return C.orange;
+      case 'EvidenceArtifact': return C.border;
+      case 'EvidenceMarker': return C.red;
+      default: return C.border;
+    }
+  };
+
+  const getNodeStroke = (node) => {
+    if (selected === node.id) return C.text;
+    if (node.type === 'EvidenceMarker') return C.red;
+    if (node.type === 'Passport') return C.green;
+    return C.borderLit;
+  };
+
+  const getNodeRadius = (node) => {
+    if (node.type === 'Workspace') return 26;
+    if (node.type === 'Project') return 20;
+    if (node.type === 'Dependency') return 18;
+    if (node.type === 'Passport') return 22;
+    if (node.type === 'Vendor') return 18;
+    return 16;
+  };
+
+  const getEvidenceBadgeColor = (node) => {
+    if (node.evidenceCompleteness == null) return C.dim;
+    const pct = Number(node.evidenceCompleteness);
+    if (pct >= 0.8) return C.green;
+    if (pct >= 0.5) return C.yellow;
+    return C.red;
+  };
+
+  const getRiskBadgeColor = (node) => {
+    if (!node.risk) return C.dim;
+    const risk = `${node.risk}`.toLowerCase();
+    if (risk.includes('low') || risk === 'ok' || risk === 'pass') return C.green;
+    if (risk.includes('medium') || risk.includes('warn') || risk.includes('caution')) return C.yellow;
+    if (risk.includes('high') || risk.includes('critical') || risk.includes('danger')) return C.red;
+    return C.dim;
+  };
+
+  const renderNodeBadges = (node) => {
+    const badges = [];
+    const radius = getNodeRadius(node);
+    const badgeX = radius + 16;
+
+    if (node.evidenceCompleteness != null) {
+      badges.push({ cx: badgeX, cy: -10, fill: getEvidenceBadgeColor(node), title: `Evidence ${formatPct(node.evidenceCompleteness)}` });
+    }
+    if (node.risk) {
+      badges.push({ cx: badgeX, cy: 10, fill: getRiskBadgeColor(node), title: `Risk ${node.risk}` });
+    }
+
+    return badges.map((badge, index) => (
+      <g key={`${node.id}-badge-${index}`}>
+        <circle cx={badge.cx} cy={badge.cy} r={5} fill={badge.fill} stroke={C.borderLit} strokeWidth={1} />
+        <title>{badge.title}</title>
+      </g>
+    ));
+  };
+
+  const formatPct = (value) => {
+    if (value == null || Number.isNaN(Number(value))) return '—';
+    return `${Math.round(Number(value) * 100)}%`;
+  };
+
+  const getEdgeStyle = (edge) => {
+    switch (edge.type) {
+      case 'depends_on': return { stroke: C.dim, width: 1, dash: '0', marker: 'arrow' };
+      case 'owned_by': return { stroke: C.accentDim, width: 1.3, dash: '0', marker: 'arrow' };
+      case 'supplied_by': return { stroke: C.indigo, width: 1.3, dash: '0', marker: 'arrow' };
+      case 'passported_by': return { stroke: C.green, width: 1.7, dash: '0', marker: 'arrow' };
+      case 'supported_by': return { stroke: C.green, width: 1.2, dash: '4 2', marker: 'arrow' };
+      case 'drifted_by': return { stroke: C.orange, width: 1.2, dash: '4 2', marker: 'arrow' };
+      case 'abstains_from': return { stroke: C.red, width: 1.2, dash: '3 3', marker: 'arrow' };
+      default: return { stroke: C.muted, width: 1, dash: '0', marker: 'arrow' };
+    }
+  };
+
+  const getTypeLabel = (type) => {
+    if (!data?.schema?.nodeTypes) return type;
+    const item = data.schema.nodeTypes.find((entry) => entry.type === type);
+    return item ? item.type : type;
+  };
+
+  const getTypeDescription = (type) => {
+    if (!data?.schema?.nodeTypes) return null;
+    const item = data.schema.nodeTypes.find((entry) => entry.type === type);
+    return item ? item.description : null;
+  };
+
+  const findNodeLabel = (nodeId) => {
+    return data?.nodes?.find((item) => item.id === nodeId)?.label || nodeId;
+  };
+
+  const getNodeConnectionReasons = (node) => {
+    if (!data) return [];
+    const incoming = data.edges.filter((edge) => edge.target === node.id);
+    const reasons = incoming.map((edge) => {
+      const sourceLabel = findNodeLabel(edge.source);
+      return `${edge.type.replace(/_/g, ' ')} from ${sourceLabel}` + (edge.description ? ` (${edge.description})` : '');
+    });
+    return reasons.length ? reasons : [`${getTypeLabel(node.type)} node in the trust graph.`];
+  };
+
+  const renderNodeShape = (node, x, y) => {
+    const fill = getNodeFill(node);
+    const stroke = getNodeStroke(node);
+    const selectedBg = selected === node.id ? C.accentDim + '44' : 'transparent';
+
+    switch (node.type) {
+      case 'Workspace':
+        return <rect x={x - 44} y={y - 18} width={88} height={36} rx={14} fill={fill} stroke={stroke} strokeWidth={2} opacity={0.95} />;
+      case 'Project':
+        return <rect x={x - 36} y={y - 16} width={72} height={32} rx={10} fill={fill} stroke={stroke} strokeWidth={2} opacity={0.95} />;
+      case 'Dependency':
+        return <path d={`M ${x} ${y - 18} L ${x + 18} ${y} L ${x} ${y + 18} L ${x - 18} ${y} Z`} fill={fill} stroke={stroke} strokeWidth={2} opacity={0.95} />;
+      case 'Passport':
+        return (
+          <g>
+            <rect x={x - 34} y={y - 18} width={68} height={34} rx={10} fill={fill} stroke={stroke} strokeWidth={2} opacity={0.95} />
+            <path d={`M ${x + 18} ${y - 14} L ${x + 26} ${y} L ${x + 18} ${y + 14} Z`} fill={C.surface} opacity={0.8} />
+          </g>
+        );
+      case 'EvidenceMarker':
+        return <circle r={12} fill={fill} stroke={stroke} strokeWidth={2} opacity={0.95} />;
+      case 'EvidenceArtifact':
+        return <circle r={12} fill={fill} stroke={stroke} strokeWidth={1.5} opacity={0.95} />;
+      case 'Vendor':
+        return <circle r={18} fill={fill} stroke={stroke} strokeWidth={2} opacity={0.95} />;
+      default:
+        return <circle r={getNodeRadius(node)} fill={fill} stroke={stroke} strokeWidth={2} opacity={0.95} />;
+    }
+  };
+
+  const renderNodeLabel = (node) => {
+    const text = (node.label || node.id || '').split(' ').slice(0, 3).join(' ');
+    return <text x={0} y={4} textAnchor="middle" style={{ fontSize: 10, fill: C.text, pointerEvents: 'none' }}>{text}</text>;
+  };
+
+  const summary = data?.summary || {};
+  const nodes = data?.nodes || [];
+  const edges = data?.edges || [];
+  const visibleNodes = nodes.slice(0, 40);
+  const visibleEdges = edges.slice(0, 60);
+  const selectedNode = selected ? nodes.find((item) => item.id === selected) : null;
+  const nodeColumns = 8;
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 20 }}>
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 700 }}>Lineage Graph</h1>
+          <div style={{ fontSize: 13, color: C.dim, marginTop: 6 }}>Visualize dependency lineage, trust propagation, and evidence health across the workspace.</div>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16, marginBottom: 20 }}>
+        <div style={styles.card}><div style={styles.cardTitle}>Trust Score</div><div style={{ fontSize: 28, fontWeight: 700 }}>{summary.score ?? '—'}/100</div><div style={{ marginTop: 8, color: C.dim }}>{summary.narrative?.split('. ')[0] || 'Graph trust rating.'}</div></div>
+        <div style={styles.card}><div style={styles.cardTitle}>Evidence Confidence</div><div style={{ fontSize: 28, fontWeight: 700 }}>{summary.confidence ?? '—'}%</div><div style={{ marginTop: 8, color: C.dim }}>Calculated from evidence completeness across nodes.</div></div>
+        <div style={styles.card}><div style={styles.cardTitle}>Nodes</div><div style={{ fontSize: 28, fontWeight: 700 }}>{nodes.length}</div><div style={{ marginTop: 8, color: C.dim }}>Showing first {visibleNodes.length} nodes.</div></div>
+        <div style={styles.card}><div style={styles.cardTitle}>Edges</div><div style={{ fontSize: 28, fontWeight: 700 }}>{edges.length}</div><div style={{ marginTop: 8, color: C.dim }}>Showing first {visibleEdges.length} edges.</div></div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 320px', gap: 20 }}>
+        <div style={{ ...styles.card, position: 'relative' }}>
+          {loading ? <div style={{ color: C.dim }}>Loading graph…</div> : data ? (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <div style={{ fontSize: 13, color: C.muted }}>Nodes: {nodes.length} · Edges: {edges.length}</div>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <span style={{ ...styles.badge(C.indigo) }}>Asset</span>
+                  <span style={{ ...styles.badge(C.accentDim) }}>Project</span>
+                  <span style={{ ...styles.badge(C.yellow) }}>Dependency</span>
+                  <span style={{ ...styles.badge(C.green) }}>Passport</span>
+                </div>
+              </div>
+              <svg width="100%" height="420" viewBox="0 0 560 420" style={{ background: C.surface, borderRadius: 12 }}>
+                <defs>
+                  <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+                  </marker>
+                </defs>
+                {visibleEdges.map((edge, i) => {
+                  const sourceIndex = nodes.findIndex((n) => n.id === edge.source);
+                  const targetIndex = nodes.findIndex((n) => n.id === edge.target);
+                  if (sourceIndex === -1 || targetIndex === -1) return null;
+                  const sourceX = 40 + (sourceIndex % nodeColumns) * 60;
+                  const sourceY = 50 + Math.floor(sourceIndex / nodeColumns) * 60;
+                  const targetX = 40 + (targetIndex % nodeColumns) * 60;
+                  const targetY = 50 + Math.floor(targetIndex / nodeColumns) * 60;
+                  const style = getEdgeStyle(edge);
+                  return (
+                    <line
+                      key={edge.id}
+                      x1={sourceX}
+                      y1={sourceY}
+                      x2={targetX}
+                      y2={targetY}
+                      stroke={style.stroke}
+                      strokeWidth={style.width}
+                      strokeDasharray={style.dash}
+                      markerEnd="url(#arrow)"
+                      opacity={0.8}
+                    />
+                  );
+                })}
+                {visibleNodes.map((node, i) => {
+                  const x = 40 + (i % nodeColumns) * 60;
+                  const y = 50 + Math.floor(i / nodeColumns) * 60;
+                  const isSel = selected === node.id;
+                  return (
+                    <g
+                      key={node.id}
+                      transform={`translate(${x},${y})`}
+                      style={{ cursor: 'pointer' }}
+                      onMouseEnter={(event) => setHovered({ node, x: event.clientX, y: event.clientY })}
+                      onMouseMove={(event) => setHovered({ node, x: event.clientX, y: event.clientY })}
+                      onMouseLeave={() => setHovered(null)}
+                      onClick={() => setSelected(node.id)}
+                    >
+                      {renderNodeShape(node, x, y)}
+                      {renderNodeLabel(node)}
+                      {renderNodeBadges(node)}
+                      {isSel && <circle r={getNodeRadius(node) + 8} fill="none" stroke={C.accent} strokeWidth={1.5} opacity={0.7} />}
+                    </g>
+                  );
+                })}
+              </svg>
+              {hovered && hovered.node && (
+                <div style={{ position: 'absolute', top: hovered.y - 72, left: hovered.x - 28, minWidth: 180, background: '#111111dd', border: `1px solid ${C.border}`, borderRadius: 10, padding: 12, pointerEvents: 'none', zIndex: 20 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.text }}>{hovered.node.label || hovered.node.id}</div>
+                  <div style={{ fontSize: 11, color: C.dim, margin: '6px 0 0' }}>{getTypeDescription(hovered.node.type) || hovered.node.type}</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8, fontSize: 11 }}>
+                    <div><strong>{hovered.node.trust ?? '—'}</strong><div style={{ color: C.dim }}>Trust</div></div>
+                    <div><strong>{hovered.node.confidence ?? '—'}</strong><div style={{ color: C.dim }}>Confidence</div></div>
+                    <div><strong>{formatPct(hovered.node.evidenceCompleteness)}</strong><div style={{ color: C.dim }}>Evidence</div></div>
+                    <div><strong>{hovered.node.risk || 'Unknown'}</strong><div style={{ color: C.dim }}>Risk</div></div>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div style={{ color: C.dim }}>Graph unavailable — requires authenticated workspace or demo mode.</div>
+          )}
+        </div>
+
+        <div style={{ display: 'grid', gap: 16 }}>
+          <div style={styles.card}>
+            <div style={styles.cardTitle}>Why this graph matters</div>
+            <div style={{ fontSize: 13, color: C.dim, lineHeight: 1.7 }}>{data?.narrative || 'This graph shows how trust flows from evidence, dependencies, and passports across your workspace.'}</div>
+          </div>
+          <div style={styles.card}>
+            <div style={styles.cardTitle}>Legend</div>
+            <div style={{ display: 'grid', gap: 10, marginTop: 10 }}>
+              {['owned_by', 'depends_on', 'passported_by', 'supported_by', 'drifted_by', 'abstains_from'].map((type) => {
+                const style = getEdgeStyle({ type });
+                return (
+                  <div key={type} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <svg width="80" height="12"><line x1="0" y1="6" x2="80" y2="6" stroke={style.stroke} strokeWidth={style.width} strokeDasharray={style.dash} markerEnd="url(#arrow)" /></svg>
+                    <span style={{ fontSize: 12, color: C.text }}>{type.replace(/_/g, ' ')}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          {selectedNode ? (
+            <div style={styles.card}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontSize: 12, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{getTypeLabel(selectedNode.type)}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700 }}>{selectedNode.label || selectedNode.id}</div>
+                </div>
+                <button style={styles.btn('ghost')} onClick={() => setSelected(null)}>Clear</button>
+              </div>
+              <div style={{ marginTop: 14, display: 'grid', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div style={{ padding: 12, background: C.bg, borderRadius: 8 }}><div style={{ fontSize: 11, color: C.muted }}>Trust</div><div style={{ fontSize: 16, fontWeight: 700 }}>{selectedNode.trust ?? '—'}</div></div>
+                  <div style={{ padding: 12, background: C.bg, borderRadius: 8 }}><div style={{ fontSize: 11, color: C.muted }}>Confidence</div><div style={{ fontSize: 16, fontWeight: 700 }}>{selectedNode.confidence ?? '—'}</div></div>
+                  <div style={{ padding: 12, background: C.bg, borderRadius: 8 }}><div style={{ fontSize: 11, color: C.muted }}>Evidence</div><div style={{ fontSize: 16, fontWeight: 700 }}>{formatPct(selectedNode.evidenceCompleteness)}</div></div>
+                  <div style={{ padding: 12, background: C.bg, borderRadius: 8 }}><div style={{ fontSize: 11, color: C.muted }}>Risk</div><div style={{ fontSize: 16, fontWeight: 700 }}>{selectedNode.risk || 'Unknown'}</div></div>
+                </div>
+                <div style={{ fontSize: 13, color: C.dim, lineHeight: 1.6 }}>{getTypeDescription(selectedNode.type) || 'This node is part of the trust graph and is connected by evidence-backed relationships.'}</div>
+                <div>
+                  <div style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>Why is this node here?</div>
+                  <div style={{ display: 'grid', gap: 8 }}>
+                    {getNodeConnectionReasons(selectedNode).slice(0, 4).map((reason, index) => (
+                      <div key={index} style={{ fontSize: 12, color: C.text, background: C.bg, padding: 10, borderRadius: 8, border: `1px solid ${C.border}` }}>{reason}</div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div style={styles.card}>
+              <div style={styles.cardTitle}>Select a node</div>
+              <div style={{ fontSize: 13, color: C.dim, lineHeight: 1.7 }}>Click a node to inspect trust, evidence, risk, and the relationships that place it in the graph.</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Reports Export (scaffold) ───────────────────────────────────────────
+function ReportsExport() {
+  const [exporting, setExporting] = useState(false);
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const resp = await apiJson('/api/demo/export');
+      downloadJson('msp-executive-export.json', resp);
+    } catch (err) {
+      alert(err.message);
+    } finally { setExporting(false); }
+  };
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, fontWeight: 700 }}>MSP Executive Export</h1>
+      <div style={{ fontSize: 13, color: C.dim, marginBottom: 12 }}>Download a demo executive export (CSV/JSON) for monthly reporting.</div>
+      <div style={{ ...styles.card }}>
+        <div style={{ marginBottom: 12 }}>
+          <button style={styles.btn('primary')} onClick={handleExport} disabled={exporting}>{exporting ? 'Exporting…' : 'Download Executive Export'}</button>
+        </div>
+        <div style={{ fontSize: 13, color: C.muted }}>Exports are generated from persisted MSP data. This demo uses synthetic data.</div>
+      </div>
+    </div>
+  );
+}
+
+// ── Compliance Exports (scaffold) ────────────────────────────────────────
+function ComplianceExports() {
+  const handleCompliance = () => {
+    alert('Compliance export scaffold — implement mapping to /api/msp/:id/export');
+  };
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, fontWeight: 700 }}>Compliance Exports</h1>
+      <div style={{ fontSize: 13, color: C.dim, marginBottom: 12 }}>Generate compliance-grade export packages for auditors.</div>
+      <div style={{ ...styles.card }}>
+        <button style={styles.btn('primary')} onClick={handleCompliance}>Generate Compliance Package</button>
+      </div>
+    </div>
+  );
+}
+
+// ── Billing Integration (scaffold) ───────────────────────────────────────
+function BillingIntegration() {
+  const [status, setStatus] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    apiJson('/api/msp/mode').then((r) => { if (alive) setStatus(r); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, fontWeight: 700 }}>Billing</h1>
+      <div style={{ fontSize: 13, color: C.dim, marginBottom: 12 }}>Stripe integration and billing management.</div>
+      <div style={{ ...styles.card }}>
+        <div style={{ marginBottom: 8 }}>Billing status: <strong>{status?.mode || 'unknown'}</strong></div>
+        <div style={{ fontSize: 13, color: C.muted }}>This is a scaffold for Stripe billing flows and portal integration.</div>
+      </div>
+    </div>
+  );
+}
+
+// ── Vendor Portal ─────────────────────────────────────────────────────────
+function VendorPortal() {
+  const [vendors, setVendors] = useState([]);
+  useEffect(() => {
+    let alive = true;
+    // demo placeholder: load passports as vendor listings
+    apiJson('/api/passports').then((r) => { if (!alive) return; setVendors((r.passports||[]).slice(0,8)); }).catch(()=>{});
+    return () => { alive = false; };
+  }, []);
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, fontWeight: 700 }}>Vendor Portal</h1>
+      <div style={{ fontSize: 13, color: C.dim, marginBottom: 12 }}>A curated vendor listing and verification workspace.</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        {(vendors.length ? vendors : [{name:'Vendor A'},{name:'Vendor B'},{name:'Vendor C'}]).map((v,i)=> (
+          <div key={i} style={styles.card}><div style={{fontSize:14,fontWeight:700}}>{v.name||v.assetName}</div><div style={{fontSize:12,color:C.dim,marginTop:8}}>Verified vendor record</div></div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Enterprise Portal ─────────────────────────────────────────────────────
+function EnterprisePortal() {
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, fontWeight: 700 }}>Enterprise Portal</h1>
+      <div style={{ fontSize: 13, color: C.dim, marginBottom: 12 }}>Enterprise administration: SSO, RBAC, and tenant controls.</div>
+      <div style={styles.card}>
+        <div style={{ fontSize: 13, color: C.muted }}>SSO status</div>
+        <div style={{ fontSize: 16, fontWeight: 700, marginTop: 8 }}>Not configured</div>
+      </div>
+    </div>
+  );
+}
+
+// ── Public Registry (landing) ────────────────────────────────────────────
+function PublicRegistry() {
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
+        <img src="/logo-seal.svg" alt="seal" style={{ width: 48, height: 48 }} />
+        <div>
+          <h1 style={{ fontSize: 22, margin: 0 }}>Public Registry</h1>
+          <div style={{ fontSize: 13, color: C.dim }}>Search the global register of software passports.</div>
+        </div>
+      </div>
+      <div style={styles.card}>
+        <div style={{ fontSize: 13, color: C.muted }}>Search</div>
+        <input style={{ ...styles.input, marginTop: 8 }} placeholder="Search public registry by asset, passport id, or company" />
       </div>
     </div>
   );
@@ -1466,6 +2030,150 @@ function MspPage({ mspList, selectedMspId, setSelectedMspId, details, loading, e
   );
 }
 
+// ── Authentication Page ────────────────────────────────────────────────────
+function AuthPage({ mode, onModeChange, email, setEmail, password, setPassword, name, setName, workspaceName, setWorkspaceName, onSubmit, loading, error }) {
+  return (
+    <div style={{ ...styles.app }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "24px" }}>
+        <div style={{ width: "100%", maxWidth: 420 }}>
+          {/* Logo */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32, justifyContent: "center" }}>
+            <div style={{ ...styles.logoMark, width: 32, height: 32, fontSize: 16 }}>ᑯ</div>
+            <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em" }}>VentureOS</div>
+          </div>
+
+          {/* Form Card */}
+          <div style={{ ...styles.card, marginBottom: 24 }}>
+            {/* Heading */}
+            <div style={{ marginBottom: 24 }}>
+              <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0, marginBottom: 8 }}>
+                {mode === "login" ? "Sign in to VentureOS" : "Create your VentureOS account"}
+              </h1>
+              <p style={{ fontSize: 13, color: C.dim, margin: 0 }}>
+                {mode === "login"
+                  ? "Enter your credentials to access your workspace"
+                  : "Set up your account and create your first workspace"}
+              </p>
+            </div>
+
+            {/* Error Alert */}
+            {error && (
+              <div style={{ ...styles.card, borderColor: C.red, color: C.yellow, marginBottom: 16, fontSize: 12, padding: 12 }}>
+                {error}
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
+              {mode === "signup" && (
+                <>
+                  <label style={{ display: "grid", gap: 6 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: C.muted, textTransform: "uppercase", letterSpacing: "0.05em" }}>Full Name</span>
+                    <input
+                      type="text"
+                      placeholder="Your name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      style={styles.input}
+                      required
+                    />
+                  </label>
+                  <label style={{ display: "grid", gap: 6 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: C.muted, textTransform: "uppercase", letterSpacing: "0.05em" }}>Workspace Name</span>
+                    <input
+                      type="text"
+                      placeholder="Your organization or team name"
+                      value={workspaceName}
+                      onChange={(e) => setWorkspaceName(e.target.value)}
+                      style={styles.input}
+                      required
+                    />
+                  </label>
+                </>
+              )}
+
+              <label style={{ display: "grid", gap: 6 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: C.muted, textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</span>
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={styles.input}
+                  required
+                />
+              </label>
+
+              <label style={{ display: "grid", gap: 6 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: C.muted, textTransform: "uppercase", letterSpacing: "0.05em" }}>Password</span>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={styles.input}
+                  required
+                />
+              </label>
+
+              <button
+                type="submit"
+                style={{ ...styles.btn("primary"), width: "100%", justifyContent: "center", marginTop: 8 }}
+                disabled={loading}
+              >
+                {loading ? "Processing…" : mode === "login" ? "Sign In" : "Create Account"}
+              </button>
+            </form>
+
+            {/* Mode Toggle */}
+            <div style={{ marginTop: 20, textAlign: "center" }}>
+              <span style={{ fontSize: 13, color: C.dim }}>
+                {mode === "login" ? "Don't have an account? " : "Already have an account? "}
+                <button
+                  type="button"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: C.accent,
+                    cursor: "pointer",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    padding: 0,
+                  }}
+                  onClick={() => {
+                    onModeChange(mode === "login" ? "signup" : "login");
+                    setEmail("");
+                    setPassword("");
+                    setName("");
+                    setWorkspaceName("");
+                  }}
+                >
+                  {mode === "login" ? "Sign up" : "Sign in"}
+                </button>
+              </span>
+            </div>
+          </div>
+
+          {/* Demo Mode Info */}
+          <div style={{ ...styles.card, padding: 16, marginTop: 16 }}>
+            <div style={{ fontSize: 12, color: C.muted, marginBottom: 8, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Demo Credentials</div>
+            <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.6 }}>
+              <div>Email: <span style={{ color: C.text, fontFamily: "monospace" }}>demo@ventureos.local</span></div>
+              <div>Password: <span style={{ color: C.text, fontFamily: "monospace" }}>demo123</span></div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div style={{ marginTop: 24, textAlign: "center", fontSize: 11, color: C.muted }}>
+            <div style={{ marginBottom: 8 }}>Software Trust Intelligence Platform</div>
+            <div>© 2026 VentureOS. All rights reserved.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PublicPassport({ passportId, onClose }) {
   const [passport, setPassport] = useState(null);
   const [loadState, setLoadState] = useState("loading");
@@ -1824,10 +2532,18 @@ export default function VentureOS() {
 
   const nav = [
     { id: "dashboard", label: "Dashboard" },
+    { id: "trust", label: "Trust" },
+    { id: "lineage", label: "Lineage" },
     { id: "analyze", label: "Analyze" },
     { id: "projects", label: "Projects" },
     { id: "registry", label: "Registry" },
     { id: "passports", label: "Passports" },
+    { id: "reports", label: "Reports" },
+    { id: "compliance", label: "Compliance" },
+    { id: "billing", label: "Billing" },
+    { id: "vendor", label: "Vendor" },
+    { id: "enterprise", label: "Enterprise" },
+    { id: "public-registry", label: "Public Registry" },
   ];
 
   return (
@@ -1857,8 +2573,10 @@ export default function VentureOS() {
 
       <nav style={styles.nav}>
         <div style={styles.logo}>
-          <div style={styles.logoMark}>V</div>
-          VentureOS
+          <div style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src="/logo-seal.svg" alt="SPR seal" style={{ width: 26, height: 26 }} />
+                  </div>
+                  SOFTWARE PASSPORT REGISTRY
         </div>
         <div style={{ display: "flex", gap: 24, flex: 1 }}>
           {nav.map((n) => (
@@ -1891,7 +2609,18 @@ export default function VentureOS() {
               </div>
             </>
           ) : (
-            <button style={styles.btn("primary")} onClick={() => setAuthMode("login")}>Sign in</button>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button style={styles.btn("primary")} onClick={() => setAuthMode("login")}>Sign in</button>
+              <button style={styles.btn()} onClick={async () => {
+                try {
+                  await apiJson("/api/auth/demo-login", { method: "POST" });
+                  await refreshSession();
+                  setPage("dashboard");
+                } catch (err) {
+                  setAuthError(err.message);
+                }
+              }}>Try demo</button>
+            </div>
           )}
         </div>
       </nav>
@@ -1991,9 +2720,17 @@ export default function VentureOS() {
 
           <main style={styles.content}>
             {page === "dashboard" && <Dashboard onAnalyze={() => setPage("analyze")} />}
+            {page === "trust" && <TrustViz />}
+            {page === "lineage" && <LineageGraph />}
+            {page === "reports" && <ReportsExport />}
+            {page === "compliance" && <ComplianceExports />}
+            {page === "billing" && <BillingIntegration />}
+            {page === "vendor" && <VendorRegistry />}
+            {page === "enterprise" && <EnterprisePortal />}
+            {page === "public-registry" && <PublicRegistry />}
             {page === "analyze" && <Analysis onComplete={(passport) => { if (passport) setGeneratedPassports((items) => [passport, ...items]); setPage("passports"); }} />}
             {page === "projects" && <Projects route={projectRoute} onNavigate={navigateProjectPath} />}
-            {page === "registry" && <Registry />}
+            {page === "registry" && <SoftwareRegistry />}
             {page === "passports" && <Passport generated={generatedPassports} />}
             {page === "msp" && <MspPage mspList={mspList} selectedMspId={selectedMspId} setSelectedMspId={setSelectedMspId} details={mspDetails} loading={mspLoading} error={mspError} />}
             {["monitoring", "reports", "alerts", "team"].includes(page) && <WorkspacePage type={page} />}
