@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mutateDb, createId, readDb } from "../lib/server/data-store.js";
 import { createSession } from "../lib/server/auth.js";
-import { handleApiRequest, verifyAuditChain, verifyPassportEnvelope } from "../lib/server/api-router.js";
+import { handleApiRequest, verifyAuditChain, verifyPassportEnvelope, decryptWorkspacePayload } from "../lib/server/api-router.js";
 
 function makeRes() {
   return {
@@ -156,10 +156,15 @@ async function main() {
   assert.equal(identityResponse.payload.ok, true);
   assert.equal(identityResponse.payload.identity.domain, true);
 
-  const bundleResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/bundle`, "POST", { encrypted: true, recipients: ["buyer-123"], selectiveDisclosure: true }, session.token);
+  const bundleResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/bundle`, "POST", { requestId: "bundle-001", encrypted: true, recipients: ["buyer-123"], selectiveDisclosure: true }, session.token);
   assert.equal(bundleResponse.statusCode, 200);
   assert.equal(bundleResponse.payload.ok, true);
   assert.equal(bundleResponse.payload.evidence.bundle.encrypted, true);
+  assert.equal(bundleResponse.payload.evidence.bundle.requestId, "bundle-001");
+  assert.ok(bundleResponse.payload.evidence.bundle.integrityHash);
+  const bundleWorkspaceId = bundleResponse.payload.evidence.bundle.workspaceId || "default";
+  const decrypted = decryptWorkspacePayload(bundleWorkspaceId, bundleResponse.payload.evidence.bundle);
+  assert.ok(decrypted.includes("CycloneDX SBOM"));
 
   const zkpResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/zkp`, "POST", { statement: "soc2", proof: "zkp-123", verified: true }, session.token);
   assert.equal(zkpResponse.statusCode, 200);
@@ -229,6 +234,9 @@ async function main() {
   const staleRestrictedPassportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "restricted", issuedBy: user.name, accessToken: `${vendorResponse.payload.vendor.id}:workspace-1:restricted`, workspaceId: "workspace-1" }, session.token);
   assert.equal(staleRestrictedPassportResponse.statusCode, 400);
   assert.equal(staleRestrictedPassportResponse.payload.code, "VALIDATION_ERROR");
+  const duplicateBundleResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/bundle`, "POST", { requestId: "bundle-001", encrypted: true, recipients: ["buyer-123"], selectiveDisclosure: true }, session.token);
+  assert.equal(duplicateBundleResponse.statusCode, 409);
+  assert.equal(duplicateBundleResponse.payload.code, "REPLAY_ERROR");
 
   const invalidSignalResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/signals`, "POST", { type: "cve", severity: "high", source: "nvd" }, session.token);
   assert.equal(invalidSignalResponse.statusCode, 400);

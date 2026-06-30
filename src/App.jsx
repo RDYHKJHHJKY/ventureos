@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import VendorRegistry from "./modules/spr/VendorRegistry.jsx";
 import SoftwareRegistry from "./modules/spr/SoftwareRegistry.jsx";
+import PassportDashboard from "./components/PassportDashboard.jsx";
 
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
@@ -2706,6 +2707,7 @@ export default function VentureOS() {
             {page === "compliance" && <ComplianceExports />}
             {page === "billing" && <BillingIntegration />}
             {page === "vendor" && <VendorRegistry />}
+            {page === "passport" && <PassportDashboard workspaceId={workspaces[0]?.id || 'demo_workspace'} vendorId={(vendors && vendors[0] && vendors[0].id) || 'demo_vendor'} />}
             {page === "enterprise" && <EnterprisePortal />}
             {page === "public-registry" && <PublicRegistry />}
             {page === "analyze" && <Analysis onComplete={(passport) => { if (passport) setGeneratedPassports((items) => [passport, ...items]); setPage("passports"); }} />}
