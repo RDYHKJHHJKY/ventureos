@@ -75,7 +75,7 @@ async function main() {
   assert.equal(summary.statusCode, 200);
   assert.equal(summary.payload.ok, true);
   assert.equal(summary.payload.mode, "active");
-  assert.equal(summary.payload.billingStatus, "active");
+  assert.equal(summary.payload.billingStatus, "paid");
   assert.equal(summary.payload.workspaces, 1);
   assert.equal(summary.payload.totals.assetCount, 1);
   assert.equal(summary.payload.totals.scanCount, 1);
@@ -107,7 +107,7 @@ async function main() {
   const pastDueSession = await createSession(pastDueScenario.user.id);
   const pastDueSummary = await requestJson(`/api/msp/${pastDueScenario.msp.id}/summary`, pastDueSession.token);
   assert.equal(pastDueSummary.statusCode, 200);
-  assert.equal(pastDueSummary.payload.mode, "past_due");
+  assert.equal(pastDueSummary.payload.mode, "suspended");
 
   const unauthorized = await requestJson(`/api/msp/${msp.id}/summary`, "invalid-token");
   assert.equal(unauthorized.statusCode, 401);

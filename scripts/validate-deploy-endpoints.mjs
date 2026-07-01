@@ -40,11 +40,7 @@ function cookieHeaderFromSetCookie(setCookie) {
 }
 
 async function main() {
-  const rawUrl = process.env.VERCEL_URL;
-  if (!rawUrl) {
-    throw new Error('Set VERCEL_URL to the deployed domain, e.g. https://your-app.vercel.app');
-  }
-
+  const rawUrl = process.env.VERCEL_URL || process.env.VERCEL_PREVIEW_URL || process.env.VERCEL_PRODUCTION_URL || 'http://127.0.0.1:5173';
   const normalizedUrl = normalizeBaseUrl(rawUrl);
   const url = new URL(normalizedUrl);
   const baseOptions = {

@@ -52,7 +52,7 @@ async function runMigration() {
     console.log('  • webhooks');
     console.log('  • webhook_deliveries');
     console.log('  • jobs');
-    console.log('  • audit_logs');
+    console.log('  • spr_audit_logs');
     console.log('');
     console.log('🎉 Database is ready to use!');
   } catch (error) {

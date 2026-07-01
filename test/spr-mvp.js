@@ -92,6 +92,12 @@ async function main() {
   assert.equal(softwareListResponse.payload.ok, true);
   assert.ok((softwareListResponse.payload.software || []).some((item) => item.id === softwareResponse.payload.software.id));
 
+  const githubScanResponse = await requestJson("/api/spr/github/scan", "POST", { owner: "octocat", repo: "Hello-World", softwareId: softwareResponse.payload.software.id }, session.token);
+  assert.equal(githubScanResponse.statusCode, 201);
+  assert.equal(githubScanResponse.payload.ok, true);
+  assert.equal(githubScanResponse.payload.evidence.type, "github");
+  assert.ok(githubScanResponse.payload.evidence.summary.includes("GitHub"));
+
   const evidenceResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "CycloneDX SBOM", summary: "Generated from release pipeline", uri: "https://example.com/sbom.json", strength: 0.9, freshnessDays: 7, verified: true }, session.token);
   assert.equal(evidenceResponse.statusCode, 201);
   assert.equal(evidenceResponse.payload.ok, true);
@@ -116,6 +122,8 @@ async function main() {
   const monitorResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/monitor`, "GET", null, session.token);
   assert.equal(monitorResponse.statusCode, 200);
   assert.equal(monitorResponse.payload.ok, true);
+  assert.equal(monitorResponse.payload.monitoring.schedule.enabled, true);
+  assert.ok(Array.isArray(monitorResponse.payload.monitoring.driftAlerts));
   assert.ok(monitorResponse.payload.monitoring.alerts.length >= 0);
 
   const signalResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/signals`, "POST", { type: "cve", severity: "high", summary: "CVE-2026-0001", source: "nvd" }, session.token);

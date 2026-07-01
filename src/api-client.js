@@ -8,6 +8,20 @@ function getCsrfToken() {
   return getCookie("ventureos_csrf");
 }
 
+function getApiBaseUrl() {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (!envUrl) return "";
+  return envUrl.replace(/\/$/, "");
+}
+
+function buildApiUrl(path) {
+  if (typeof path !== "string") return path;
+  if (/^https?:\/\//i.test(path)) return path;
+  const baseUrl = getApiBaseUrl();
+  if (!baseUrl) return path;
+  return path.startsWith("/") ? `${baseUrl}${path}` : `${baseUrl}/${path}`;
+}
+
 export async function apiJson(path, options = {}) {
   const opts = { ...options };
   const workspaceId = opts.workspaceId !== undefined ? opts.workspaceId : (typeof window !== "undefined" ? window.__VENTUREOS_WORKSPACE_ID__ : null);
@@ -25,7 +39,8 @@ export async function apiJson(path, options = {}) {
   if (normalizedWorkspaceId) {
     headers["x-workspace-id"] = normalizedWorkspaceId;
   }
-  const response = await fetch(path, {
+  const url = buildApiUrl(path);
+  const response = await fetch(url, {
     credentials: "include",
     ...opts,
     headers,

@@ -29,7 +29,7 @@ function main() {
   }
 
   if (!urls.length) {
-    throw new Error('Set VERCEL_URL, VERCEL_PREVIEW_URL, or VERCEL_PRODUCTION_URL to validate deployed targets.');
+    urls.push({ target: 'local', url: 'http://127.0.0.1:5173' });
   }
 
   for (const { target, url } of urls) {

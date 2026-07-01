@@ -2,6 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import VendorRegistry from "./modules/spr/VendorRegistry.jsx";
 import SoftwareRegistry from "./modules/spr/SoftwareRegistry.jsx";
 import PassportDashboard from "./components/PassportDashboard.jsx";
+import { UniversalCommandBar } from "./components/UniversalCommandBar.tsx";
+import { useCommandRegistry } from "./hooks/useCommandRegistry.ts";
+import { hydrateInteractionGraph, buildGraphCommands } from "./hooks/useInteractionGraph.ts";
+import { useWorkspaceMutation } from "./hooks/useWorkspaceMutation.ts";
+import { apiJson } from "./api-client";
 
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
@@ -215,8 +220,6 @@ function buildNarrative(asset, r) {
   return `${asset || "This asset"} is conditionally trusted with a ${r.trust}/100 trust score and ${r.confidence}% confidence. Engineering and product signals are strong, led by active maintainers and a healthy release profile. The verdict remains conditional because ${mediumFindings.join(" and ").toLowerCase()} need remediation before unrestricted production use.`;
 }
 
-import { apiJson } from "./api-client.js";
-
 function timeAgo(value) {
   if (!value) return "Never";
   const delta = Date.now() - new Date(value).getTime();
@@ -391,11 +394,15 @@ function TrustViz() {
 }
 
 // ── Lineage Graph Viewer (polished) ───────────────────────────────────────
-function LineageGraph() {
+function LineageGraph({ activeNodeId, onActiveNodeIdChange }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(activeNodeId || null);
   const [hovered, setHovered] = useState(null);
+
+  useEffect(() => {
+    setSelected(activeNodeId || null);
+  }, [activeNodeId]);
 
   useEffect(() => {
     let alive = true;
@@ -521,6 +528,10 @@ function LineageGraph() {
     return reasons.length ? reasons : [`${getTypeLabel(node.type)} node in the trust graph.`];
   };
 
+  useEffect(() => {
+    setSelected(activeNodeId || null);
+  }, [activeNodeId]);
+
   const renderNodeShape = (node, x, y) => {
     const fill = getNodeFill(node);
     const stroke = getNodeStroke(node);
@@ -635,7 +646,10 @@ function LineageGraph() {
                       onMouseEnter={(event) => setHovered({ node, x: event.clientX, y: event.clientY })}
                       onMouseMove={(event) => setHovered({ node, x: event.clientX, y: event.clientY })}
                       onMouseLeave={() => setHovered(null)}
-                      onClick={() => setSelected(node.id)}
+                      onClick={() => {
+                        setSelected(node.id);
+                        if (onActiveNodeIdChange) onActiveNodeIdChange(node.id);
+                      }}
                     >
                       {renderNodeShape(node, x, y)}
                       {renderNodeLabel(node)}
@@ -843,21 +857,24 @@ function Dashboard({ onAnalyze }) {
   const [assets, setAssets] = useState([]);
   const [scans, setScans] = useState([]);
   const [passports, setPassports] = useState([]);
+  const [demoMsp, setDemoMsp] = useState(null);
   const [loadState, setLoadState] = useState("loading");
 
   useEffect(() => {
     let alive = true;
     async function loadDashboard() {
       try {
-        const [assetData, scanData, passportData] = await Promise.all([
+        const [assetData, scanData, passportData, mspData] = await Promise.all([
           apiJson("/api/assets"),
           apiJson("/api/scans"),
           apiJson("/api/passports"),
+          apiJson("/api/demo/msp").catch(() => null),
         ]);
         if (!alive) return;
         setAssets(assetData.assets || []);
         setScans(scanData.scans || []);
         setPassports(passportData.passports || []);
+        setDemoMsp(mspData?.demo || null);
         setLoadState("ready");
       } catch {
         if (alive) setLoadState("fallback");
@@ -872,18 +889,46 @@ function Dashboard({ onAnalyze }) {
     { assetName: "vercel/next.js", trustScore: 91, risk: "Low", status: "completed", createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString() },
     { assetName: "openai/openai-node", trustScore: 73, risk: "Medium", status: "completed", createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() },
   ];
-  const recentScans = (scans.length ? scans : fallbackScans).slice(0, 5);
+
+  const recentScans = (scans.length ? scans : fallbackScans).slice(0, 6);
   const assetCount = assets.length || 47;
   const avgScore = assets.length ? Math.round(assets.reduce((sum, a) => sum + (a.trust || 0), 0) / assets.length) : 72;
-  const activeAlerts = assets.filter((a) => ["High", "Critical"].includes(a.risk)).length || 6;
+  const highRiskCount = assets.filter((a) => ["High", "Critical"].includes(a.risk)).length || 3;
   const passportCount = passports.length || 31;
+  const staleCount = Math.max(0, assetCount - passportCount + 2);
+  const growthSignal = scans.length ? Math.max(1, Math.round(scans.length / Math.max(1, assetCount))) : 3;
   const riskColor = (r) => r === "Low" ? C.green : r === "Medium" ? C.yellow : r === "High" ? C.orange : C.red;
+
+  const actions = [
+    {
+      title: "Close the highest-risk gaps",
+      detail: `${highRiskCount} assets need immediate attention. Prioritize the weakest trust signals first.`,
+      tone: C.red,
+    },
+    {
+      title: "Issue or renew passports",
+      detail: `${passportCount} passports are active, but ${staleCount} assets look under-covered and need renewal attention.`,
+      tone: C.yellow,
+    },
+    {
+      title: "Expand monitored coverage",
+      detail: `Your platform is moving fast. Add monitoring to ${Math.max(1, Math.round(assetCount * 0.12))} more dependencies this week.`,
+      tone: C.green,
+    },
+  ];
 
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: "-0.02em" }}>Dashboard</h1>
-        <p style={{ fontSize: 14, color: C.dim, margin: "4px 0 0" }}>Software trust intelligence overview</p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, letterSpacing: "-0.02em" }}>CEO Command Center</h1>
+            <p style={{ fontSize: 14, color: C.dim, margin: "6px 0 0" }}>
+              Every signal, alert, and growth opportunity in one place.
+            </p>
+          </div>
+          <button style={styles.btn("primary")} onClick={onAnalyze}>+ New Analysis</button>
+        </div>
       </div>
 
       {loadState === "fallback" && (
@@ -892,12 +937,12 @@ function Dashboard({ onAnalyze }) {
         </div>
       )}
 
-      <div className="metric-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
+      <div className="metric-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 16 }}>
         {[
-          { label: "Assets Analyzed", value: loadState === "loading" ? "..." : assetCount, sub: "persisted registry", color: C.accent },
-          { label: "Avg Trust Score", value: loadState === "loading" ? "..." : avgScore, sub: "from latest scans", color: C.green },
-          { label: "Active Alerts", value: activeAlerts, sub: "risk-derived queue", color: C.red },
-          { label: "Passports Issued", value: passportCount, sub: "server records", color: C.indigo },
+          { label: "Assets under watch", value: loadState === "loading" ? "..." : assetCount, sub: "platform surface area", color: C.accent },
+          { label: "Average trust", value: loadState === "loading" ? "..." : avgScore, sub: "from latest scans", color: C.green },
+          { label: "High-risk signals", value: highRiskCount, sub: "needs board attention", color: C.red },
+          { label: "Active passports", value: passportCount, sub: "issued and live", color: C.indigo },
         ].map((s) => (
           <div key={s.label} style={{ ...styles.card }}>
             <div style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>{s.label}</div>
@@ -907,16 +952,42 @@ function Dashboard({ onAnalyze }) {
         ))}
       </div>
 
-      <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 16, marginBottom: 16 }}>
+        <div style={{ ...styles.card }}>
+          <div style={styles.cardTitle}>Growth pulse</div>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 12 }}>
+            <div style={{ width: 12, height: 12, borderRadius: 999, background: C.green }} />
+            <div style={{ fontSize: 14, color: C.text }}>
+              {growthSignal} new trust signals are moving through the platform this week.
+            </div>
+          </div>
+          <div style={{ fontSize: 13, color: C.dim, lineHeight: 1.6 }}>
+            {demoMsp?.name ? `MSP posture: ${demoMsp.name}` : "The platform is healthy enough to scale."} Keep the trust loop active by closing risk gaps before they become public incidents.
+          </div>
+        </div>
+        <div style={{ ...styles.card }}>
+          <div style={styles.cardTitle}>What to do next</div>
+          <div style={{ display: "grid", gap: 10 }}>
+            {actions.map((action) => (
+              <div key={action.title} style={{ padding: 10, borderRadius: 8, border: `1px solid ${C.border}`, background: C.bg }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: action.tone }}>{action.title}</div>
+                <div style={{ fontSize: 12, color: C.dim, marginTop: 4 }}>{action.detail}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 16 }}>
         <div style={styles.card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <div style={styles.cardTitle}>Recent Analyses</div>
-            <button style={styles.btn("ghost")} onClick={onAnalyze}>+ New Analysis</button>
+            <div style={styles.cardTitle}>Recent analyses</div>
+            <span style={{ fontSize: 12, color: C.muted }}>Live trust feed</span>
           </div>
           <div className="table-scroll"><table style={{ width: "100%", borderCollapse: "collapse", minWidth: 620 }}>
             <thead>
               <tr style={{ borderBottom: `1px solid ${C.border}` }}>
-                {["Asset", "Trust Score", "Risk", "Status", ""].map((h) => (
+                {["Asset", "Trust", "Risk", "When", "Status"].map((h) => (
                   <th key={h} style={{ textAlign: "left", fontSize: 11, color: C.muted, fontWeight: 600, padding: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{h}</th>
                 ))}
               </tr>
@@ -930,7 +1001,7 @@ function Dashboard({ onAnalyze }) {
                   </td>
                   <td style={{ padding: "12px 0" }}><span style={styles.badge(riskColor(s.risk))}>{s.risk}</span></td>
                   <td style={{ padding: "12px 0", fontSize: 12, color: C.dim }}>{timeAgo(s.createdAt)}</td>
-                  <td style={{ padding: "12px 0" }}><span style={{ fontSize: 12, color: C.accent }}>Persisted</span></td>
+                  <td style={{ padding: "12px 0", fontSize: 12, color: C.accent }}>Persisted</td>
                 </tr>
               ))}
             </tbody>
@@ -938,7 +1009,7 @@ function Dashboard({ onAnalyze }) {
         </div>
 
         <div style={styles.card}>
-          <div style={styles.cardTitle}>Active Alerts</div>
+          <div style={styles.cardTitle}>Board-level alerts</div>
           {(assets.filter((a) => ["High", "Critical"].includes(a.risk)).slice(0, 4).length ? assets.filter((a) => ["High", "Critical"].includes(a.risk)).slice(0, 4) : [
             { name: "acme-corp/internal-api", risk: "High", updatedAt: new Date().toISOString() },
             { name: "legacy-payments/sdk", risk: "Critical", updatedAt: new Date().toISOString() },
@@ -1225,7 +1296,7 @@ function Analysis({ onComplete }) {
 }
 
 // ── Passport ───────────────────────────────────────────────────────────────
-function Passport({ generated = [] }) {
+function Passport({ generated = [], activePassportId, onActivePassportIdChange }) {
   const [passports, setPassports] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loadState, setLoadState] = useState("loading");
@@ -1305,7 +1376,10 @@ function Passport({ generated = [] }) {
       {loadState === "fallback" && <div style={{ ...styles.card, borderColor: C.yellow, color: C.yellow, marginBottom: 16, fontSize: 13 }}>API unavailable. Showing fallback passport records.</div>}
       <div className="passport-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
         {allPassports.map((p, i) => (
-          <div key={p.id || p.name} style={{ ...styles.card, cursor: "pointer", transition: "border-color 0.15s" }} onClick={() => setSelected(i)}>
+          <div key={p.id || p.name} style={{ ...styles.card, cursor: "pointer", transition: "border-color 0.15s" }} onClick={() => {
+            setSelected(i);
+            onActivePassportIdChange?.(p.id);
+          }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
               <div><div style={{ fontSize: 14, fontWeight: 700 }}>{p.name}</div><div style={{ fontSize: 12, color: C.dim }}>{p.company}</div></div>
               <span style={styles.badge(p.status === "Active" ? C.green : C.yellow)}>{p.status}</span>
@@ -1415,6 +1489,7 @@ function renderTimelineLabel(type) {
     SIGNAL_SKIPPED: "Skipped signal",
     EVIDENCE_INCOMPLETE: "Evidence incomplete",
     ABSTENTION_CONSIDERED: "Abstention considered",
+    PIPELINE_RUN_REQUESTED: "Pipeline run requested",
     SIGNALS_COMPUTED: "Signals computed",
     SCORE_COMPUTED: "Score computed",
   };
@@ -1423,11 +1498,12 @@ function renderTimelineLabel(type) {
 
 function renderTimelineDetail(event) {
   if (!event?.details) return "";
-  const { artifact, signal, completeness, reason } = event.details;
+  const { artifact, signal, completeness, reason, runId } = event.details;
   if (event.type === "ARTIFACT_MISSING") return `Missing artifact: ${artifact || "unknown"}`;
   if (event.type === "SIGNAL_SKIPPED") return `Signal skipped: ${signal}`;
   if (event.type === "EVIDENCE_INCOMPLETE") return `Evidence completeness ${completeness}%`;
   if (event.type === "ABSTENTION_CONSIDERED") return reason || "No provable evidence";
+  if (event.type === "PIPELINE_RUN_REQUESTED") return runId ? `Run ID: ${runId}` : "Pipeline run requested";
   return JSON.stringify(event.details);
 }
 
@@ -1692,7 +1768,8 @@ const handleRunPipeline = async () => {
   setBusy(true);
   setActionError("");
   try {
-    const data = await apiJson(`/api/projects/${encodeURIComponent(projectId)}/run-pipeline`, { method: "POST" });
+    const runId = `run-${Date.now()}`;
+    const data = await apiJson(`/api/projects/${encodeURIComponent(projectId)}/run-pipeline`, { method: "POST", body: JSON.stringify({ runId }) });
     setProject(data.project);
     refreshProjects();
   } catch (err) {
@@ -1728,6 +1805,14 @@ const scoreLabel = latestScore ? `${latestScore.score}` : "—";
 const confidenceLabel = latestScore ? (latestScore.confidence >= 80 ? "High" : latestScore.confidence >= 60 ? "Medium" : "Low") : "None";
 const riskBand = latestScore?.riskBand || "None";
 const modelVersion = latestScore?.modelVersion || "v1";
+const pipelineRuns = (project?.events || []).filter((event) => event.type === "PIPELINE_RUN_REQUESTED");
+const lastPipelineEvent = pipelineRuns[0] || null;
+const lastPipelineStatus = latestScore
+  ? `Last score ${scoreLabel} (${riskBand}) computed ${timeAgo(lastPipelineEvent?.timestamp)}`
+  : lastPipelineEvent
+    ? `Pipeline started ${timeAgo(lastPipelineEvent.timestamp)}`
+    : "No pipeline runs yet";
+const pipelineRunCount = pipelineRuns.length;
 
 if (loadState === "loading") {
   return <div style={styles.card}><div style={{ fontSize: 18, fontWeight: 700 }}>Loading project…</div></div>;
@@ -1745,6 +1830,7 @@ return (
       <div>
         <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0 }}>{project.name}</h1>
         <p style={{ fontSize: 14, color: C.dim, margin: "4px 0 0" }}>{project.vendor || "No vendor specified"} · {project.sector || "No sector specified"}</p>
+        <div style={{ marginTop: 8, fontSize: 12, color: C.dim }}>{pipelineRunCount ? `${pipelineRunCount} pipeline run${pipelineRunCount === 1 ? "" : "s"}` : "No pipeline runs yet"}</div>
       </div>
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         <button style={styles.btn("ghost")} onClick={() => onNavigate("/projects")}>← Back to projects</button>
@@ -1753,21 +1839,25 @@ return (
     </div>
 
     {actionError && <div style={{ ...styles.card, borderColor: C.yellow, color: C.yellow, marginBottom: 16 }}>{actionError}</div>}
-
-    <div className="two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16, marginBottom: 16 }}>
-      <div style={styles.card}>
-        <div style={{ display: "grid", gap: 10 }}>
-          <div style={{ fontSize: 12, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em" }}>Score panel</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Trust Score</div><div style={{ fontSize: 30, fontWeight: 700, color: C.text }}>{scoreLabel}</div></div>
-            <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Confidence</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{confidenceLabel}</div></div>
-            <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Risk band</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{riskBand}</div></div>
-            <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Model version</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{modelVersion}</div></div>
-          </div>
-        </div>
+    <div style={{ ...styles.card, marginBottom: 16, borderColor: C.borderLit }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <div style={styles.cardTitle}>Pipeline status</div>
+        <div style={{ fontSize: 12, color: C.dim }}>{pipelineRunCount ? `${pipelineRunCount} run${pipelineRunCount === 1 ? "" : "s"}` : "No runs yet"}</div>
       </div>
+      <div style={{ fontSize: 13, color: C.text, fontWeight: 600 }}>{lastPipelineStatus}</div>
+      {lastPipelineEvent?.details?.runId && (
+        <div style={{ marginTop: 8, fontSize: 12, color: C.dim }}>Run ID: {lastPipelineEvent.details.runId}</div>
+      )}
+    </div>
+    <div style={{ fontSize: 12, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em" }}>Score panel</div>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+      <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Trust Score</div><div style={{ fontSize: 30, fontWeight: 700, color: C.text }}>{scoreLabel}</div></div>
+      <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Confidence</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{confidenceLabel}</div></div>
+      <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Risk band</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{riskBand}</div></div>
+      <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Model version</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{modelVersion}</div></div>
+    </div>
 
-      <div style={styles.card}>
+    <div style={styles.card}>
         <div style={{ display: "grid", gap: 14 }}>
           <div>
             <div style={{ fontSize: 12, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em" }}>Artifacts</div>
@@ -1796,7 +1886,6 @@ return (
           )}
         </div>
       </div>
-    </div>
 
     {latestScore?.narrative && (
       <div style={{ ...styles.card, marginBottom: 16 }}>
@@ -2151,6 +2240,103 @@ function AuthPage({ mode, onModeChange, email, setEmail, password, setPassword, 
   );
 }
 
+function EvidenceDetail({ evidenceId }) {
+  const [evidence, setEvidence] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setError("");
+    setEvidence(null);
+
+    if (!evidenceId) {
+      setLoading(false);
+      return () => { active = false; };
+    }
+
+    apiJson(`/api/spr/evidence/${encodeURIComponent(evidenceId)}`)
+      .then((result) => {
+        if (!active) return;
+        setEvidence(result.evidence || null);
+      })
+      .catch((err) => {
+        if (!active) return;
+        setError(err.message || 'Unable to load evidence details.');
+      })
+      .finally(() => {
+        if (!active) return;
+        setLoading(false);
+      });
+
+    return () => { active = false; };
+  }, [evidenceId]);
+
+  if (loading) {
+    return <div>Loading evidence details…</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!evidence) {
+    return <div>No evidence selected.</div>;
+  }
+
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, fontWeight: 700 }}>Evidence details</h1>
+      <div style={{ fontSize: 13, color: C.dim, marginBottom: 16 }}>Inspect evidence and related trust metadata.</div>
+      <div style={styles.card}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div>
+            <div style={styles.cardTitle}>Title</div>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>{evidence.title || evidence.id}</div>
+          </div>
+          <div>
+            <div style={styles.cardTitle}>Type</div>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>{evidence.type || 'Unknown'}</div>
+          </div>
+        </div>
+        <div style={{ marginTop: 18, display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 14 }}>
+          <div style={styles.card}>
+            <div style={styles.cardTitle}>Verified</div>
+            <div>{evidence.verificationStatus === 'verified' || evidence.verified ? 'Yes' : 'No'}</div>
+          </div>
+          <div style={styles.card}>
+            <div style={styles.cardTitle}>Visibility</div>
+            <div>{evidence.visibility || 'public'}</div>
+          </div>
+          <div style={styles.card}>
+            <div style={styles.cardTitle}>Source</div>
+            <div>{evidence.source || 'Unknown'}</div>
+          </div>
+        </div>
+        <div style={{ marginTop: 18 }}>
+          <div style={styles.cardTitle}>Summary</div>
+          <div style={{ fontSize: 14, color: C.text, lineHeight: 1.6 }}>{evidence.summary || 'No summary available.'}</div>
+        </div>
+        {evidence.uri ? (
+          <div style={{ marginTop: 18 }}>
+            <div style={styles.cardTitle}>URI</div>
+            <a href={evidence.uri} target="_blank" rel="noreferrer" style={{ fontSize: 14, color: C.accent }}>{evidence.uri}</a>
+          </div>
+        ) : null}
+        {evidence.softwareId ? (
+          <div style={{ marginTop: 18 }}>
+            <div style={styles.cardTitle}>Related software</div>
+            <div style={{ fontSize: 14 }}>
+              {evidence.softwareId}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 function PublicPassport({ passportId, onClose }) {
   const [passport, setPassport] = useState(null);
   const [loadState, setLoadState] = useState("loading");
@@ -2275,6 +2461,10 @@ function PublicPassport({ passportId, onClose }) {
 export default function VentureOS() {
   const [page, setPage] = useState("dashboard");
   const [publicPassportId, setPublicPassportId] = useState(null);
+  const [activePassportId, setActivePassportId] = useState(null);
+  const [activeEvidenceId, setActiveEvidenceId] = useState(null);
+  const [activeGraphNodeId, setActiveGraphNodeId] = useState(null);
+  const [currentRoute, setCurrentRoute] = useState(typeof window !== 'undefined' ? window.location.pathname : '/');
   const [generatedPassports, setGeneratedPassports] = useState([]);
   const [authenticated, setAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
@@ -2291,6 +2481,100 @@ export default function VentureOS() {
   const [loadState, setLoadState] = useState("loading");
   const [authError, setAuthError] = useState("");
   const [authMode, setAuthMode] = useState("login");
+  
+  // Command bar state
+  const [isCommandBarOpen, setCommandBarOpen] = useState(false);
+  const { refresh: refreshWorkspace, workspaceRefreshKey } = useWorkspaceMutation();
+  const hydrateActiveEntity = () => {
+    const route = currentRoute || (typeof window !== 'undefined' ? window.location.pathname : '/');
+    const passportMatch = route.match(/^\/passport\/([^/]+)$/);
+    if (passportMatch) {
+      return { entityId: decodeURIComponent(passportMatch[1]), entityType: 'passport' };
+    }
+    const evidenceMatch = route.match(/^\/evidence\/([^/]+)$/);
+    if (evidenceMatch) {
+      return { entityId: decodeURIComponent(evidenceMatch[1]), entityType: 'evidence' };
+    }
+    const graphMatch = route.match(/^\/lineage(?:\?|$)/);
+    if (graphMatch) {
+      const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+      const node = searchParams.get('node');
+      if (node) {
+        return { entityId: node, entityType: 'graph-node' };
+      }
+    }
+    const fileMatch = route.match(/^\/files\/([^/]+)$/);
+    if (fileMatch) {
+      return { entityId: decodeURIComponent(fileMatch[1]), entityType: 'file' };
+    }
+    const integrationMatch = route.match(/^\/integrations\/([^/]+)$/);
+    if (integrationMatch) {
+      return { entityId: decodeURIComponent(integrationMatch[1]), entityType: 'integration' };
+    }
+    const userMatch = route.match(/^\/users\/([^/]+)$/);
+    if (userMatch) {
+      return { entityId: decodeURIComponent(userMatch[1]), entityType: 'user' };
+    }
+    if (activeEvidenceId) {
+      return { entityId: activeEvidenceId, entityType: 'evidence' };
+    }
+    if (activePassportId) {
+      return { entityId: activePassportId, entityType: 'passport' };
+    }
+    if (activeGraphNodeId) {
+      return { entityId: activeGraphNodeId, entityType: 'graph-node' };
+    }
+    return undefined;
+  };
+
+  const activeEntity = hydrateActiveEntity();
+
+  const workspaceId = workspace?.id || undefined;
+  const activePassportContextId = activePassportId || publicPassportId || undefined;
+  const activeEvidenceContextId = activeEvidenceId || (activeEntity?.entityType === 'evidence' ? activeEntity.entityId : undefined);
+
+  const commandContext = {
+    workspaceId,
+    activeEntity,
+    activePassportId: activePassportContextId,
+    activeEvidenceId: activeEvidenceContextId,
+    activeFileId: undefined,
+    activeGraphNodeId: activeGraphNodeId || undefined,
+    activeIntegrationId: undefined,
+    activeUserId: user?.id || undefined,
+    currentPage: page,
+    currentRoute,
+    refreshWorkspace,
+    workspaceRefreshKey,
+  };
+
+  const [graphCommands, setGraphCommands] = useState([]);
+
+  useEffect(() => {
+    let active = true;
+    if (!workspaceId) {
+      setGraphCommands([]);
+      return;
+    }
+
+    hydrateInteractionGraph(commandContext)
+      .then((graph) => {
+        if (!active) return;
+        setGraphCommands(buildGraphCommands(graph, commandContext));
+      })
+      .catch((error) => {
+        console.warn('Failed to hydrate interaction graph:', error);
+        if (!active) return;
+        setGraphCommands([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [workspaceId, activeEntity?.entityId, activeEntity?.entityType, activePassportContextId, activeEvidenceContextId, activeGraphNodeId, workspaceRefreshKey]);
+
+  const allCommands = [...useCommandRegistry(commandContext), ...graphCommands];
+
   const navigateProjectPath = (path) => {
     if (typeof window !== "undefined" && window.history?.pushState) {
       window.history.pushState({}, "", path);
@@ -2369,6 +2653,24 @@ export default function VentureOS() {
       loadMspDetails(selectedMspId);
     }
   }, [selectedMspId]);
+
+  // Keyboard binding for command bar (Ctrl+K or Cmd+K)
+  useEffect(() => {
+    const handler = (e) => {
+      const isMac = navigator.platform.toLowerCase().includes('mac');
+      const isShortcut =
+        (isMac && e.metaKey && e.key === 'k') ||
+        (!isMac && e.ctrlKey && e.key === 'k');
+
+      if (isShortcut) {
+        e.preventDefault();
+        setCommandBarOpen(open => !open);
+      }
+    };
+
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   const refreshSession = async (workspaceId) => {
     const data = await apiJson("/api/auth/session", { workspaceId });
@@ -2455,12 +2757,21 @@ export default function VentureOS() {
 
     const handleRoute = () => {
       const pathname = window.location.pathname;
+      setCurrentRoute(pathname);
       const passportMatch = pathname.match(/^\/passport\/([^/]+)$/);
       if (passportMatch) {
         setPublicPassportId(decodeURIComponent(passportMatch[1]));
-        return;
+      } else {
+        setPublicPassportId(null);
       }
-      setPublicPassportId(null);
+
+        const evidenceMatch = pathname.match(/^\/evidence\/([^/]+)$/);
+      if (evidenceMatch) {
+        setActiveEvidenceId(decodeURIComponent(evidenceMatch[1]));
+        setPage('evidence');
+      } else {
+        setActiveEvidenceId(null);
+      }
 
       if (pathname === "/projects/new") {
         setPage("projects");
@@ -2702,7 +3013,7 @@ export default function VentureOS() {
           <main style={styles.content}>
             {page === "dashboard" && <Dashboard onAnalyze={() => setPage("analyze")} />}
             {page === "trust" && <TrustViz />}
-            {page === "lineage" && <LineageGraph />}
+            {page === "lineage" && <LineageGraph activeNodeId={activeGraphNodeId} onActiveNodeIdChange={setActiveGraphNodeId} />}
             {page === "reports" && <ReportsExport />}
             {page === "compliance" && <ComplianceExports />}
             {page === "billing" && <BillingIntegration />}
@@ -2713,11 +3024,21 @@ export default function VentureOS() {
             {page === "analyze" && <Analysis onComplete={(passport) => { if (passport) setGeneratedPassports((items) => [passport, ...items]); setPage("passports"); }} />}
             {page === "projects" && <Projects route={projectRoute} onNavigate={navigateProjectPath} />}
             {page === "registry" && <SoftwareRegistry />}
-            {page === "passports" && <Passport generated={generatedPassports} />}
+            {page === "passports" && <Passport generated={generatedPassports} activePassportId={activePassportId} onActivePassportIdChange={setActivePassportId} />}
             {page === "msp" && <MspPage mspList={mspList} selectedMspId={selectedMspId} setSelectedMspId={setSelectedMspId} details={mspDetails} loading={mspLoading} error={mspError} />}
             {["monitoring", "reports", "alerts", "team"].includes(page) && <WorkspacePage type={page} />}
           </main>
         </div>
+      )}
+      
+      {/* Universal Command Bar */}
+      {authenticated && (
+        <UniversalCommandBar
+          context={commandContext}
+          isOpen={isCommandBarOpen}
+          onClose={() => setCommandBarOpen(false)}
+          allCommands={allCommands}
+        />
       )}
     </div>
   );
