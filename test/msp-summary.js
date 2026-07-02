@@ -81,7 +81,7 @@ function isIsoTimestamp(value) {
 }
 
 async function main() {
-  const { user, msp } = await seedScenario({ billingStatus: "active" });
+  const { user, msp, workspace } = await seedScenario({ billingStatus: "active" });
   const session = await createSession(user.id);
 
   const summary = await requestJson(`/api/msp/${msp.id}/summary`, session.token, workspace.id);

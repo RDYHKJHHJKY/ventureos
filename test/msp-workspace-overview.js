@@ -131,11 +131,11 @@ async function main() {
     return record;
   });
   const otherSession = await createSession(otherUser.id);
-  const nonMspResponse = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, otherSession.token, otherScenario.workspace.id);
+  const nonMspResponse = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, otherSession.token, workspaceA.id);
   assert.equal(nonMspResponse.statusCode, 403);
 
   const otherMspResult = await mutateDb((db) => createMsp(db, { name: "Other MSP", billingEmail: "billing@other.local", region: "us-east-1", ownerUserId: otherUser.id }));
-  const crossMspResponse = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, otherSession.token, otherScenario.workspace.id);
+  const crossMspResponse = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, otherSession.token, workspaceA.id);
   assert.equal(crossMspResponse.statusCode, 403);
 
   const suspendedScenario = await seedScenario({ billingStatus: "past_due", includeIdleWorkspace: false });

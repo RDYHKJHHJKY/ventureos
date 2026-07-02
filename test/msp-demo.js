@@ -39,7 +39,14 @@ function makeRes() {
 }
 
 async function requestJson(pathname, token) {
-  const req = { method: "GET", url: pathname, headers: { cookie: token ? `ventureos_session=${token}` : "" } };
+  const req = {
+    method: "GET",
+    url: pathname,
+    headers: {
+      cookie: token ? `ventureos_session=${token}` : "",
+      "Content-Type": "application/json",
+    },
+  };
   const res = makeRes();
   await handleApiRequest(req, res);
   return { statusCode: res.statusCode, payload: res.body ? JSON.parse(res.body) : null };

@@ -9,7 +9,8 @@ function getCsrfToken() {
 }
 
 function getApiBaseUrl() {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  const env = typeof import.meta !== "undefined" && import.meta && import.meta.env ? import.meta.env : {};
+  const envUrl = env.VITE_API_BASE_URL;
   if (!envUrl) return "";
   return envUrl.replace(/\/$/, "");
 }
