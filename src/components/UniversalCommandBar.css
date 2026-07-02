@@ -1,0 +1,504 @@
+/**
+ * Universal Command Bar Styling
+ */
+
+/* Overlay */
+.ucb-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 9998;
+  animation: fadeIn 150ms ease-out;
+}
+
+/* Main container */
+.ucb-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  max-height: 70vh;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 200ms ease-out;
+}
+
+/* Header with input */
+.ucb-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.ucb-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    sans-serif;
+  padding: 8px 12px;
+  background: transparent;
+  color: #1f2937;
+}
+
+.ucb-input::placeholder {
+  color: #9ca3af;
+}
+
+.ucb-input:disabled {
+  opacity: 0.6;
+}
+
+/* Status area */
+.ucb-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.ucb-loading {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+.ucb-hint {
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+/* Command body with preview */
+.ucb-body {
+  display: flex;
+  min-height: 320px;
+  max-height: calc(70vh - 80px);
+}
+
+.ucb-list {
+  flex: 0 0 58%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: white;
+}
+
+.ucb-preview {
+  flex: 0 0 42%;
+  border-left: 1px solid #e5e7eb;
+  padding: 16px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.ucb-preview-loading {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.ucb-meta {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.ucb-meta li {
+  font-size: 13px;
+  color: #374151;
+}
+
+.ucb-meta strong {
+  display: inline-block;
+  width: 80px;
+  color: #111827;
+}
+
+.ucb-preview-header {
+  font-weight: 700;
+  font-size: 12px;
+  color: #374151;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ucb-preview-label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #111827;
+}
+
+.ucb-preview-desc,
+.ucb-preview-detail,
+.ucb-preview-empty {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.ucb-preview-detail {
+  margin-top: 10px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.ucb-preview-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ucb-preview-action {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #4f46e5;
+  color: white;
+  font-weight: 600;
+}
+
+.ucb-preview-navigation,
+.ucb-preview-submenu {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ucb-preview-navigation-action,
+.ucb-preview-submenu button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #10b981;
+  color: white;
+  font-weight: 600;
+}
+
+.ucb-preview-submenu-title {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ucb-preview-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.ucb-preview-field {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ucb-preview-field strong {
+  min-width: 90px;
+  color: #111827;
+}
+
+.ucb-preview-field-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f9fafb;
+}
+
+.ucb-step {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 180px;
+}
+
+.ucb-step-prompt {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.ucb-step-input {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.ucb-step-error {
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+.ucb-step-help {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Empty state */
+.ucb-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 8px;
+  color: #9ca3af;
+}
+
+.ucb-empty-icon {
+  font-size: 32px;
+  opacity: 0.3;
+}
+
+.ucb-empty-text {
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.ucb-empty-tip {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Command item */
+.ucb-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+  border-left: 2px solid transparent;
+}
+
+.ucb-item:hover:not(.disabled) {
+  background: #f3f4f6;
+}
+
+.ucb-item.selected {
+  background: #f0f4ff;
+  border-left-color: #4f46e5;
+}
+
+.ucb-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Item icon */
+.ucb-icon {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+/* Item content */
+.ucb-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ucb-item-label {
+  font-weight: 500;
+  color: #1f2937;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ucb-item-desc {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ucb-item-disabled {
+  font-size: 11px;
+  color: #ef4444;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Item scope badge */
+.ucb-item-scope {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Toasts */
+.ucb-toasts {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ucb-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: slideInRight 200ms ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ucb-toast-success {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #d1fae5;
+}
+
+.ucb-toast-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+}
+
+.ucb-toast-info {
+  background: #eff6ff;
+  color: #0284c7;
+  border: 1px solid #bfdbfe;
+}
+
+.ucb-toast-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.ucb-toast-message {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scrollbar styling */
+.ucb-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ucb-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ucb-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.ucb-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .ucb-container {
+    width: 95%;
+    max-height: 60vh;
+  }
+
+  .ucb-item-scope {
+    display: none;
+  }
+
+  .ucb-hint {
+    display: none;
+  }
+
+  .ucb-toasts {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+}

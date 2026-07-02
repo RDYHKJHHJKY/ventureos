@@ -69,18 +69,20 @@ function makeRes() {
   };
 }
 
-async function requestJson(pathname, token) {
-  const req = { method: "GET", url: pathname, headers: { cookie: `ventureos_session=${token}` } };
+async function requestJson(pathname, token, workspaceId = null) {
+  const headers = { cookie: `ventureos_session=${token}` };
+  if (workspaceId) headers["x-workspace-id"] = workspaceId;
+  const req = { method: "GET", url: pathname, headers };
   const res = makeRes();
   await handleApiRequest(req, res);
   return { statusCode: res.statusCode, payload: JSON.parse(res.body) };
 }
 
 async function main() {
-  const { user, msp } = await seedScenario({ billingStatus: "active" });
+  const { user, msp, workspaces } = await seedScenario({ billingStatus: "active" });
   const session = await createSession(user.id);
 
-  const executive = await requestJson(`/api/msp/${msp.id}/executive`, session.token);
+  const executive = await requestJson(`/api/msp/${msp.id}/executive`, session.token, workspaces[0].id);
   assert.equal(executive.statusCode, 200);
   assert.equal(executive.payload.ok, true);
   assert.equal(executive.payload.healthScore, 62);
@@ -99,7 +101,7 @@ async function main() {
 
   const suspendedScenario = await seedScenario({ billingStatus: "past_due" });
   const suspendedSession = await createSession(suspendedScenario.user.id);
-  const suspendedExecutive = await requestJson(`/api/msp/${suspendedScenario.msp.id}/executive`, suspendedSession.token);
+  const suspendedExecutive = await requestJson(`/api/msp/${suspendedScenario.msp.id}/executive`, suspendedSession.token, suspendedScenario.workspaces[0].id);
   assert.equal(suspendedExecutive.statusCode, 200);
   assert.equal(suspendedExecutive.payload.billingStatus, "past_due");
 

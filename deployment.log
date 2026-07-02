@@ -1,0 +1,49 @@
+Retrieving projectΓÇª
+Deploying stackdigitz-5790s-projects/ventureos
+Uploading [--------------------] (0.0B/1.5MB)
+Uploading [=====---------------] (374.0KB/1.5MB)
+Uploading [==========----------] (744.6KB/1.5MB)
+Uploading [===============-----] (1.1MB/1.5MB)
+Uploading [====================] (1.5MB/1.5MB)
+Inspect: https://vercel.com/stackdigitz-5790s-projects/ventureos/HcSruUGjYWVX123XkYH4yP9hMZ1i [3s]
+Production: https://ventureos-jrpbxcxg5-stackdigitz-5790s-projects.vercel.app [3s]
+Building...
+Building...
+Building: Running build in Washington, D.C., USA (East) ΓÇô iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Downloading 162 deployment files...
+Building: Restored build cache from previous deployment (E92XtufVsYhTSyahADikuz9zsgG7)
+Building: Running "vercel build"
+Building: Vercel CLI 54.18.4
+Building: WARNING! Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+Building: Installing dependencies...
+Building: added 9 packages, removed 103 packages, and changed 6 packages in 2s
+Building: 24 packages are looking for funding
+Building: run `npm fund` for details
+Building: Running "npm run build"
+Building: > ventureos@0.0.1 build
+Building: > vite build
+Building: vite v8.1.0 building client environment for production...
+Building: transforming...Γ£ô 23 modules transformed.
+Building: rendering chunks...
+Building: computing gzip size...
+Building: dist/index.html                  1.22 kB Γöé gzip:   0.65 kB
+Building: dist/assets/index-DaIbC9M6.js  549.32 kB Γöé gzip: 147.08 kB
+Building: [plugin builtin:vite-reporter]
+Building: (!) Some chunks are larger than 500 kB after minification. Consider:
+Building: - Using dynamic import() to code-split the application
+Building: - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+Building: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+Building: Γ£ô built in 269ms
+Building: Build Completed in /vercel/output [6s]
+Building: Deploying outputs...
+[2K[1A[2K[GProduction: https://ventureos-jrpbxcxg5-stackdigitz-5790s-projects.vercel.app [19s]
+Completing...
+Aliased: https://ventureos-kohl.vercel.app [19s]
+Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+
+Common next commands:
+- `vercel inspect ventureos-jrpbxcxg5-stackdigitz-5790s-projects.vercel.app --logs`
+- `vercel redeploy ventureos-jrpbxcxg5-stackdigitz-5790s-projects.vercel.app`
+https://ventureos-jrpbxcxg5-stackdigitz-5790s-projects.vercel.app

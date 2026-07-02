@@ -51,8 +51,8 @@ async function run() {
   assert.ok(subscription.id.startsWith("sub_"), "Billing subscription ID should be stubbed.");
   assert.strictEqual(getBillingPortalUrl(msp), `https://billing.ventureos.local/portal/${encodeURIComponent(msp.id)}`);
 
-  const { token } = await createSession(user.id);
-  const ctx = await getSessionContext({ headers: { cookie: sessionCookie(token) } });
+  const { token } = await createSession(user.id, { workspaceId: workspace.id });
+  const ctx = await getSessionContext({ headers: { cookie: sessionCookie(token), "x-workspace-id": workspace.id } }, workspace.id);
   assert.ok(ctx, "Session context should resolve for authenticated MSP users.");
   assert.strictEqual(ctx.mspId, msp.id, "Session context should contain the MSP ID.");
   assert.strictEqual(ctx.mspRole, "admin", "Session context should contain the MSP role.");

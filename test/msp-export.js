@@ -68,8 +68,10 @@ function makeRes() {
   };
 }
 
-async function requestJson(pathname, token) {
-  const req = { method: "GET", url: pathname, headers: { cookie: `ventureos_session=${token}` } };
+async function requestJson(pathname, token, workspaceId = null) {
+  const headers = { cookie: `ventureos_session=${token}` };
+  if (workspaceId) headers["x-workspace-id"] = workspaceId;
+  const req = { method: "GET", url: pathname, headers };
   const res = makeRes();
   await handleApiRequest(req, res);
   return { statusCode: res.statusCode, payload: JSON.parse(res.body) };
@@ -79,13 +81,13 @@ async function main() {
   const { user, msp, workspaces } = await seedScenario({ billingStatus: "active" });
   const session = await createSession(user.id);
 
-  const mspExport = await requestJson(`/api/msp/${msp.id}/export`, session.token);
+  const mspExport = await requestJson(`/api/msp/${msp.id}/export`, session.token, workspaces[0].id);
   assert.equal(mspExport.statusCode, 200);
   assert.equal(mspExport.payload.ok, true);
   assert.equal(mspExport.payload.executive.healthScore >= 0, true);
   assert.equal(mspExport.payload.workspaces.length, 2);
 
-  const workspaceExport = await requestJson(`/api/workspace/${workspaces[0].id}/export`, session.token);
+  const workspaceExport = await requestJson(`/api/workspace/${workspaces[0].id}/export`, session.token, workspaces[0].id);
   assert.equal(workspaceExport.statusCode, 200);
   assert.equal(workspaceExport.payload.ok, true);
   assert.equal(workspaceExport.payload.report.workspaceId, workspaces[0].id);

@@ -60,18 +60,20 @@ function makeRes() {
   };
 }
 
-async function requestJson(pathname, token) {
-  const req = { method: "GET", url: pathname, headers: { cookie: `ventureos_session=${token}` } };
+async function requestJson(pathname, token, workspaceId = null) {
+  const headers = { cookie: `ventureos_session=${token}` };
+  if (workspaceId) headers["x-workspace-id"] = workspaceId;
+  const req = { method: "GET", url: pathname, headers };
   const res = makeRes();
   await handleApiRequest(req, res);
   return { statusCode: res.statusCode, payload: JSON.parse(res.body) };
 }
 
 async function main() {
-  const { user, msp } = await seedScenario({ billingStatus: "active" });
+  const { user, msp, workspace } = await seedScenario({ billingStatus: "active" });
   const session = await createSession(user.id);
 
-  const summary = await requestJson(`/api/msp/${msp.id}/summary`, session.token);
+  const summary = await requestJson(`/api/msp/${msp.id}/summary`, session.token, workspace.id);
   assert.equal(summary.statusCode, 200);
   assert.equal(summary.payload.ok, true);
   assert.equal(summary.payload.mode, "active");
@@ -82,7 +84,7 @@ async function main() {
   assert.equal(summary.payload.totals.passportCount, 1);
   assert.equal(summary.payload.totals.riskEvents, 1);
 
-  const overview = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, session.token);
+  const overview = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, session.token, workspace.id);
   assert.equal(overview.statusCode, 200);
   assert.equal(overview.payload.ok, true);
   assert.equal(overview.payload.workspaces.length, 1);
@@ -90,7 +92,7 @@ async function main() {
   assert.equal(overview.payload.workspaces[0].scanCount, 1);
   assert.equal(overview.payload.workspaces[0].passportCount, 1);
 
-  const billing = await requestJson(`/api/msp/${msp.id}/billing`, session.token);
+  const billing = await requestJson(`/api/msp/${msp.id}/billing`, session.token, workspace.id);
   assert.equal(billing.statusCode, 200);
   assert.equal(billing.payload.ok, true);
   assert.equal(billing.payload.billingStatus, "active");
@@ -98,14 +100,14 @@ async function main() {
   assert.equal(billing.payload.usageTotals.scanCount, 1);
   assert.equal(billing.payload.usageByWorkspace[0].workspaceName, "Client Workspace");
 
-  const alerts = await requestJson(`/api/msp/${msp.id}/alerts`, session.token);
+  const alerts = await requestJson(`/api/msp/${msp.id}/alerts`, session.token, workspace.id);
   assert.equal(alerts.statusCode, 200);
   assert.equal(alerts.payload.ok, true);
   assert.ok(alerts.payload.alerts.some((alert) => alert.message.includes("High risk")));
 
   const pastDueScenario = await seedScenario({ billingStatus: "past_due" });
   const pastDueSession = await createSession(pastDueScenario.user.id);
-  const pastDueSummary = await requestJson(`/api/msp/${pastDueScenario.msp.id}/summary`, pastDueSession.token);
+  const pastDueSummary = await requestJson(`/api/msp/${pastDueScenario.msp.id}/summary`, pastDueSession.token, pastDueScenario.workspace.id);
   assert.equal(pastDueSummary.statusCode, 200);
   assert.equal(pastDueSummary.payload.mode, "suspended");
 

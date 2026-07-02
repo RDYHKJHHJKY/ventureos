@@ -21,12 +21,10 @@ function makeRes() {
   };
 }
 
-async function requestJson(pathname, token) {
-  const req = {
-    method: "GET",
-    url: pathname,
-    headers: token ? { cookie: `ventureos_session=${token}` } : {},
-  };
+async function requestJson(pathname, token, workspaceId = null) {
+  const headers = token ? { cookie: `ventureos_session=${token}` } : {};
+  if (workspaceId) headers["x-workspace-id"] = workspaceId;
+  const req = { method: "GET", url: pathname, headers };
   const res = makeRes();
   await handleApiRequest(req, res);
   return { statusCode: res.statusCode, payload: res.body ? JSON.parse(res.body) : null };
@@ -86,7 +84,7 @@ async function main() {
   const { user, msp } = await seedScenario({ billingStatus: "active" });
   const session = await createSession(user.id);
 
-  const summary = await requestJson(`/api/msp/${msp.id}/summary`, session.token);
+  const summary = await requestJson(`/api/msp/${msp.id}/summary`, session.token, workspace.id);
   assert.equal(summary.statusCode, 200);
   assert.equal(summary.payload.ok, true);
   assert.equal(summary.payload.mspId, msp.id);
@@ -107,12 +105,12 @@ async function main() {
 
   const otherScenario = await seedScenario({ billingStatus: "active" });
   const otherUserSession = await createSession(otherScenario.user.id);
-  const crossMspResponse = await requestJson(`/api/msp/${msp.id}/summary`, otherUserSession.token);
+  const crossMspResponse = await requestJson(`/api/msp/${msp.id}/summary`, otherUserSession.token, otherScenario.workspace.id);
   assert.equal(crossMspResponse.statusCode, 403);
 
   const suspendedScenario = await seedScenario({ billingStatus: "past_due" });
   const suspendedSession = await createSession(suspendedScenario.user.id);
-  const suspendedResponse = await requestJson(`/api/msp/${suspendedScenario.msp.id}/summary`, suspendedSession.token);
+  const suspendedResponse = await requestJson(`/api/msp/${suspendedScenario.msp.id}/summary`, suspendedSession.token, suspendedScenario.workspace.id);
   assert.equal(suspendedResponse.statusCode, 200);
   assert.equal(suspendedResponse.payload.billingStatus, "overdue");
   assert.equal(suspendedResponse.payload.mode, "suspended");

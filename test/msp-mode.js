@@ -27,27 +27,29 @@ async function seedScenario({ billingStatus }) {
     return record;
   });
 
-  await mutateDb((db) => {
-    db.workspaces.push({ id: createId("workspace", "mode"), mspId: msp.id, name: "Mode Workspace", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
-    db.workspaceMembers.push({ id: createId("member", `${user.id}-mode`), workspaceId: db.workspaces[db.workspaces.length - 1].id, userId: user.id, role: "Owner", createdAt: new Date().toISOString() });
+  const workspace = await mutateDb((db) => {
+    const record = { id: createId("workspace", "mode"), mspId: msp.id, name: "Mode Workspace", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    db.workspaces.push(record);
+    db.workspaceMembers.push({ id: createId("member", `${user.id}-mode`), workspaceId: record.id, userId: user.id, role: "Owner", createdAt: new Date().toISOString() });
     db.mspMembers.push({ id: createId("mspmember", `${user.id}-${msp.id}`), mspId: msp.id, userId: user.id, role: "admin", createdAt: new Date().toISOString() });
+    return record;
   });
 
-  return { user, msp };
+  return { user, msp, workspace };
 }
 
 async function main() {
   const activeScenario = await seedScenario({ billingStatus: "active" });
-  const session = await createSession(activeScenario.user.id);
-  const req = { method: "GET", url: "/", headers: { cookie: `ventureos_session=${session.token}` } };
-  const ctx = await getSessionContext(req, null);
+  const session = await createSession(activeScenario.user.id, { workspaceId: activeScenario.workspace.id });
+  const req = { method: "GET", url: "/", headers: { cookie: `ventureos_session=${session.token}`, "x-workspace-id": activeScenario.workspace.id } };
+  const ctx = await getSessionContext(req, activeScenario.workspace.id);
   assert.equal(ctx.mspMode, "active");
   assert.doesNotThrow(() => assertMspMode(ctx, { operation: "write" }));
 
   const pastDueScenario = await seedScenario({ billingStatus: "past_due" });
-  const pastDueSession = await createSession(pastDueScenario.user.id);
-  const pastDueReq = { method: "GET", url: "/", headers: { cookie: `ventureos_session=${pastDueSession.token}` } };
-  const pastDueCtx = await getSessionContext(pastDueReq, null);
+  const pastDueSession = await createSession(pastDueScenario.user.id, { workspaceId: pastDueScenario.workspace.id });
+  const pastDueReq = { method: "GET", url: "/", headers: { cookie: `ventureos_session=${pastDueSession.token}`, "x-workspace-id": pastDueScenario.workspace.id } };
+  const pastDueCtx = await getSessionContext(pastDueReq, pastDueScenario.workspace.id);
   assert.equal(pastDueCtx.mspMode, "past_due");
   assert.doesNotThrow(() => assertMspMode(pastDueCtx, { operation: "read" }));
   assert.throws(() => assertMspMode(pastDueCtx, { operation: "write" }), (error) => {
@@ -56,9 +58,9 @@ async function main() {
   });
 
   const canceledScenario = await seedScenario({ billingStatus: "canceled" });
-  const canceledSession = await createSession(canceledScenario.user.id);
-  const canceledReq = { method: "GET", url: "/", headers: { cookie: `ventureos_session=${canceledSession.token}` } };
-  const canceledCtx = await getSessionContext(canceledReq, null);
+  const canceledSession = await createSession(canceledScenario.user.id, { workspaceId: canceledScenario.workspace.id });
+  const canceledReq = { method: "GET", url: "/", headers: { cookie: `ventureos_session=${canceledSession.token}`, "x-workspace-id": canceledScenario.workspace.id } };
+  const canceledCtx = await getSessionContext(canceledReq, canceledScenario.workspace.id);
   assert.equal(canceledCtx.mspMode, "canceled");
   assert.throws(() => assertMspMode(canceledCtx, { operation: "read" }), (error) => {
     assert.equal(error.statusCode, 403);
@@ -66,8 +68,8 @@ async function main() {
   });
 
   const endpointScenario = await seedScenario({ billingStatus: "active" });
-  const modeEndpointSession = await createSession(endpointScenario.user.id);
-  const modeReq = { method: "GET", url: "/api/msp/mode", headers: { cookie: `ventureos_session=${modeEndpointSession.token}` } };
+  const modeEndpointSession = await createSession(endpointScenario.user.id, { workspaceId: endpointScenario.workspace.id });
+  const modeReq = { method: "GET", url: "/api/msp/mode", headers: { cookie: `ventureos_session=${modeEndpointSession.token}`, "x-workspace-id": endpointScenario.workspace.id } };
   const modeRes = { statusCode: 200, headers: {}, writeHead(code, headers) { this.statusCode = code; this.headers = headers; }, end(body) { this.body = body; } };
   await handleApiRequest(modeReq, modeRes);
   const modePayload = JSON.parse(modeRes.body);

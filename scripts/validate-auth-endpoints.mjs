@@ -91,10 +91,6 @@ async function main() {
   console.log('SESSION AFTER LOGIN:', loginSessionRes.statusCode, isSuccessfulResponse(loginSessionRes, 200) ? 'OK' : 'FAIL');
   if (!isSuccessfulResponse(loginSessionRes, 200)) throw new Error('Session check after login failed: ' + JSON.stringify(loginSessionRes.body));
 
-  const demoRes = await requestJson({ ...base, path: '/api/auth/demo-login' });
-  console.log('DEMO-LOGIN:', demoRes.statusCode, isSuccessfulResponse(demoRes, 200) ? 'OK' : 'FAIL');
-  if (!isSuccessfulResponse(demoRes, 200)) throw new Error('Demo login failed: ' + JSON.stringify(demoRes.body));
-
   console.log('\nAuth endpoint validation completed successfully.');
 }
 

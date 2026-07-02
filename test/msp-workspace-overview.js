@@ -113,7 +113,7 @@ async function main() {
   assert.equal(idleWorkspace.lastTimelineEvent, null);
   assert.equal(idleWorkspace.mode, "active");
 
-  const endpoint = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, session.token);
+  const endpoint = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, session.token, workspaceA.id);
   assert.equal(endpoint.statusCode, 200);
   assert.equal(endpoint.payload.ok, true);
   assert.equal(endpoint.payload.mspId, msp.id);
@@ -131,16 +131,16 @@ async function main() {
     return record;
   });
   const otherSession = await createSession(otherUser.id);
-  const nonMspResponse = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, otherSession.token);
+  const nonMspResponse = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, otherSession.token, otherScenario.workspace.id);
   assert.equal(nonMspResponse.statusCode, 403);
 
   const otherMspResult = await mutateDb((db) => createMsp(db, { name: "Other MSP", billingEmail: "billing@other.local", region: "us-east-1", ownerUserId: otherUser.id }));
-  const crossMspResponse = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, otherSession.token);
+  const crossMspResponse = await requestJson(`/api/msp/${msp.id}/workspaces/overview`, otherSession.token, otherScenario.workspace.id);
   assert.equal(crossMspResponse.statusCode, 403);
 
   const suspendedScenario = await seedScenario({ billingStatus: "past_due", includeIdleWorkspace: false });
   const suspendedSession = await createSession(suspendedScenario.user.id);
-  const suspendedEndpoint = await requestJson(`/api/msp/${suspendedScenario.msp.id}/workspaces/overview`, suspendedSession.token);
+  const suspendedEndpoint = await requestJson(`/api/msp/${suspendedScenario.msp.id}/workspaces/overview`, suspendedSession.token, suspendedScenario.workspaceA.id);
   assert.equal(suspendedEndpoint.statusCode, 200);
   assert.equal(suspendedEndpoint.payload.workspaces.length, 1);
   assert.equal(suspendedEndpoint.payload.workspaces[0].mode, "suspended");

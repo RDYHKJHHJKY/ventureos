@@ -21,17 +21,17 @@ async function seedScenario() {
   });
 
   const msp = await mutateDb((db) => createMsp(db, { name: "Billing MSP", billingEmail: "billing@state.local", region: "us-east-1", ownerUserId: owner.id }));
-  await mutateDb((db) => createWorkspaceForMsp(db, { mspId: msp.msp.id, name: "Billing Workspace", ownerUserId: owner.id }));
+  const workspace = await mutateDb((db) => createWorkspaceForMsp(db, { mspId: msp.msp.id, name: "Billing Workspace", ownerUserId: owner.id }));
   await mutateDb((db) => createMspMembership(db, { mspId: msp.msp.id, userId: owner.id, role: "admin" }));
   await mutateDb((db) => {
-    db.sessions.push({ id: createId("session", owner.id), userId: owner.id, tokenHash: hashToken("billing-token"), csrfToken: "csrf", expiresAt: new Date(Date.now() + 60_000).toISOString(), createdAt: new Date().toISOString() });
+    db.sessions.push({ id: createId("session", owner.id), userId: owner.id, workspaceId: workspace.id, tokenHash: hashToken("billing-token"), csrfToken: "csrf", expiresAt: new Date(Date.now() + 60_000).toISOString(), createdAt: new Date().toISOString() });
   });
 
-  return { owner, msp: msp.msp };
+  return { owner, msp: msp.msp, workspace };
 }
 
 async function main() {
-  const { owner, msp } = await seedScenario();
+  const { owner, msp, workspace } = await seedScenario();
   const db = await readDb();
   const persistedMsp = db.msps.find((item) => item.id === msp.id);
   const initialState = getMspBillingState(persistedMsp);
@@ -43,7 +43,7 @@ async function main() {
   const invalid = () => updateMspBillingState({ ...updated, billingStatus: "active" }, { billingStatus: "pending" });
   assert.throws(invalid, /Invalid billing transition/, "Invalid billing state transitions should be rejected.");
 
-  const ctx = await getSessionContext({ headers: { cookie: "ventureos_session=billing-token" } });
+  const ctx = await getSessionContext({ headers: { cookie: "ventureos_session=billing-token", "x-workspace-id": workspace.id } }, workspace.id);
   assert.ok(ctx, "Session context should resolve for billing admin users.");
 
   console.log("MSP billing state tests passed.");

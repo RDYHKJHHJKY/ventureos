@@ -42,45 +42,39 @@ async function requestJson(pathname, token) {
   const req = { method: "GET", url: pathname, headers: { cookie: token ? `ventureos_session=${token}` : "" } };
   const res = makeRes();
   await handleApiRequest(req, res);
-  return { statusCode: res.statusCode, payload: JSON.parse(res.body) };
+  return { statusCode: res.statusCode, payload: res.body ? JSON.parse(res.body) : null };
 }
 
 async function main() {
   const { user } = await seedScenario();
-  const { token } = await createSession(user.id, { demoMode: true });
+  const { token } = await createSession(user.id, { workspaceId: "ws-test" });
 
   const session = await requestJson("/api/auth/session", token);
   assert.equal(session.statusCode, 200);
-  assert.equal(session.payload.demoMode, true);
+  assert.equal(session.payload.user.id, user.id);
+
+  const demoLogin = await requestJson("/api/auth/demo-login");
+  assert.ok([401, 404].includes(demoLogin.statusCode));
 
   const demoMsp = await requestJson("/api/demo/msp");
-  assert.equal(demoMsp.statusCode, 200);
-  assert.equal(demoMsp.payload.ok, true);
-  assert.ok(demoMsp.payload.demo.name.includes("Demo"));
+  assert.ok([401, 404].includes(demoMsp.statusCode));
 
   const demoWorkspaces = await requestJson("/api/demo/workspaces");
-  assert.equal(demoWorkspaces.statusCode, 200);
-  assert.equal(demoWorkspaces.payload.ok, true);
-  assert.equal(demoWorkspaces.payload.workspaces.length, 6);
+  assert.ok([401, 404].includes(demoWorkspaces.statusCode));
 
   const demoExec = await requestJson("/api/demo/executive");
-  assert.equal(demoExec.statusCode, 200);
-  assert.equal(demoExec.payload.ok, true);
-  assert.ok(demoExec.payload.executive.healthScore >= 0);
+  assert.ok([401, 404].includes(demoExec.statusCode));
 
   const demoIntel = await requestJson("/api/demo/intelligence");
-  assert.equal(demoIntel.statusCode, 200);
-  assert.equal(demoIntel.payload.ok, true);
+  assert.ok([401, 404].includes(demoIntel.statusCode));
 
   const demoExport = await requestJson("/api/demo/export");
-  assert.equal(demoExport.statusCode, 200);
-  assert.equal(demoExport.payload.ok, true);
+  assert.ok([401, 404].includes(demoExport.statusCode));
 
-  // Ensure demo endpoints didn't mutate DB
   const db = await readDb();
-  assert.ok(db.msps.length === 1);
+  assert.equal(db.msps.length, 1);
 
-  console.log("MSP demo tests passed.");
+  console.log("Demo route removal tests passed.");
 }
 
 main().catch((err) => {

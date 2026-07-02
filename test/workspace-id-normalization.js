@@ -70,8 +70,7 @@ async function main() {
     { headers: { cookie: `ventureos_session=${token}` } },
     ""
   );
-  assert.ok(ctxBlank, "Context should resolve when workspace id is blank and fallback to default workspace.");
-  assert.strictEqual(ctxBlank.workspace?.id, workspace.id, "Blank workspace id should fallback to the user's first accessible workspace.");
+  assert.strictEqual(ctxBlank, null, "Context should not resolve when workspace id is blank and explicit workspace proof is missing.");
 
   const req = {
     method: "GET",
@@ -86,6 +85,17 @@ async function main() {
   assert.strictEqual(res.statusCode, 200, "API session call should succeed with whitespace workspace header.");
   const payload = res.body ? JSON.parse(res.body) : null;
   assert.strictEqual(payload.workspace?.id, workspace.id, "API session response workspace id should match normalized workspace id.");
+
+  const reqNoHeader = {
+    method: "GET",
+    url: "/api/auth/session",
+    headers: {
+      cookie: `ventureos_session=${token}`,
+    },
+  };
+  const resNoHeader = makeRes();
+  await handleApiRequest(reqNoHeader, resNoHeader);
+  assert.strictEqual(resNoHeader.statusCode, 401, "API session call should fail when workspace header is missing.");
 
   console.log("Workspace ID normalization tests passed.");
 }

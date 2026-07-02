@@ -4,9 +4,6 @@ import SoftwareRegistry from "./modules/spr/SoftwareRegistry.jsx";
 import PassportDashboard from "./components/PassportDashboard.jsx";
 import { UniversalCommandBar } from "./components/UniversalCommandBar.tsx";
 import { useCommandRegistry } from "./hooks/useCommandRegistry.ts";
-import { hydrateInteractionGraph, buildGraphCommands } from "./hooks/useInteractionGraph.ts";
-import { useWorkspaceMutation } from "./hooks/useWorkspaceMutation.ts";
-import { apiJson } from "./api-client";
 
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
@@ -220,6 +217,8 @@ function buildNarrative(asset, r) {
   return `${asset || "This asset"} is conditionally trusted with a ${r.trust}/100 trust score and ${r.confidence}% confidence. Engineering and product signals are strong, led by active maintainers and a healthy release profile. The verdict remains conditional because ${mediumFindings.join(" and ").toLowerCase()} need remediation before unrestricted production use.`;
 }
 
+import { apiJson } from "./api-client.js";
+
 function timeAgo(value) {
   if (!value) return "Never";
   const delta = Date.now() - new Date(value).getTime();
@@ -394,15 +393,11 @@ function TrustViz() {
 }
 
 // ── Lineage Graph Viewer (polished) ───────────────────────────────────────
-function LineageGraph({ activeNodeId, onActiveNodeIdChange }) {
+function LineageGraph() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState(activeNodeId || null);
+  const [selected, setSelected] = useState(null);
   const [hovered, setHovered] = useState(null);
-
-  useEffect(() => {
-    setSelected(activeNodeId || null);
-  }, [activeNodeId]);
 
   useEffect(() => {
     let alive = true;
@@ -528,10 +523,6 @@ function LineageGraph({ activeNodeId, onActiveNodeIdChange }) {
     return reasons.length ? reasons : [`${getTypeLabel(node.type)} node in the trust graph.`];
   };
 
-  useEffect(() => {
-    setSelected(activeNodeId || null);
-  }, [activeNodeId]);
-
   const renderNodeShape = (node, x, y) => {
     const fill = getNodeFill(node);
     const stroke = getNodeStroke(node);
@@ -646,10 +637,7 @@ function LineageGraph({ activeNodeId, onActiveNodeIdChange }) {
                       onMouseEnter={(event) => setHovered({ node, x: event.clientX, y: event.clientY })}
                       onMouseMove={(event) => setHovered({ node, x: event.clientX, y: event.clientY })}
                       onMouseLeave={() => setHovered(null)}
-                      onClick={() => {
-                        setSelected(node.id);
-                        if (onActiveNodeIdChange) onActiveNodeIdChange(node.id);
-                      }}
+                      onClick={() => setSelected(node.id)}
                     >
                       {renderNodeShape(node, x, y)}
                       {renderNodeLabel(node)}
@@ -1296,7 +1284,7 @@ function Analysis({ onComplete }) {
 }
 
 // ── Passport ───────────────────────────────────────────────────────────────
-function Passport({ generated = [], activePassportId, onActivePassportIdChange }) {
+function Passport({ generated = [] }) {
   const [passports, setPassports] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loadState, setLoadState] = useState("loading");
@@ -1376,10 +1364,7 @@ function Passport({ generated = [], activePassportId, onActivePassportIdChange }
       {loadState === "fallback" && <div style={{ ...styles.card, borderColor: C.yellow, color: C.yellow, marginBottom: 16, fontSize: 13 }}>API unavailable. Showing fallback passport records.</div>}
       <div className="passport-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
         {allPassports.map((p, i) => (
-          <div key={p.id || p.name} style={{ ...styles.card, cursor: "pointer", transition: "border-color 0.15s" }} onClick={() => {
-            setSelected(i);
-            onActivePassportIdChange?.(p.id);
-          }}>
+          <div key={p.id || p.name} style={{ ...styles.card, cursor: "pointer", transition: "border-color 0.15s" }} onClick={() => setSelected(i)}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
               <div><div style={{ fontSize: 14, fontWeight: 700 }}>{p.name}</div><div style={{ fontSize: 12, color: C.dim }}>{p.company}</div></div>
               <span style={styles.badge(p.status === "Active" ? C.green : C.yellow)}>{p.status}</span>
@@ -1489,7 +1474,6 @@ function renderTimelineLabel(type) {
     SIGNAL_SKIPPED: "Skipped signal",
     EVIDENCE_INCOMPLETE: "Evidence incomplete",
     ABSTENTION_CONSIDERED: "Abstention considered",
-    PIPELINE_RUN_REQUESTED: "Pipeline run requested",
     SIGNALS_COMPUTED: "Signals computed",
     SCORE_COMPUTED: "Score computed",
   };
@@ -1498,12 +1482,11 @@ function renderTimelineLabel(type) {
 
 function renderTimelineDetail(event) {
   if (!event?.details) return "";
-  const { artifact, signal, completeness, reason, runId } = event.details;
+  const { artifact, signal, completeness, reason } = event.details;
   if (event.type === "ARTIFACT_MISSING") return `Missing artifact: ${artifact || "unknown"}`;
   if (event.type === "SIGNAL_SKIPPED") return `Signal skipped: ${signal}`;
   if (event.type === "EVIDENCE_INCOMPLETE") return `Evidence completeness ${completeness}%`;
   if (event.type === "ABSTENTION_CONSIDERED") return reason || "No provable evidence";
-  if (event.type === "PIPELINE_RUN_REQUESTED") return runId ? `Run ID: ${runId}` : "Pipeline run requested";
   return JSON.stringify(event.details);
 }
 
@@ -1768,8 +1751,7 @@ const handleRunPipeline = async () => {
   setBusy(true);
   setActionError("");
   try {
-    const runId = `run-${Date.now()}`;
-    const data = await apiJson(`/api/projects/${encodeURIComponent(projectId)}/run-pipeline`, { method: "POST", body: JSON.stringify({ runId }) });
+    const data = await apiJson(`/api/projects/${encodeURIComponent(projectId)}/run-pipeline`, { method: "POST" });
     setProject(data.project);
     refreshProjects();
   } catch (err) {
@@ -1805,14 +1787,6 @@ const scoreLabel = latestScore ? `${latestScore.score}` : "—";
 const confidenceLabel = latestScore ? (latestScore.confidence >= 80 ? "High" : latestScore.confidence >= 60 ? "Medium" : "Low") : "None";
 const riskBand = latestScore?.riskBand || "None";
 const modelVersion = latestScore?.modelVersion || "v1";
-const pipelineRuns = (project?.events || []).filter((event) => event.type === "PIPELINE_RUN_REQUESTED");
-const lastPipelineEvent = pipelineRuns[0] || null;
-const lastPipelineStatus = latestScore
-  ? `Last score ${scoreLabel} (${riskBand}) computed ${timeAgo(lastPipelineEvent?.timestamp)}`
-  : lastPipelineEvent
-    ? `Pipeline started ${timeAgo(lastPipelineEvent.timestamp)}`
-    : "No pipeline runs yet";
-const pipelineRunCount = pipelineRuns.length;
 
 if (loadState === "loading") {
   return <div style={styles.card}><div style={{ fontSize: 18, fontWeight: 700 }}>Loading project…</div></div>;
@@ -1830,7 +1804,6 @@ return (
       <div>
         <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0 }}>{project.name}</h1>
         <p style={{ fontSize: 14, color: C.dim, margin: "4px 0 0" }}>{project.vendor || "No vendor specified"} · {project.sector || "No sector specified"}</p>
-        <div style={{ marginTop: 8, fontSize: 12, color: C.dim }}>{pipelineRunCount ? `${pipelineRunCount} pipeline run${pipelineRunCount === 1 ? "" : "s"}` : "No pipeline runs yet"}</div>
       </div>
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         <button style={styles.btn("ghost")} onClick={() => onNavigate("/projects")}>← Back to projects</button>
@@ -1839,25 +1812,21 @@ return (
     </div>
 
     {actionError && <div style={{ ...styles.card, borderColor: C.yellow, color: C.yellow, marginBottom: 16 }}>{actionError}</div>}
-    <div style={{ ...styles.card, marginBottom: 16, borderColor: C.borderLit }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <div style={styles.cardTitle}>Pipeline status</div>
-        <div style={{ fontSize: 12, color: C.dim }}>{pipelineRunCount ? `${pipelineRunCount} run${pipelineRunCount === 1 ? "" : "s"}` : "No runs yet"}</div>
-      </div>
-      <div style={{ fontSize: 13, color: C.text, fontWeight: 600 }}>{lastPipelineStatus}</div>
-      {lastPipelineEvent?.details?.runId && (
-        <div style={{ marginTop: 8, fontSize: 12, color: C.dim }}>Run ID: {lastPipelineEvent.details.runId}</div>
-      )}
-    </div>
-    <div style={{ fontSize: 12, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em" }}>Score panel</div>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
-      <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Trust Score</div><div style={{ fontSize: 30, fontWeight: 700, color: C.text }}>{scoreLabel}</div></div>
-      <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Confidence</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{confidenceLabel}</div></div>
-      <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Risk band</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{riskBand}</div></div>
-      <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Model version</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{modelVersion}</div></div>
-    </div>
 
-    <div style={styles.card}>
+    <div className="two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16, marginBottom: 16 }}>
+      <div style={styles.card}>
+        <div style={{ display: "grid", gap: 10 }}>
+          <div style={{ fontSize: 12, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em" }}>Score panel</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Trust Score</div><div style={{ fontSize: 30, fontWeight: 700, color: C.text }}>{scoreLabel}</div></div>
+            <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Confidence</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{confidenceLabel}</div></div>
+            <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Risk band</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{riskBand}</div></div>
+            <div style={{ ...styles.card, padding: 16 }}><div style={{ fontSize: 12, color: C.muted }}>Model version</div><div style={{ fontSize: 24, fontWeight: 700, color: C.text }}>{modelVersion}</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style={styles.card}>
         <div style={{ display: "grid", gap: 14 }}>
           <div>
             <div style={{ fontSize: 12, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em" }}>Artifacts</div>
@@ -1886,6 +1855,7 @@ return (
           )}
         </div>
       </div>
+    </div>
 
     {latestScore?.narrative && (
       <div style={{ ...styles.card, marginBottom: 16 }}>
@@ -2240,103 +2210,6 @@ function AuthPage({ mode, onModeChange, email, setEmail, password, setPassword, 
   );
 }
 
-function EvidenceDetail({ evidenceId }) {
-  const [evidence, setEvidence] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    setError("");
-    setEvidence(null);
-
-    if (!evidenceId) {
-      setLoading(false);
-      return () => { active = false; };
-    }
-
-    apiJson(`/api/spr/evidence/${encodeURIComponent(evidenceId)}`)
-      .then((result) => {
-        if (!active) return;
-        setEvidence(result.evidence || null);
-      })
-      .catch((err) => {
-        if (!active) return;
-        setError(err.message || 'Unable to load evidence details.');
-      })
-      .finally(() => {
-        if (!active) return;
-        setLoading(false);
-      });
-
-    return () => { active = false; };
-  }, [evidenceId]);
-
-  if (loading) {
-    return <div>Loading evidence details…</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (!evidence) {
-    return <div>No evidence selected.</div>;
-  }
-
-  return (
-    <div>
-      <h1 style={{ fontSize: 22, fontWeight: 700 }}>Evidence details</h1>
-      <div style={{ fontSize: 13, color: C.dim, marginBottom: 16 }}>Inspect evidence and related trust metadata.</div>
-      <div style={styles.card}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-          <div>
-            <div style={styles.cardTitle}>Title</div>
-            <div style={{ fontSize: 16, fontWeight: 700 }}>{evidence.title || evidence.id}</div>
-          </div>
-          <div>
-            <div style={styles.cardTitle}>Type</div>
-            <div style={{ fontSize: 16, fontWeight: 700 }}>{evidence.type || 'Unknown'}</div>
-          </div>
-        </div>
-        <div style={{ marginTop: 18, display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 14 }}>
-          <div style={styles.card}>
-            <div style={styles.cardTitle}>Verified</div>
-            <div>{evidence.verificationStatus === 'verified' || evidence.verified ? 'Yes' : 'No'}</div>
-          </div>
-          <div style={styles.card}>
-            <div style={styles.cardTitle}>Visibility</div>
-            <div>{evidence.visibility || 'public'}</div>
-          </div>
-          <div style={styles.card}>
-            <div style={styles.cardTitle}>Source</div>
-            <div>{evidence.source || 'Unknown'}</div>
-          </div>
-        </div>
-        <div style={{ marginTop: 18 }}>
-          <div style={styles.cardTitle}>Summary</div>
-          <div style={{ fontSize: 14, color: C.text, lineHeight: 1.6 }}>{evidence.summary || 'No summary available.'}</div>
-        </div>
-        {evidence.uri ? (
-          <div style={{ marginTop: 18 }}>
-            <div style={styles.cardTitle}>URI</div>
-            <a href={evidence.uri} target="_blank" rel="noreferrer" style={{ fontSize: 14, color: C.accent }}>{evidence.uri}</a>
-          </div>
-        ) : null}
-        {evidence.softwareId ? (
-          <div style={{ marginTop: 18 }}>
-            <div style={styles.cardTitle}>Related software</div>
-            <div style={{ fontSize: 14 }}>
-              {evidence.softwareId}
-            </div>
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
 function PublicPassport({ passportId, onClose }) {
   const [passport, setPassport] = useState(null);
   const [loadState, setLoadState] = useState("loading");
@@ -2461,10 +2334,6 @@ function PublicPassport({ passportId, onClose }) {
 export default function VentureOS() {
   const [page, setPage] = useState("dashboard");
   const [publicPassportId, setPublicPassportId] = useState(null);
-  const [activePassportId, setActivePassportId] = useState(null);
-  const [activeEvidenceId, setActiveEvidenceId] = useState(null);
-  const [activeGraphNodeId, setActiveGraphNodeId] = useState(null);
-  const [currentRoute, setCurrentRoute] = useState(typeof window !== 'undefined' ? window.location.pathname : '/');
   const [generatedPassports, setGeneratedPassports] = useState([]);
   const [authenticated, setAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
@@ -2484,97 +2353,7 @@ export default function VentureOS() {
   
   // Command bar state
   const [isCommandBarOpen, setCommandBarOpen] = useState(false);
-  const { refresh: refreshWorkspace, workspaceRefreshKey } = useWorkspaceMutation();
-  const hydrateActiveEntity = () => {
-    const route = currentRoute || (typeof window !== 'undefined' ? window.location.pathname : '/');
-    const passportMatch = route.match(/^\/passport\/([^/]+)$/);
-    if (passportMatch) {
-      return { entityId: decodeURIComponent(passportMatch[1]), entityType: 'passport' };
-    }
-    const evidenceMatch = route.match(/^\/evidence\/([^/]+)$/);
-    if (evidenceMatch) {
-      return { entityId: decodeURIComponent(evidenceMatch[1]), entityType: 'evidence' };
-    }
-    const graphMatch = route.match(/^\/lineage(?:\?|$)/);
-    if (graphMatch) {
-      const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-      const node = searchParams.get('node');
-      if (node) {
-        return { entityId: node, entityType: 'graph-node' };
-      }
-    }
-    const fileMatch = route.match(/^\/files\/([^/]+)$/);
-    if (fileMatch) {
-      return { entityId: decodeURIComponent(fileMatch[1]), entityType: 'file' };
-    }
-    const integrationMatch = route.match(/^\/integrations\/([^/]+)$/);
-    if (integrationMatch) {
-      return { entityId: decodeURIComponent(integrationMatch[1]), entityType: 'integration' };
-    }
-    const userMatch = route.match(/^\/users\/([^/]+)$/);
-    if (userMatch) {
-      return { entityId: decodeURIComponent(userMatch[1]), entityType: 'user' };
-    }
-    if (activeEvidenceId) {
-      return { entityId: activeEvidenceId, entityType: 'evidence' };
-    }
-    if (activePassportId) {
-      return { entityId: activePassportId, entityType: 'passport' };
-    }
-    if (activeGraphNodeId) {
-      return { entityId: activeGraphNodeId, entityType: 'graph-node' };
-    }
-    return undefined;
-  };
-
-  const activeEntity = hydrateActiveEntity();
-
-  const workspaceId = workspace?.id || undefined;
-  const activePassportContextId = activePassportId || publicPassportId || undefined;
-  const activeEvidenceContextId = activeEvidenceId || (activeEntity?.entityType === 'evidence' ? activeEntity.entityId : undefined);
-
-  const commandContext = {
-    workspaceId,
-    activeEntity,
-    activePassportId: activePassportContextId,
-    activeEvidenceId: activeEvidenceContextId,
-    activeFileId: undefined,
-    activeGraphNodeId: activeGraphNodeId || undefined,
-    activeIntegrationId: undefined,
-    activeUserId: user?.id || undefined,
-    currentPage: page,
-    currentRoute,
-    refreshWorkspace,
-    workspaceRefreshKey,
-  };
-
-  const [graphCommands, setGraphCommands] = useState([]);
-
-  useEffect(() => {
-    let active = true;
-    if (!workspaceId) {
-      setGraphCommands([]);
-      return;
-    }
-
-    hydrateInteractionGraph(commandContext)
-      .then((graph) => {
-        if (!active) return;
-        setGraphCommands(buildGraphCommands(graph, commandContext));
-      })
-      .catch((error) => {
-        console.warn('Failed to hydrate interaction graph:', error);
-        if (!active) return;
-        setGraphCommands([]);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [workspaceId, activeEntity?.entityId, activeEntity?.entityType, activePassportContextId, activeEvidenceContextId, activeGraphNodeId, workspaceRefreshKey]);
-
-  const allCommands = [...useCommandRegistry(commandContext), ...graphCommands];
-
+  const allCommands = useCommandRegistry();
   const navigateProjectPath = (path) => {
     if (typeof window !== "undefined" && window.history?.pushState) {
       window.history.pushState({}, "", path);
@@ -2656,7 +2435,7 @@ export default function VentureOS() {
 
   // Keyboard binding for command bar (Ctrl+K or Cmd+K)
   useEffect(() => {
-    const handler = (e) => {
+    const handler = (e: KeyboardEvent) => {
       const isMac = navigator.platform.toLowerCase().includes('mac');
       const isShortcut =
         (isMac && e.metaKey && e.key === 'k') ||
@@ -2757,21 +2536,12 @@ export default function VentureOS() {
 
     const handleRoute = () => {
       const pathname = window.location.pathname;
-      setCurrentRoute(pathname);
       const passportMatch = pathname.match(/^\/passport\/([^/]+)$/);
       if (passportMatch) {
         setPublicPassportId(decodeURIComponent(passportMatch[1]));
-      } else {
-        setPublicPassportId(null);
+        return;
       }
-
-        const evidenceMatch = pathname.match(/^\/evidence\/([^/]+)$/);
-      if (evidenceMatch) {
-        setActiveEvidenceId(decodeURIComponent(evidenceMatch[1]));
-        setPage('evidence');
-      } else {
-        setActiveEvidenceId(null);
-      }
+      setPublicPassportId(null);
 
       if (pathname === "/projects/new") {
         setPage("projects");
@@ -3013,7 +2783,7 @@ export default function VentureOS() {
           <main style={styles.content}>
             {page === "dashboard" && <Dashboard onAnalyze={() => setPage("analyze")} />}
             {page === "trust" && <TrustViz />}
-            {page === "lineage" && <LineageGraph activeNodeId={activeGraphNodeId} onActiveNodeIdChange={setActiveGraphNodeId} />}
+            {page === "lineage" && <LineageGraph />}
             {page === "reports" && <ReportsExport />}
             {page === "compliance" && <ComplianceExports />}
             {page === "billing" && <BillingIntegration />}
@@ -3024,7 +2794,7 @@ export default function VentureOS() {
             {page === "analyze" && <Analysis onComplete={(passport) => { if (passport) setGeneratedPassports((items) => [passport, ...items]); setPage("passports"); }} />}
             {page === "projects" && <Projects route={projectRoute} onNavigate={navigateProjectPath} />}
             {page === "registry" && <SoftwareRegistry />}
-            {page === "passports" && <Passport generated={generatedPassports} activePassportId={activePassportId} onActivePassportIdChange={setActivePassportId} />}
+            {page === "passports" && <Passport generated={generatedPassports} />}
             {page === "msp" && <MspPage mspList={mspList} selectedMspId={selectedMspId} setSelectedMspId={setSelectedMspId} details={mspDetails} loading={mspLoading} error={mspError} />}
             {["monitoring", "reports", "alerts", "team"].includes(page) && <WorkspacePage type={page} />}
           </main>
@@ -3034,7 +2804,9 @@ export default function VentureOS() {
       {/* Universal Command Bar */}
       {authenticated && (
         <UniversalCommandBar
-          context={commandContext}
+          workspaceId={workspace?.id || 'default'}
+          activePassportId={publicPassportId}
+          activeUserId={user?.id || 'unknown'}
           isOpen={isCommandBarOpen}
           onClose={() => setCommandBarOpen(false)}
           allCommands={allCommands}

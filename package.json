@@ -13,8 +13,7 @@
     "test:deploy:all": "node scripts/validate-deploy-targets.mjs",
     "test:smoke": "node scripts/validate-smoke-all.mjs",
     "test:ci": "npm run test && npm run test:auth && npm run build",
-    "start": "node server.js",
-    "seed:demo": "node scripts/seed-demo.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

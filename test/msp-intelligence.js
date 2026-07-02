@@ -67,8 +67,10 @@ function makeRes() {
   };
 }
 
-async function requestJson(pathname, token) {
-  const req = { method: "GET", url: pathname, headers: { cookie: `ventureos_session=${token}` } };
+async function requestJson(pathname, token, workspaceId = null) {
+  const headers = { cookie: `ventureos_session=${token}` };
+  if (workspaceId) headers["x-workspace-id"] = workspaceId;
+  const req = { method: "GET", url: pathname, headers };
   const res = makeRes();
   await handleApiRequest(req, res);
   return { statusCode: res.statusCode, payload: JSON.parse(res.body) };
@@ -78,7 +80,7 @@ async function main() {
   const { user, msp, workspaces } = await seedScenario({ billingStatus: "active" });
   const session = await createSession(user.id);
 
-  const intelligence = await requestJson(`/api/msp/${msp.id}/intelligence`, session.token);
+  const intelligence = await requestJson(`/api/msp/${msp.id}/intelligence`, session.token, workspaces[0].id);
   assert.equal(intelligence.statusCode, 200);
   assert.equal(intelligence.payload.ok, true);
   assert.equal(intelligence.payload.risk.totalRiskEvents, 2);
@@ -89,7 +91,7 @@ async function main() {
 
   const suspendedScenario = await seedScenario({ billingStatus: "past_due" });
   const suspendedSession = await createSession(suspendedScenario.user.id);
-  const suspendedIntelligence = await requestJson(`/api/msp/${suspendedScenario.msp.id}/intelligence`, suspendedSession.token);
+  const suspendedIntelligence = await requestJson(`/api/msp/${suspendedScenario.msp.id}/intelligence`, suspendedSession.token, suspendedScenario.workspaces[0].id);
   assert.equal(suspendedIntelligence.statusCode, 200);
   assert.equal(suspendedIntelligence.payload.risk.totalRiskEvents, 2);
 
