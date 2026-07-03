@@ -94,7 +94,7 @@ const passportAutoCommands: AutoCommandDefinition = {
           placeholder: passport.name || 'Passport name',
           validate: (input: string) => input.length > 2,
           run: async (name) => {
-            await apiJson('PATCH', `/api/passports/${encodeURIComponent(passport.id)}`, { name });
+            await apiJson(`/api/passports/${encodeURIComponent(passport.id)}`, { method: 'PATCH', body: JSON.stringify({ name }) });
           },
         },
       ],
@@ -110,7 +110,7 @@ const passportAutoCommands: AutoCommandDefinition = {
       requiredContext: ['workspace'],
       run: async ({ onSuccess, onError }) => {
         try {
-          await apiJson('DELETE', `/api/passports/${encodeURIComponent(passport.id)}`);
+          await apiJson(`/api/passports/${encodeURIComponent(passport.id)}`, { method: 'DELETE' });
           onSuccess?.('Passport deleted');
         } catch (err: any) {
           onError?.(err.message || 'Failed to delete passport');
@@ -159,10 +159,10 @@ const evidenceAutoCommands: AutoCommandDefinition = {
           placeholder: 'verified',
           validate: (input: string) => ['verified', 'pending'].includes(input.trim().toLowerCase()),
           run: async (status) => {
-            await apiJson('POST', `/api/spr/evidence/${encodeURIComponent(evidence.id)}/verify`, {
+            await apiJson(`/api/spr/evidence/${encodeURIComponent(evidence.id)}/verify`, { method: 'POST', body: JSON.stringify({
               verified: status.trim().toLowerCase() === 'verified',
               details: 'Updated via auto-generated command',
-            });
+            }) });
           },
         },
       ],
@@ -214,9 +214,9 @@ const evidenceAutoMenu: AutoMenuDefinition = {
           placeholder: 'software-123',
           validate: (input: string) => input.length > 2,
           run: async (softwareId) => {
-            await apiJson('PATCH', `/api/spr/evidence/${encodeURIComponent(evidence.id)}`, {
+            await apiJson(`/api/spr/evidence/${encodeURIComponent(evidence.id)}`, { method: 'PATCH', body: JSON.stringify({
               softwareId,
-            });
+            }) });
           },
         },
       ],
@@ -231,7 +231,7 @@ const evidenceAutoMenu: AutoMenuDefinition = {
       keywords: ['delete', 'remove', 'evidence'],
       run: async ({ onSuccess, onError }) => {
         try {
-          await apiJson('DELETE', `/api/spr/evidence/${encodeURIComponent(evidence.id)}`);
+          await apiJson(`/api/spr/evidence/${encodeURIComponent(evidence.id)}`, { method: 'DELETE' });
           onSuccess?.('Evidence deleted');
         } catch (err: any) {
           onError?.(err.message || 'Failed to delete evidence');
@@ -286,10 +286,11 @@ const evidenceAutoFlows: AutoFlowDefinition = {
           prompt: 'Enter privacy tier',
           placeholder: 'public',
           run: async (tier, context, state) => {
-            await apiJson('POST', `/api/spr/evidence/${encodeURIComponent(evidence.id)}/bundle`, {
+            await apiJson(`/api/spr/evidence/${encodeURIComponent(evidence.id)}/bundle`, { method: 'POST', body: JSON.stringify({
+              workspaceId: context.workspaceId,
               softwareId: state.targetId,
               tier,
-            });
+            }) });
           },
         },
       ],
@@ -378,8 +379,8 @@ export const hydrateInteractionGraph = async (context: CommandContextState): Pro
 
   try {
       const [passportResponse, softwareResponse] = await Promise.all([
-        apiJson('GET', `/api/passports?workspace=${encodeURIComponent(context.workspaceId)}`),
-        apiJson('GET', `/api/spr/software`),
+        apiJson(`/api/passports?workspace=${encodeURIComponent(context.workspaceId)}`),
+        apiJson(`/api/spr/software`),
       ]);
       const passports = Array.isArray(passportResponse.passports) ? passportResponse.passports : [];
       const softwareItems = Array.isArray(softwareResponse.software) ? softwareResponse.software : [];
@@ -525,3 +526,7 @@ export const buildGraphCommands = (graph: InteractionGraph, context: CommandCont
 
   return commands;
 };
+
+
+
+

@@ -19,13 +19,13 @@ async function seedScenario() {
   });
   const user = await mutateDb((db) => {
     const now = new Date().toISOString();
-    const record = { id: createId("user", "demo"), name: "Demo User", email: "demo@test.local", passwordHash: "hash", createdAt: now, updatedAt: now };
+    const record = { id: createId("user", "msp-session"), name: "MSP User", email: "msp-session@test.local", passwordHash: "hash", createdAt: now, updatedAt: now };
     db.users.push(record);
     return record;
   });
   const msp = await mutateDb((db) => createMsp(db, { name: "Real MSP", billingEmail: "billing@real.local", region: "us-east-1", ownerUserId: user.id }));
-  const ws = await mutateDb((db) => createWorkspaceForMsp(db, { mspId: msp.msp.id, name: "Real Client", ownerUserId: user.id }));
-  return { user, msp: msp.msp, workspace: ws };
+  const workspace = await mutateDb((db) => createWorkspaceForMsp(db, { mspId: msp.msp.id, name: "Real Client", ownerUserId: user.id }));
+  return { user, msp: msp.msp, workspace };
 }
 
 function makeRes() {
@@ -33,7 +33,8 @@ function makeRes() {
     statusCode: 200,
     headers: {},
     body: null,
-    writeHead(code, headers) { this.statusCode = code; this.headers = headers; },
+    setHeader(name, value) { this.headers[name] = value; },
+    writeHead(code, headers) { this.statusCode = code; this.headers = { ...this.headers, ...(headers || {}) }; },
     end(body) { this.body = body; },
   };
 }
@@ -53,35 +54,26 @@ async function requestJson(pathname, token) {
 }
 
 async function main() {
-  const { user } = await seedScenario();
-  const { token } = await createSession(user.id, { workspaceId: "ws-test" });
+  const { user, msp } = await seedScenario();
+  const { token } = await createSession(user.id);
 
   const session = await requestJson("/api/auth/session", token);
   assert.equal(session.statusCode, 200);
   assert.equal(session.payload.user.id, user.id);
 
-  const demoLogin = await requestJson("/api/auth/demo-login");
-  assert.ok([401, 404].includes(demoLogin.statusCode));
+  const mspList = await requestJson("/api/msps", token);
+  assert.equal(mspList.statusCode, 200);
+  assert.equal(mspList.payload.msps.length, 1);
+  assert.equal(mspList.payload.msps[0].id, msp.id);
 
-  const demoMsp = await requestJson("/api/demo/msp");
-  assert.ok([401, 404].includes(demoMsp.statusCode));
-
-  const demoWorkspaces = await requestJson("/api/demo/workspaces");
-  assert.ok([401, 404].includes(demoWorkspaces.statusCode));
-
-  const demoExec = await requestJson("/api/demo/executive");
-  assert.ok([401, 404].includes(demoExec.statusCode));
-
-  const demoIntel = await requestJson("/api/demo/intelligence");
-  assert.ok([401, 404].includes(demoIntel.statusCode));
-
-  const demoExport = await requestJson("/api/demo/export");
-  assert.ok([401, 404].includes(demoExport.statusCode));
+  const mspMode = await requestJson("/api/msp/mode", token);
+  assert.equal(mspMode.statusCode, 200);
+  assert.equal(mspMode.payload.mode, "active");
 
   const db = await readDb();
   assert.equal(db.msps.length, 1);
 
-  console.log("Demo route removal tests passed.");
+  console.log("MSP session tests passed.");
 }
 
 main().catch((err) => {

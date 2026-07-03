@@ -29,10 +29,13 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
           placeholder: 'e.g. Billing Service',
           validate: (input: string) => input.length > 2,
           run: async (name, ctx) => {
-            await apiJson('POST', '/api/passports', {
-              workspaceId: ctx.workspaceId,
-              softwareId: name,
-              status: 'draft',
+            await apiJson('/api/passports', {
+              method: 'POST',
+              body: JSON.stringify({
+                workspaceId: ctx.workspaceId,
+                softwareId: name,
+                status: 'draft',
+              }),
             });
           },
         },
@@ -59,7 +62,7 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
           return;
         }
         try {
-          const result = await apiJson('POST', `/api/passports/${encodeURIComponent(activePassportId)}/renew`, {});
+          const result = await apiJson(`/api/passports/${encodeURIComponent(activePassportId)}/renew`, { method: 'POST' });
           if (result.ok) {
             onSuccess?.(`Passport renewed until ${result.expiresAt || 'unknown'}`);
           }
@@ -101,7 +104,7 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
           return;
         }
         try {
-          const result = await apiJson('POST', `/api/passports/${encodeURIComponent(activePassportId)}/revoke`, {});
+          const result = await apiJson(`/api/passports/${encodeURIComponent(activePassportId)}/revoke`, { method: 'POST' });
           if (result.ok) {
             onSuccess?.('Passport revoked');
           }
@@ -124,7 +127,7 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
           return;
         }
         try {
-          const result = await apiJson('POST', `/api/passports/${encodeURIComponent(activePassportId)}/activate`, {});
+          const result = await apiJson(`/api/passports/${encodeURIComponent(activePassportId)}/activate`, { method: 'POST' });
           if (result.ok) {
             onSuccess?.('Passport re-activated');
           }
@@ -147,7 +150,7 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
           return;
         }
         try {
-          const result = await apiJson('POST', `/api/passports/${encodeURIComponent(activePassportId)}/set-public`, {});
+          const result = await apiJson(`/api/passports/${encodeURIComponent(activePassportId)}/set-public`, { method: 'POST' });
           if (result.ok) {
             onSuccess?.('Passport set to public visibility');
           }
@@ -170,7 +173,7 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
           return;
         }
         try {
-          const result = await apiJson('POST', `/api/passports/${encodeURIComponent(activePassportId)}/set-private`, {});
+          const result = await apiJson(`/api/passports/${encodeURIComponent(activePassportId)}/set-private`, { method: 'POST' });
           if (result.ok) {
             onSuccess?.('Passport set to private visibility');
           }
@@ -189,7 +192,7 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
       requiredContext: ['workspace'],
       run: async ({ workspaceId, onSuccess, onError }) => {
         try {
-          const result = await apiJson('GET', `/api/passports?workspace=${encodeURIComponent(workspaceId)}`);
+          const result = await apiJson(`/api/passports?workspace=${encodeURIComponent(workspaceId)}`);
           if (result.ok) {
             const count = result.passports?.length || 0;
             onSuccess?.(`Loaded ${count} passports`);
@@ -214,7 +217,7 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
         if (!context.workspaceId) {
           return { title: 'Active passport', description: 'No workspace context available.' };
         }
-        const result = await apiJson('GET', `/api/passports?workspace=${encodeURIComponent(context.workspaceId)}`);
+        const result = await apiJson(`/api/passports?workspace=${encodeURIComponent(context.workspaceId)}`);
         const passport = result.passports?.find((item: any) => item.id === context.activePassportId);
         return {
           title: passport?.name || `Passport ${context.activePassportId}`,
@@ -298,9 +301,9 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
                 placeholder: 'New passport name',
                 validate: (input: string) => input.length > 2,
                 run: async (name, ctx) => {
-                  await apiJson('PATCH', `/api/passports/${encodeURIComponent(passportId)}`, {
+                  await apiJson(`/api/passports/${encodeURIComponent(passportId)}`, { method: 'PATCH', body: JSON.stringify({
                     name,
-                  });
+                  }) });
                 },
               },
             ],
@@ -317,7 +320,7 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
             keywords: ['delete', 'passport', 'remove', 'destroy'],
             run: async ({ onSuccess, onError }) => {
               try {
-                await apiJson('DELETE', `/api/passports/${encodeURIComponent(passportId)}`);
+                await apiJson(`/api/passports/${encodeURIComponent(passportId)}`, { method: 'DELETE' });
                 onSuccess?.('Passport deleted');
               } catch (err: any) {
                 onError?.(err.message || 'Failed to delete passport');
@@ -338,12 +341,12 @@ const createPassportCommandSet = (context: CommandContextState): Command[] => {
                 return;
               }
               try {
-                await apiJson('POST', `/api/evidence`, {
+                await apiJson(`/api/evidence`, { method: 'POST', body: JSON.stringify({
                   passportId,
                   title: evidenceTitle,
                   type: 'manual',
                   source: 'command-bar',
-                });
+                }) });
                 onSuccess?.('Evidence attached to passport');
               } catch (err: any) {
                 onError?.(err.message || 'Failed to attach evidence');
@@ -418,11 +421,14 @@ const createEvidenceCommandSet = (context: CommandContextState): Command[] => {
           return;
         }
         try {
-          const result = await apiJson('POST', '/api/spr/github/scan', {
-            workspaceId,
-            owner,
-            repo: repoName,
-            softwareId,
+          const result = await apiJson('/api/spr/github/scan', {
+            method: 'POST',
+            body: JSON.stringify({
+              workspaceId,
+              owner,
+              repo: repoName,
+              softwareId,
+            }),
           });
           if (result.ok) {
             onSuccess?.(`GitHub evidence created for ${owner}/${repoName}`);
@@ -453,13 +459,14 @@ const createEvidenceCommandSet = (context: CommandContextState): Command[] => {
             if (!type) {
               throw new Error('Evidence type is required');
             }
-            await apiJson('POST', `/api/spr/evidence`, {
+            await apiJson(`/api/spr/evidence`, { method: 'POST', body: JSON.stringify({
+              workspaceId: ctx.workspaceId,
               softwareId: ctx.activePassportId,
               title,
               type,
               source: 'manual',
               visibility: 'public',
-            });
+            }) });
           },
         },
       ],
@@ -509,10 +516,10 @@ const createEvidenceCommandSet = (context: CommandContextState): Command[] => {
                 placeholder: 'verified',
                 validate: (input: string) => ['verified', 'pending'].includes(input.trim().toLowerCase()),
                 run: async (status) => {
-                  await apiJson('POST', `/api/spr/evidence/${encodeURIComponent(evidenceId)}/verify`, {
+                  await apiJson(`/api/spr/evidence/${encodeURIComponent(evidenceId)}/verify`, { method: 'POST', body: JSON.stringify({
                     verified: status.trim().toLowerCase() === 'verified',
                     details: `Updated via command bar`,
-                  });
+                  }) });
                 },
               },
             ],
@@ -537,10 +544,10 @@ const createEvidenceCommandSet = (context: CommandContextState): Command[] => {
                   const accessToken = selected === 'restricted'
                     ? promptInput('Enter restricted access token', '')
                     : '';
-                  await apiJson('POST', `/api/spr/evidence/${encodeURIComponent(evidenceId)}/privacy`, {
+                  await apiJson(`/api/spr/evidence/${encodeURIComponent(evidenceId)}/privacy`, { method: 'POST', body: JSON.stringify({
                     visibility: selected,
                     accessToken: accessToken || null,
-                  });
+                  }) });
                 },
               },
             ],
@@ -564,11 +571,12 @@ const createEvidenceCommandSet = (context: CommandContextState): Command[] => {
                     .split(',')
                     .map((item) => item.trim())
                     .filter(Boolean);
-                  await apiJson('POST', `/api/spr/evidence/${encodeURIComponent(evidenceId)}/bundle`, {
+                  await apiJson(`/api/spr/evidence/${encodeURIComponent(evidenceId)}/bundle`, { method: 'POST', body: JSON.stringify({
+                    workspaceId: ctx.workspaceId,
                     encrypted: false,
                     recipients: recips,
                     selectiveDisclosure: false,
-                  });
+                  }) });
                 },
               },
             ],
@@ -591,11 +599,11 @@ const createEvidenceCommandSet = (context: CommandContextState): Command[] => {
                 run: async (statement) => {
                   const proof = promptInput('Enter proof payload', 'proof-data');
                   if (!proof) throw new Error('Proof payload is required');
-                  await apiJson('POST', `/api/spr/evidence/${encodeURIComponent(evidenceId)}/zkp`, {
+                  await apiJson(`/api/spr/evidence/${encodeURIComponent(evidenceId)}/zkp`, { method: 'POST', body: JSON.stringify({
                     statement,
                     proof,
                     verified: true,
-                  });
+                  }) });
                 },
               },
             ],
@@ -716,9 +724,9 @@ const createIntegrationCommandSet = (context: CommandContextState): Command[] =>
     requiredContext: ['workspace'],
     run: async ({ workspaceId, onSuccess, onError }) => {
       try {
-        const result = await apiJson('POST', '/api/integrations/github', {
-          workspaceId,
-          action: 'connect',
+        const result = await apiJson('/api/integrations/github', {
+          method: 'POST',
+          body: JSON.stringify({ workspaceId, action: 'connect' }),
         });
         if (result.ok) {
           onSuccess?.(`GitHub connected`);
@@ -738,8 +746,9 @@ const createIntegrationCommandSet = (context: CommandContextState): Command[] =>
     requiredContext: ['workspace'],
     run: async ({ workspaceId, onSuccess, onError }) => {
       try {
-        const result = await apiJson('POST', '/api/integrations/rotate-key', {
-          workspaceId,
+        const result = await apiJson('/api/integrations/rotate-key', {
+          method: 'POST',
+          body: JSON.stringify({ workspaceId }),
         });
         if (result.ok) {
           onSuccess?.(`New API key generated`);
@@ -762,9 +771,9 @@ const createWorkspaceCommandSet = (context: CommandContextState): Command[] => [
     requiredContext: ['workspace'],
     run: async ({ workspaceId, onSuccess, onError }) => {
       try {
-        const result = await apiJson('POST', '/api/scans', {
-          workspaceId,
-          scanType: 'discovery',
+        const result = await apiJson('/api/scans', {
+          method: 'POST',
+          body: JSON.stringify({ workspaceId, scanType: 'discovery' }),
         });
         if (result.ok) {
           onSuccess?.(`Scan started: ${result.scan?.id || result.scanId || 'pending'}`);
@@ -786,7 +795,7 @@ const createWorkspaceCommandSet = (context: CommandContextState): Command[] => [
       if (!context.workspaceId) {
         return { title: 'Workspace trust score', description: 'No workspace selected.' };
       }
-      const result = await apiJson('GET', `/api/workspaces/${encodeURIComponent(context.workspaceId)}/trust-score`);
+      const result = await apiJson(`/api/workspaces/${encodeURIComponent(context.workspaceId)}/trust-score`);
       return {
         title: 'Workspace trust score',
         description: `Current score is ${result.score ?? 'unknown'} (${result.band ?? 'unknown'})`,
@@ -799,7 +808,7 @@ const createWorkspaceCommandSet = (context: CommandContextState): Command[] => [
     },
     run: async ({ workspaceId, onSuccess, onError }) => {
       try {
-        const result = await apiJson('GET', `/api/workspaces/${encodeURIComponent(workspaceId)}/trust-score`);
+        const result = await apiJson(`/api/workspaces/${encodeURIComponent(workspaceId)}/trust-score`);
         if (result.ok) {
           onSuccess?.(`Workspace trust score: ${result.score ?? 'unknown'}`);
         }
@@ -826,10 +835,10 @@ const createUserCommandSet = (context: CommandContextState): Command[] => [
         validate: (input: string) => input.includes('@') && input.includes('.'),
         run: async (email, ctx) => {
           const role = promptInput('Role (Owner, Admin, Reviewer, Viewer)', 'Reviewer') || 'Reviewer';
-          await apiJson('POST', `/api/workspaces/${encodeURIComponent(ctx.workspaceId)}/members`, {
+          await apiJson(`/api/workspaces/${encodeURIComponent(ctx.workspaceId)}/members`, { method: 'POST', body: JSON.stringify({
             email,
             role,
-          });
+          }) });
         },
       },
     ],
@@ -883,3 +892,9 @@ export const useCommandRegistry = (context: CommandContextState): Command[] => {
     ];
   }, [context]);
 };
+
+
+
+
+
+

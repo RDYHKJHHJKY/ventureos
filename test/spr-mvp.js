@@ -70,7 +70,14 @@ async function main() {
     db.users.push(record);
     return record;
   });
-  const session = await createSession(user.id);
+  const workspace = await mutateDb((db) => {
+    const now = new Date().toISOString();
+    const record = { id: createId("workspace", "spr"), ownerId: user.id, name: "SPR Workspace", plan: "starter", active: true, createdAt: now, updatedAt: now };
+    db.workspaces.push(record);
+    db.workspaceMembers.push({ id: createId("member", `${user.id}-${record.id}`), workspaceId: record.id, userId: user.id, role: "Owner", createdAt: now });
+    return record;
+  });
+  const session = await createSession(user.id, { workspaceId: workspace.id });
 
   const vendorResponse = await requestJson("/api/spr/vendors", "POST", { name: "Contoso Security", domain: "contoso.example", email: "security@contoso.example", country: "US", complianceClaims: ["SOC2", "ISO27001"] }, session.token);
   assert.equal(vendorResponse.statusCode, 201);
@@ -92,18 +99,18 @@ async function main() {
   assert.equal(softwareListResponse.payload.ok, true);
   assert.ok((softwareListResponse.payload.software || []).some((item) => item.id === softwareResponse.payload.software.id));
 
-  const githubScanResponse = await requestJson("/api/spr/github/scan", "POST", { owner: "octocat", repo: "Hello-World", softwareId: softwareResponse.payload.software.id }, session.token);
+  const githubScanResponse = await requestJson("/api/spr/github/scan", "POST", { owner: "octocat", repo: "Hello-World", softwareId: softwareResponse.payload.software.id, workspaceId: workspace.id }, session.token);
   assert.equal(githubScanResponse.statusCode, 201);
   assert.equal(githubScanResponse.payload.ok, true);
   assert.equal(githubScanResponse.payload.evidence.type, "github");
   assert.ok(githubScanResponse.payload.evidence.summary.includes("GitHub"));
 
-  const evidenceResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "CycloneDX SBOM", summary: "Generated from release pipeline", uri: "https://example.com/sbom.json", strength: 0.9, freshnessDays: 7, verified: true }, session.token);
+  const evidenceResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "CycloneDX SBOM", summary: "Generated from release pipeline", uri: "https://example.com/sbom.json", strength: 0.9, freshnessDays: 7, verified: true, workspaceId: workspace.id }, session.token);
   assert.equal(evidenceResponse.statusCode, 201);
   assert.equal(evidenceResponse.payload.ok, true);
   assert.equal(evidenceResponse.payload.evidence.type, "sbom");
 
-  const visibilityResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/visibility`, "POST", { visibility: "restricted", accessToken: `${vendorResponse.payload.vendor.id}:${"workspace-1"}:${"restricted"}`, vendorId: vendorResponse.payload.vendor.id, workspaceId: "workspace-1" }, session.token);
+  const visibilityResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/visibility`, "POST", { visibility: "restricted", accessToken: `${vendorResponse.payload.vendor.id}:${workspace.id}:${"restricted"}`, vendorId: vendorResponse.payload.vendor.id, workspaceId: workspace.id }, session.token);
   assert.equal(visibilityResponse.statusCode, 200);
   assert.equal(visibilityResponse.payload.ok, true);
   assert.equal(visibilityResponse.payload.evidence.visibility, "restricted");
@@ -126,17 +133,17 @@ async function main() {
   assert.ok(Array.isArray(monitorResponse.payload.monitoring.driftAlerts));
   assert.ok(monitorResponse.payload.monitoring.alerts.length >= 0);
 
-  const signalResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/signals`, "POST", { type: "cve", severity: "high", summary: "CVE-2026-0001", source: "nvd" }, session.token);
+  const signalResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/signals`, "POST", { type: "cve", severity: "high", summary: "CVE-2026-0001", source: "nvd", workspaceId: workspace.id }, session.token);
   assert.equal(signalResponse.statusCode, 201);
   assert.equal(signalResponse.payload.ok, true);
   assert.equal(signalResponse.payload.signal.type, "cve");
 
-  const sbomResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/sbom`, "POST", { content: JSON.stringify({ components: [{ name: "left-pad", version: "1.0.0" }] }) }, session.token);
+  const sbomResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/sbom`, "POST", { content: JSON.stringify({ components: [{ name: "left-pad", version: "1.0.0" }] }), workspaceId: workspace.id }, session.token);
   assert.equal(sbomResponse.statusCode, 201);
   assert.equal(sbomResponse.payload.ok, true);
   assert.equal(sbomResponse.payload.evidence.type, "sbom");
 
-  const provenanceResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/provenance`, "POST", { type: "slsa", build: "ci", source: "github-actions" }, session.token);
+  const provenanceResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/provenance`, "POST", { type: "slsa", build: "ci", source: "github-actions", workspaceId: workspace.id }, session.token);
   assert.equal(provenanceResponse.statusCode, 201);
   assert.equal(provenanceResponse.payload.ok, true);
   assert.equal(provenanceResponse.payload.evidence.type, "slsa");
@@ -146,7 +153,7 @@ async function main() {
   assert.equal(sigstoreResponse.payload.ok, true);
   assert.equal(sigstoreResponse.payload.evidence.verificationStatus, "verified");
 
-  const privacyResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/privacy`, "POST", { visibility: "restricted", accessToken: `${vendorResponse.payload.vendor.id}:workspace-1:restricted`, vendorId: vendorResponse.payload.vendor.id, workspaceId: "workspace-1" }, session.token);
+  const privacyResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/privacy`, "POST", { visibility: "restricted", accessToken: `${vendorResponse.payload.vendor.id}:${workspace.id}:restricted`, vendorId: vendorResponse.payload.vendor.id, workspaceId: workspace.id }, session.token);
   assert.equal(privacyResponse.statusCode, 200);
   assert.equal(privacyResponse.payload.ok, true);
   assert.equal(privacyResponse.payload.evidence.visibility, "restricted");
@@ -154,7 +161,7 @@ async function main() {
   const auditDbAfterPrivacy = await readDb();
   assert.ok((auditDbAfterPrivacy.sprAuditLogs || []).some((item) => item.type === "evidence.visibility_changed" && item.targetId === evidenceResponse.payload.evidence.id));
 
-  const standardsResponse = await requestJson("/api/spr/standards", "POST", { softwareId: softwareResponse.payload.software.id, framework: "soc2", title: "SOC 2 Report", summary: "Annual attestation", uri: "https://example.com/soc2.pdf", strength: 0.85, freshnessDays: 30, verified: true }, session.token);
+  const standardsResponse = await requestJson("/api/spr/standards", "POST", { softwareId: softwareResponse.payload.software.id, framework: "soc2", title: "SOC 2 Report", summary: "Annual attestation", uri: "https://example.com/soc2.pdf", strength: 0.85, freshnessDays: 30, verified: true, workspaceId: workspace.id }, session.token);
   assert.equal(standardsResponse.statusCode, 201);
   assert.equal(standardsResponse.payload.ok, true);
   assert.equal(standardsResponse.payload.evidence.type, "soc2");
@@ -164,7 +171,7 @@ async function main() {
   assert.equal(identityResponse.payload.ok, true);
   assert.equal(identityResponse.payload.identity.domain, true);
 
-  const bundleResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/bundle`, "POST", { requestId: "bundle-001", encrypted: true, recipients: ["buyer-123"], selectiveDisclosure: true }, session.token);
+  const bundleResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/bundle`, "POST", { requestId: "bundle-001", encrypted: true, recipients: ["buyer-123"], selectiveDisclosure: true, workspaceId: workspace.id }, session.token);
   assert.equal(bundleResponse.statusCode, 200);
   assert.equal(bundleResponse.payload.ok, true);
   assert.equal(bundleResponse.payload.evidence.bundle.encrypted, true);
@@ -184,7 +191,7 @@ async function main() {
   assert.equal(procurementResponse.payload.ok, true);
   assert.ok(Array.isArray(procurementResponse.payload.software));
 
-  const passportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "public", issuedBy: user.name }, session.token);
+  const passportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "public", issuedBy: user.name, workspaceId: workspace.id }, session.token);
   assert.equal(passportResponse.statusCode, 201);
   assert.equal(passportResponse.payload.ok, true);
   assert.equal(passportResponse.payload.passport.visibility, "public");
@@ -196,7 +203,7 @@ async function main() {
   assert.equal(renewedPassportResponse.statusCode, 200);
   assert.equal(renewedPassportResponse.payload.passport.status, "Active");
 
-  const invalidRestrictedPassportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "restricted", issuedBy: user.name }, session.token);
+  const invalidRestrictedPassportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "restricted", issuedBy: user.name, workspaceId: workspace.id }, session.token);
   assert.equal(invalidRestrictedPassportResponse.statusCode, 400);
   assert.equal(invalidRestrictedPassportResponse.payload.code, "VALIDATION_ERROR");
 
@@ -214,12 +221,12 @@ async function main() {
   assert.equal(publicViewResponse.statusCode, 200);
   assert.equal(publicViewResponse.payload.passportId, passportResponse.payload.passport.id);
 
-  const restrictedPassportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "restricted", issuedBy: user.name, accessToken: `${vendorResponse.payload.vendor.id}:workspace-1:restricted`, vendorId: vendorResponse.payload.vendor.id, workspaceId: "workspace-1" }, session.token);
+  const restrictedPassportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "restricted", issuedBy: user.name, accessToken: `${vendorResponse.payload.vendor.id}:${workspace.id}:restricted`, vendorId: vendorResponse.payload.vendor.id, workspaceId: workspace.id }, session.token);
   assert.equal(restrictedPassportResponse.statusCode, 201);
   assert.equal(restrictedPassportResponse.payload.ok, true);
   assert.equal(restrictedPassportResponse.payload.passport.visibility, "restricted");
 
-  const restrictedViewResponse = await requestJson(`/api/spr/passports/${restrictedPassportResponse.payload.passport.id}/restricted?accessToken=${vendorResponse.payload.vendor.id}:workspace-1:restricted`, "GET", null, session.token);
+  const restrictedViewResponse = await requestJson(`/api/spr/passports/${restrictedPassportResponse.payload.passport.id}/restricted?accessToken=${vendorResponse.payload.vendor.id}:${workspace.id}:restricted`, "GET", null, session.token);
   assert.equal(restrictedViewResponse.statusCode, 200);
   assert.equal(restrictedViewResponse.payload.passportId, restrictedPassportResponse.payload.passport.id);
 
@@ -228,25 +235,25 @@ async function main() {
   assert.ok((auditDbAfterRestrictedAccess.sprAuditLogs || []).every((item) => item.auditHash));
   assert.equal(verifyAuditChain(auditDbAfterRestrictedAccess.sprAuditLogs), true);
 
-  const invalidScopedTokenResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/privacy`, "POST", { visibility: "restricted", accessToken: "wrong-token", vendorId: vendorResponse.payload.vendor.id, workspaceId: "workspace-1" }, session.token);
+  const invalidScopedTokenResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/privacy`, "POST", { visibility: "restricted", accessToken: "wrong-token", vendorId: vendorResponse.payload.vendor.id, workspaceId: workspace.id }, session.token);
   assert.equal(invalidScopedTokenResponse.statusCode, 403);
 
-  const freshPassportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "restricted", issuedBy: user.name, accessToken: `${vendorResponse.payload.vendor.id}:workspace-1:restricted` }, session.token);
+  const freshPassportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "restricted", issuedBy: user.name, accessToken: `${vendorResponse.payload.vendor.id}:${workspace.id}:restricted`, vendorId: vendorResponse.payload.vendor.id, workspaceId: workspace.id }, session.token);
   assert.equal(freshPassportResponse.statusCode, 201);
   assert.equal(freshPassportResponse.payload.passport.visibility, "restricted");
   assert.ok(freshPassportResponse.payload.passport.passportEnvelopeHash);
   assert.equal(verifyPassportEnvelope(freshPassportResponse.payload.passport), true);
 
-  const staleEvidenceResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "Stale evidence", summary: "Old evidence", freshnessDays: 250, verified: false, visibility: "restricted", accessToken: `${vendorResponse.payload.vendor.id}:workspace-1:restricted` }, session.token);
+  const staleEvidenceResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "Stale evidence", summary: "Old evidence", freshnessDays: 250, verified: false, visibility: "restricted", accessToken: `${vendorResponse.payload.vendor.id}:${workspace.id}:restricted`, vendorId: vendorResponse.payload.vendor.id, workspaceId: workspace.id }, session.token);
   assert.equal(staleEvidenceResponse.statusCode, 201);
-  const staleRestrictedPassportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "restricted", issuedBy: user.name, accessToken: `${vendorResponse.payload.vendor.id}:workspace-1:restricted`, workspaceId: "workspace-1" }, session.token);
+  const staleRestrictedPassportResponse = await requestJson("/api/spr/passports/issue", "POST", { softwareId: softwareResponse.payload.software.id, visibility: "restricted", issuedBy: user.name, accessToken: `${vendorResponse.payload.vendor.id}:${workspace.id}:restricted`, workspaceId: workspace.id }, session.token);
   assert.equal(staleRestrictedPassportResponse.statusCode, 400);
   assert.equal(staleRestrictedPassportResponse.payload.code, "VALIDATION_ERROR");
-  const duplicateBundleResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/bundle`, "POST", { requestId: "bundle-001", encrypted: true, recipients: ["buyer-123"], selectiveDisclosure: true }, session.token);
+  const duplicateBundleResponse = await requestJson(`/api/spr/evidence/${evidenceResponse.payload.evidence.id}/bundle`, "POST", { requestId: "bundle-001", encrypted: true, recipients: ["buyer-123"], selectiveDisclosure: true, workspaceId: workspace.id }, session.token);
   assert.equal(duplicateBundleResponse.statusCode, 409);
   assert.equal(duplicateBundleResponse.payload.code, "REPLAY_ERROR");
 
-  const invalidSignalResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/signals`, "POST", { type: "cve", severity: "high", source: "nvd" }, session.token);
+  const invalidSignalResponse = await requestJson(`/api/spr/software/${softwareResponse.payload.software.id}/signals`, "POST", { type: "cve", severity: "high", source: "nvd", workspaceId: workspace.id }, session.token);
   assert.equal(invalidSignalResponse.statusCode, 400);
   assert.equal(invalidSignalResponse.payload.code, "VALIDATION_ERROR");
 
@@ -282,3 +289,5 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+

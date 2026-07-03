@@ -7,7 +7,7 @@
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id text PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   name VARCHAR(255),
@@ -22,8 +22,8 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS workspaces (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  id text PRIMARY KEY,
+  owner_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   plan VARCHAR(50) DEFAULT 'starter',
   active BOOLEAN DEFAULT true,
@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS workspaces (
 CREATE INDEX IF NOT EXISTS idx_workspaces_owner ON workspaces(owner_id);
 
 CREATE TABLE IF NOT EXISTS workspace_members (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  id text PRIMARY KEY,
+  workspace_id text NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   role VARCHAR(50) DEFAULT 'member',
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(workspace_id, user_id)
@@ -51,8 +51,8 @@ CREATE INDEX IF NOT EXISTS idx_workspace_members_user ON workspace_members(user_
 
 CREATE TABLE IF NOT EXISTS sessions (
   id VARCHAR(255) PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  workspace_id text NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   data JSONB,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW(),
@@ -69,7 +69,7 @@ CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
 
 CREATE TABLE IF NOT EXISTS assets (
   id text primary key,
-  workspace_id uuid not null references workspaces(id) on delete cascade,
+  workspace_id text not null references workspaces(id) on delete cascade,
   name text not null,
   canonical_url text not null,
   type text not null,
@@ -91,9 +91,9 @@ CREATE TABLE IF NOT EXISTS assets (
 
 create table scan_runs (
   id text primary key,
-  workspace_id uuid not null references workspaces(id) on delete cascade,
+  workspace_id text not null references workspaces(id) on delete cascade,
   asset_id text not null references assets(id) on delete cascade,
-  created_by uuid,
+  created_by text,
   status text not null,
   trust_score integer not null,
   confidence_score integer not null,
@@ -108,7 +108,7 @@ create table scan_runs (
 
 create table scan_findings (
   id text primary key,
-  workspace_id uuid not null references workspaces(id) on delete cascade,
+  workspace_id text not null references workspaces(id) on delete cascade,
   scan_run_id text not null references scan_runs(id) on delete cascade,
   asset_id text not null references assets(id) on delete cascade,
   severity text not null,
@@ -120,7 +120,7 @@ create table scan_findings (
 
 create table evidence_items (
   id text primary key,
-  workspace_id uuid not null references workspaces(id) on delete cascade,
+  workspace_id text not null references workspaces(id) on delete cascade,
   scan_run_id text not null references scan_runs(id) on delete cascade,
   asset_id text not null references assets(id) on delete cascade,
   label text not null,
@@ -132,7 +132,7 @@ create table evidence_items (
 
 create table passports (
   id text primary key,
-  workspace_id uuid not null references workspaces(id) on delete cascade,
+  workspace_id text not null references workspaces(id) on delete cascade,
   asset_id text not null references assets(id) on delete cascade,
   scan_run_id text references scan_runs(id) on delete set null,
   asset_name text not null,
@@ -150,7 +150,7 @@ create table passports (
   evidence_summary text not null,
   badge_embed text not null,
   public_url text not null,
-  issued_by uuid,
+  issued_by text,
   updated_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );
@@ -200,7 +200,7 @@ CREATE TABLE IF NOT EXISTS spr_evidence (
   verified boolean DEFAULT false,
   visibility text NOT NULL DEFAULT 'public',
   access_token text,
-  workspace_id uuid REFERENCES workspaces(id) ON DELETE SET NULL,
+  workspace_id text REFERENCES workspaces(id) ON DELETE SET NULL,
   vendor_id text,
   trust_score numeric,
   numeric_signals jsonb,
@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS spr_signals (
   summary text,
   source text,
   numeric_signals jsonb,
-  workspace_id uuid REFERENCES workspaces(id) ON DELETE SET NULL,
+  workspace_id text REFERENCES workspaces(id) ON DELETE SET NULL,
   vendor text,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
@@ -243,7 +243,7 @@ CREATE TABLE IF NOT EXISTS spr_passports (
   vendor_name text,
   visibility text NOT NULL DEFAULT 'public',
   access_token text,
-  workspace_id uuid REFERENCES workspaces(id) ON DELETE SET NULL,
+  workspace_id text REFERENCES workspaces(id) ON DELETE SET NULL,
   scoring_profile text,
   evidence_ids jsonb,
   trust_graph_hash text,
@@ -280,7 +280,7 @@ CREATE TABLE IF NOT EXISTS spr_audit_logs (
   type text NOT NULL,
   target_id text,
   payload jsonb NOT NULL,
-  workspace_id uuid REFERENCES workspaces(id) ON DELETE SET NULL,
+  workspace_id text REFERENCES workspaces(id) ON DELETE SET NULL,
   payload_hash text NOT NULL,
   previous_audit_hash text,
   audit_hash text NOT NULL,
@@ -294,7 +294,7 @@ CREATE INDEX IF NOT EXISTS idx_spr_audit_logs_created_at ON spr_audit_logs(creat
 CREATE TABLE IF NOT EXISTS spr_restricted_tokens (
   id text PRIMARY KEY,
   token text UNIQUE NOT NULL,
-  workspace_id uuid REFERENCES workspaces(id) ON DELETE SET NULL,
+  workspace_id text REFERENCES workspaces(id) ON DELETE SET NULL,
   project_id text,
   evidence_type text,
   ttl_days integer NOT NULL,
@@ -305,4 +305,5 @@ CREATE TABLE IF NOT EXISTS spr_restricted_tokens (
 
 CREATE INDEX IF NOT EXISTS idx_spr_restricted_tokens_token ON spr_restricted_tokens(token);
 CREATE INDEX IF NOT EXISTS idx_spr_restricted_tokens_workspace_id ON spr_restricted_tokens(workspace_id);
+
 

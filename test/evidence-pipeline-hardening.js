@@ -72,11 +72,11 @@ async function main() {
   const softwareResponse = await requestJson("/api/spr/software", "POST", { name: "Evidence Agent", vendorId: vendorResponse.payload.vendor.id, repositoryUrl: "https://github.com/contoso/evidence-agent", packageName: "@contoso/evidence-agent", version: "1.0.0", ecosystem: "npm" }, session.token);
   assert.equal(softwareResponse.statusCode, 201);
 
-  const malformedResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "", summary: "Missing title", freshnessDays: 7 }, session.token);
+  const malformedResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "", summary: "Missing title", workspaceId: workspace.id, freshnessDays: 7 }, session.token);
   assert.equal(malformedResponse.statusCode, 400);
   assert.equal(malformedResponse.payload.code, "VALIDATION_ERROR");
 
-  const staleResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "Stale evidence", summary: "Old evidence", freshnessDays: 250, createdAt: "2020-01-01T00:00:00.000Z" }, session.token);
+  const staleResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "Stale evidence", summary: "Old evidence", workspaceId: workspace.id, freshnessDays: 250, createdAt: "2020-01-01T00:00:00.000Z" }, session.token);
   assert.equal(staleResponse.statusCode, 400);
   assert.equal(staleResponse.payload.code, "VALIDATION_ERROR");
 
@@ -85,7 +85,7 @@ async function main() {
   assert.equal(crossWorkspaceResponse.payload.code, "FORBIDDEN");
 
   const oversizedPayload = "x".repeat(300 * 1024);
-  const oversizedResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "Oversized evidence", summary: oversizedPayload, freshnessDays: 7 }, session.token);
+  const oversizedResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "Oversized evidence", summary: oversizedPayload, workspaceId: workspace.id, freshnessDays: 7 }, session.token);
   assert.equal(oversizedResponse.statusCode, 400);
   assert.equal(oversizedResponse.payload.code, "VALIDATION_ERROR");
 
@@ -97,7 +97,7 @@ async function main() {
   assert.equal(normalizedA.workspaceId, workspace.id);
   assert.deepEqual(normalizedA, normalizedB);
 
-  const signalResponse = await requestJson(`/api/spr/software/${encodeURIComponent(softwareResponse.payload.software.id)}/signals`, "POST", { type: "cve", severity: "high", summary: "CVE-2026-0001", source: "nvd", confidence: true }, session.token);
+  const signalResponse = await requestJson(`/api/spr/software/${encodeURIComponent(softwareResponse.payload.software.id)}/signals`, "POST", { type: "cve", severity: "high", summary: "CVE-2026-0001", source: "nvd", workspaceId: workspace.id, confidence: true }, session.token);
   assert.equal(signalResponse.statusCode, 201);
   assert.equal(signalResponse.payload.signal.numericSignals.severity, 2);
   assert.equal(signalResponse.payload.signal.numericSignals.confidence, 1);
@@ -112,3 +112,4 @@ main().catch((error) => {
   console.error(error);
   process.exit(1);
 });
+

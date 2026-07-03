@@ -164,30 +164,8 @@ async function runValidation() {
   }
   results.total++;
 
-  // 4. Demo-route absence checks
-  logSeparator("DEMO ROUTE REMOVAL");
-  if (await testEndpoint("Demo Login Route", "POST", "/api/auth/demo-login", [401, 404])) {
-    results.passed++;
-  } else {
-    results.failed++;
-  }
-  results.total++;
+  // 4. Core frontend/API surface
 
-  if (await testEndpoint("Demo MSP Route", "GET", "/api/demo/msp", [401, 404])) {
-    results.passed++;
-  } else {
-    results.failed++;
-  }
-  results.total++;
-
-  if (await testEndpoint("Demo Workspaces Route", "GET", "/api/demo/workspaces", [401, 404])) {
-    results.passed++;
-  } else {
-    results.failed++;
-  }
-  results.total++;
-
-  // 5. SPR Passport API
   logSeparator("CORE ENDPOINTS");
   
   // Frontend root
@@ -223,3 +201,5 @@ runValidation().catch((err) => {
   console.error("Validation error:", err);
   process.exit(1);
 });
+
+

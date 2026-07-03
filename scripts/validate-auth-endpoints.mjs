@@ -5,6 +5,17 @@ function makeUniqueTestEmail() {
   return `test-user+${suffix}@ventureos.local`;
 }
 
+function cookieHeaderFromSetCookie(setCookie) {
+  if (!setCookie) return '';
+  const cookies = Array.isArray(setCookie) ? setCookie : [setCookie];
+  return cookies.map((cookie) => cookie.split(';')[0]).join('; ');
+}
+
+function cookieValue(cookieHeader, name) {
+  const match = cookieHeader.split(';').map((part) => part.trim()).find((part) => part.startsWith(`${name}=`));
+  return match ? decodeURIComponent(match.slice(name.length + 1)) : '';
+}
+
 function isSuccessfulResponse(res, expectedStatus) {
   const okFlag = res.body?.ok;
   const statusOk = res.statusCode === expectedStatus;
@@ -37,7 +48,8 @@ async function requestJson(options, body) {
 }
 
 async function main() {
-  const base = { hostname: '127.0.0.1', port: 5173, method: 'POST', path: '' };
+  const baseHeaders = { Accept: 'application/json' };
+  const base = { hostname: '127.0.0.1', port: 5173, method: 'POST', path: '', headers: baseHeaders };
   const signupPayload = {
     name: 'Test User',
     email: makeUniqueTestEmail(),
@@ -52,25 +64,24 @@ async function main() {
   console.log('SIGNUP:', signupRes.statusCode, isSuccessfulResponse(signupRes, 201) ? 'OK' : 'FAIL');
   if (!isSuccessfulResponse(signupRes, 201)) throw new Error('Signup failed: ' + JSON.stringify(signupRes.body));
 
-  const cookies = signupRes.headers['set-cookie'] || [];
-  if (!cookies.length) throw new Error('Signup did not set cookies');
-  const sessionCookie = cookies.find((cookie) => cookie.startsWith('ventureos_session='));
-  if (!sessionCookie) throw new Error('Missing session cookie after signup');
+  const signupCookieHeader = cookieHeaderFromSetCookie(signupRes.headers['set-cookie']);
+  if (!signupCookieHeader.includes('ventureos_session=')) throw new Error('Missing session cookie after signup');
 
   const sessionRes = await requestJson({
     ...base,
     method: 'GET',
     path: '/api/auth/session',
-    headers: { cookie: sessionCookie },
+    headers: { ...baseHeaders, Cookie: signupCookieHeader },
   });
   console.log('SESSION:', sessionRes.statusCode, isSuccessfulResponse(sessionRes, 200) ? 'OK' : 'FAIL');
   if (!isSuccessfulResponse(sessionRes, 200)) throw new Error('Session check failed: ' + JSON.stringify(sessionRes.body));
 
+  const csrfToken = cookieValue(signupCookieHeader, 'ventureos_csrf');
   const logoutRes = await requestJson({
     ...base,
     path: '/api/auth/logout',
     method: 'POST',
-    headers: { cookie: sessionCookie },
+    headers: { ...baseHeaders, Cookie: signupCookieHeader, ...(csrfToken ? { 'x-csrf-token': csrfToken } : {}) },
   });
   console.log('LOGOUT:', logoutRes.statusCode, isSuccessfulResponse(logoutRes, 200) ? 'OK' : 'FAIL');
   if (!isSuccessfulResponse(logoutRes, 200)) throw new Error('Logout failed: ' + JSON.stringify(logoutRes.body));
@@ -78,15 +89,15 @@ async function main() {
   const loginRes = await requestJson({ ...base, path: '/api/auth/login' }, loginPayload);
   console.log('LOGIN:', loginRes.statusCode, isSuccessfulResponse(loginRes, 200) ? 'OK' : 'FAIL');
   if (!isSuccessfulResponse(loginRes, 200)) throw new Error('Login failed: ' + JSON.stringify(loginRes.body));
-  const loginCookies = loginRes.headers['set-cookie'] || [];
-  const loginSessionCookie = loginCookies.find((cookie) => cookie.startsWith('ventureos_session='));
-  if (!loginSessionCookie) throw new Error('Missing session cookie after login');
+
+  const loginCookieHeader = cookieHeaderFromSetCookie(loginRes.headers['set-cookie']);
+  if (!loginCookieHeader.includes('ventureos_session=')) throw new Error('Missing session cookie after login');
 
   const loginSessionRes = await requestJson({
     ...base,
     method: 'GET',
     path: '/api/auth/session',
-    headers: { cookie: loginSessionCookie },
+    headers: { ...baseHeaders, Cookie: loginCookieHeader },
   });
   console.log('SESSION AFTER LOGIN:', loginSessionRes.statusCode, isSuccessfulResponse(loginSessionRes, 200) ? 'OK' : 'FAIL');
   if (!isSuccessfulResponse(loginSessionRes, 200)) throw new Error('Session check after login failed: ' + JSON.stringify(loginSessionRes.body));
