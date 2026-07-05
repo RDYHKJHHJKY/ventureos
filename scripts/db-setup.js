@@ -14,7 +14,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const schemaPath = path.join(__dirname, '../db/schema.sql');
+const schemaFiles = [
+  path.join(__dirname, '../db/schema.sql'),
+  path.join(__dirname, '../db/schema-spr-self.sql'),
+  path.join(__dirname, '../db/schema-admin-dashboard.sql'),
+];
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -24,35 +28,24 @@ const pool = new pg.Pool({
 async function runMigration() {
   const client = await pool.connect();
   try {
-    console.log('📦 Reading schema file...');
-    const schema = fs.readFileSync(schemaPath, 'utf-8');
+    console.log('📦 Reading schema files...');
+
+    if (shouldReset) {
+      console.log('🧹 Resetting public schema before applying migrations...');
+      await client.query('DROP SCHEMA IF EXISTS public CASCADE');
+      await client.query('CREATE SCHEMA public');
+    }
 
     console.log('🚀 Running database migration...');
-    await client.query(schema);
+    for (const schemaPath of schemaFiles) {
+      const schema = fs.readFileSync(schemaPath, 'utf-8');
+      await client.query(schema);
+    }
 
     console.log('✅ Database migration completed successfully!');
     console.log('');
-    console.log('📊 Created tables:');
-    console.log('  • users');
-    console.log('  • workspaces');
-    console.log('  • workspace_members');
-    console.log('  • sessions');
-    console.log('  • assets');
-    console.log('  • scan_runs');
-    console.log('  • findings');
-    console.log('  • passports');
-    console.log('  • projects');
-    console.log('  • artifacts');
-    console.log('  • signals');
-    console.log('  • msps');
-    console.log('  • msp_members');
-    console.log('  • msp_workspaces');
-    console.log('  • billing_events');
-    console.log('  • events');
-    console.log('  • webhooks');
-    console.log('  • webhook_deliveries');
-    console.log('  • jobs');
-    console.log('  • spr_audit_logs');
+    console.log('📊 Applied schema files:');
+    schemaFiles.forEach((schemaPath) => console.log(`  • ${path.basename(schemaPath)}`));
     console.log('');
     console.log('🎉 Database is ready to use!');
   } catch (error) {
@@ -84,7 +77,10 @@ async function checkConnection() {
   }
 }
 
+let shouldReset = process.argv.includes('--reset') || process.argv.includes('--reset-db') || process.env.VENTUREOS_RESET_DB === '1';
+
 async function main() {
+
   console.log('🌟 VentureOS Database Setup');
   console.log('=============================');
   console.log('');
@@ -100,6 +96,10 @@ async function main() {
   const connected = await checkConnection();
   if (!connected) {
     process.exit(1);
+  }
+
+  if (shouldReset) {
+    console.log('🧹 Resetting local database tables before applying migrations...');
   }
 
   console.log('');

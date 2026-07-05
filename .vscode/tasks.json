@@ -1,0 +1,403 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "supabase-link",
+			"type": "shell",
+			"command": "supabase link --project-ref rlaiuxtagxtplvifcqam",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "supabase-link-npx",
+			"type": "shell",
+			"command": "npx supabase@latest link --project-ref rlaiuxtagxtplvifcqam",
+			"isBackground": false
+		},
+		{
+			"label": "supabase-link-npx-yes",
+			"type": "shell",
+			"command": "npx --yes supabase@latest link --project-ref rlaiuxtagxtplvifcqam",
+			"isBackground": false
+		},
+		{
+			"label": "supabase-login",
+			"type": "shell",
+			"command": "npx --yes supabase@latest login",
+			"isBackground": false
+		},
+		{
+			"label": "supabase-link-after-login",
+			"type": "shell",
+			"command": "npx --yes supabase@latest link --project-ref rlaiuxtagxtplvifcqam",
+			"isBackground": false
+		},
+		{
+			"label": "validate-spr-audit-routes",
+			"type": "shell",
+			"command": "node --input-type=module -e \"import { handleApiRequest } from './lib/server/api-router.js'; const req={method:'GET',url:'/api/spr/audit/status',headers:{}}; const res={setHeader(){},writeHead(){},end(body){console.log(body);}}; await handleApiRequest(req,res);\"",
+			"isBackground": false
+		},
+		{
+			"label": "validate-spr-audit-routes",
+			"type": "shell",
+			"command": "node tmp-validate-spr-audit.mjs",
+			"isBackground": false
+		},
+		{
+			"label": "validate-spr-audit-routes-2",
+			"type": "shell",
+			"command": "node .\\tmp-validate-spr-audit.mjs",
+			"isBackground": false
+		},
+		{
+			"label": "validate-spr-audit-routes-3",
+			"type": "shell",
+			"command": "node .\\tmp-validate-spr-audit.mjs",
+			"isBackground": false
+		},
+		{
+			"label": "trigger-spr-audit",
+			"type": "shell",
+			"command": "node .\\tmp-trigger-spr-audit.mjs",
+			"isBackground": false
+		},
+		{
+			"label": "validate-privacy-routes",
+			"type": "shell",
+			"command": "node .\\tmp-privacy-verify.mjs",
+			"isBackground": false
+		},
+		{
+			"label": "check-evidence-privacy",
+			"type": "shell",
+			"command": "node .\\tmp-evidence-privacy-check.mjs",
+			"isBackground": false
+		},
+		{
+			"label": "run-project-tests",
+			"type": "shell",
+			"command": "npm test",
+			"isBackground": false
+		},
+		{
+			"label": "build-project",
+			"type": "shell",
+			"command": "npm run build",
+			"isBackground": false
+		},
+		{
+			"label": "build-project",
+			"type": "shell",
+			"command": "npm run build",
+			"isBackground": false
+		},
+		{
+			"label": "smoke-check",
+			"type": "shell",
+			"command": "node scripts/validate-smoke-all.mjs",
+			"isBackground": false
+		},
+		{
+			"label": "run-db-migration",
+			"type": "shell",
+			"command": "node scripts/db-setup.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "run-db-migration",
+			"type": "shell",
+			"command": "node scripts/db-setup.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "run-db-migration",
+			"type": "shell",
+			"command": "node scripts/db-setup.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "run-db-migration",
+			"type": "shell",
+			"command": "node scripts/run-migrations.mjs --reset",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "inspect-db-error",
+			"type": "shell",
+			"command": "node -e \"import pg from 'pg'; import dotenv from 'dotenv'; import fs from 'fs'; dotenv.config(); const pool=new pg.Pool({connectionString:process.env.DATABASE_URL, ssl:false}); const client=await pool.connect(); try { const schema=fs.readFileSync('db/schema.sql','utf8'); await client.query(schema); } catch (e) { console.error(e.message); console.error(e.stack); } finally { client.release(); await pool.end(); }\"",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "inspect-db-error",
+			"type": "shell",
+			"command": "node tmp-debug-schema.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "debug-schema-run",
+			"type": "shell",
+			"command": "node tmp-debug-schema.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "run-db-migration",
+			"type": "shell",
+			"command": "node scripts/run-migrations.mjs --reset",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "inspect-scan-runs",
+			"type": "shell",
+			"command": "psql \"postgresql://ventureos_user:password@localhost:5432/ventureos\" -c \"\\d scan_runs\"",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "inspect-scan-runs",
+			"type": "shell",
+			"command": "node -e \"import pg from 'pg'; const pool=new pg.Pool({connectionString:'postgresql://ventureos_user:password@localhost:5432/ventureos', ssl:false}); const client=await pool.connect(); const res=await client.query('SELECT column_name FROM information_schema.columns WHERE table_name = $1 ORDER BY ordinal_position', ['scan_runs']); console.log(res.rows); await client.release(); await pool.end();\"",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "inspect-scan-runs-columns",
+			"type": "shell",
+			"command": "node -e 'import pg from \"pg\"; const pool = new pg.Pool({ connectionString: \"postgresql://ventureos_user:password@localhost:5432/ventureos\", ssl: false }); const client = await pool.connect(); try { const res = await client.query(\"SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2 ORDER BY ordinal_position\", [\"public\", \"scan_runs\"]); console.log(JSON.stringify(res.rows, null, 2)); } finally { client.release(); await pool.end(); }'",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "run-db-migration",
+			"type": "shell",
+			"command": "node scripts/run-migrations.mjs --reset",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-scan-runs-table",
+			"type": "shell",
+			"command": "node tmp-inspect-scan-runs.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "run-db-migration",
+			"type": "shell",
+			"command": "node scripts/run-migrations.mjs --reset",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "run-db-migration",
+			"type": "shell",
+			"command": "node scripts/run-migrations.mjs --reset",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "check-asset-type",
+			"type": "shell",
+			"command": "node tmp-check-asset-type.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "debug-schema-statements",
+			"type": "shell",
+			"command": "node tmp-debug-statements.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "reset-and-replay-schema",
+			"type": "shell",
+			"command": "node tmp-reset-and-replay.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "verify-schema-tables",
+			"type": "shell",
+			"command": "node -e \"import pg from 'pg'; const pool=new pg.Pool({connectionString:'postgresql://ventureos_user:password@localhost:5432/ventureos', ssl:false}); const client=await pool.connect(); try { const res=await client.query('SELECT table_name FROM information_schema.tables WHERE table_schema = $1 ORDER BY table_name', ['public']); console.log(res.rows.map(r=>r.table_name).join('\\n')); } finally { client.release(); await pool.end(); }\"",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "list-db-tables",
+			"type": "shell",
+			"command": "node tmp-list-tables.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-local-server",
+			"type": "shell",
+			"command": "node server.js",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "run-auth-smoke",
+			"type": "shell",
+			"command": "node scripts/validate-auth-endpoints.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "run-smoke-suite",
+			"type": "shell",
+			"command": "node scripts/validate-smoke-all.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "rerun-evidence-test",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "rerun-evidence-test",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "rerun-evidence-test",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-evidence-pipeline",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-evidence-pipeline",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-evidence-pipeline",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-evidence-pipeline",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-evidence-pipeline",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-evidence-pipeline",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-evidence-pipeline",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js 2>&1 | head -80",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-evidence-pipeline",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "smoke-tests",
+			"type": "shell",
+			"command": "node scripts/validate-smoke-all.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "db-migrate",
+			"type": "shell",
+			"command": "node scripts/db-migrate.js --reset",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "db-migrate",
+			"type": "shell",
+			"command": "bash -c 'export $(cat .env | xargs) && node scripts/db-migrate.js --reset'",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "db-migrate",
+			"type": "shell",
+			"command": "node scripts/db-migrate.js --reset",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "db-migrate",
+			"type": "shell",
+			"command": "node scripts/db-migrate.js --reset",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-evidence-pipeline",
+			"type": "shell",
+			"command": "node test/evidence-pipeline-hardening.js",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "smoke-tests",
+			"type": "shell",
+			"command": "node scripts/validate-smoke-all.mjs",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-spr-mvp",
+			"type": "shell",
+			"command": "node test/spr-mvp.js 2>&1 | head -100",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "test-spr-mvp",
+			"type": "shell",
+			"command": "node test/spr-mvp.js",
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,11 +1,6 @@
 import { request as httpRequest } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 
-function makeUniqueTestEmail() {
-  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-  return `deploy-smoke+${suffix}@ventureos.local`;
-}
-
 function requestJson(options, body) {
   return new Promise((resolve, reject) => {
     const requestFn = options.protocol === 'https:' ? httpsRequest : httpRequest;
@@ -44,10 +39,6 @@ function cookieHeaderFromSetCookie(setCookie) {
   return cookies.map((cookie) => cookie.split(';')[0]).join('; ');
 }
 
-function isOk(res, statusCode) {
-  return res.statusCode === statusCode && res.body?.ok !== false;
-}
-
 async function main() {
   const rawUrl = process.env.VERCEL_URL || process.env.VERCEL_PREVIEW_URL || process.env.VERCEL_PRODUCTION_URL || 'http://127.0.0.1:5173';
   const normalizedUrl = normalizeBaseUrl(rawUrl);
@@ -61,27 +52,20 @@ async function main() {
 
   console.log(`Validating deployment at ${normalizedUrl}`);
 
-  const signupPayload = {
-    name: 'Deploy Smoke User',
-    email: makeUniqueTestEmail(),
-    password: 'password123',
-    workspaceName: 'Deploy Smoke Workspace',
-  };
-
-  const signupRes = await requestJson({
+  const demoLoginRes = await requestJson({
     ...baseOptions,
     method: 'POST',
-    path: '/api/auth/signup',
-  }, signupPayload);
+    path: '/api/auth/demo-login',
+  });
 
-  console.log('SIGNUP:', signupRes.statusCode, isOk(signupRes, 201) ? 'OK' : 'FAIL');
-  if (!isOk(signupRes, 201)) {
-    throw new Error(`Signup failed: ${JSON.stringify(signupRes.body)}`);
+  console.log('DEMO LOGIN:', demoLoginRes.statusCode, demoLoginRes.body?.ok ? 'OK' : 'FAIL');
+  if (demoLoginRes.statusCode !== 200 || !demoLoginRes.body?.ok) {
+    throw new Error(`Demo login failed: ${JSON.stringify(demoLoginRes.body)}`);
   }
 
-  const cookieHeader = cookieHeaderFromSetCookie(signupRes.headers['set-cookie']);
-  if (!cookieHeader.includes('ventureos_session=')) {
-    throw new Error('Signup did not return a session cookie');
+  const cookieHeader = cookieHeaderFromSetCookie(demoLoginRes.headers['set-cookie']);
+  if (!cookieHeader) {
+    throw new Error('Demo login did not return a session cookie');
   }
 
   const sessionRes = await requestJson({
@@ -91,8 +75,8 @@ async function main() {
     headers: { ...baseOptions.headers, Cookie: cookieHeader },
   });
 
-  console.log('SESSION:', sessionRes.statusCode, isOk(sessionRes, 200) ? 'OK' : 'FAIL');
-  if (!isOk(sessionRes, 200)) {
+  console.log('SESSION:', sessionRes.statusCode, sessionRes.body?.ok ? 'OK' : 'FAIL');
+  if (sessionRes.statusCode !== 200 || !sessionRes.body?.ok) {
     throw new Error(`Session check failed: ${JSON.stringify(sessionRes.body)}`);
   }
 

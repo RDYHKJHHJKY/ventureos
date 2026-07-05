@@ -4,26 +4,26 @@ import SoftwareRegistry from "./modules/spr/SoftwareRegistry.jsx";
 import PassportDashboard from "./components/PassportDashboard.jsx";
 import { UniversalCommandBar } from "./components/UniversalCommandBar.tsx";
 import { useCommandRegistry } from "./hooks/useCommandRegistry.ts";
+import EvidenceListPage from "./pages/EvidenceListPage.jsx";
+import EvidenceReportPage from "./pages/EvidenceReportPage.jsx";
+import "./styles/provenance.css";
 
 // ── Design tokens ──────────────────────────────────────────────────────────
-// SPR Global Legal Badge inspired: Dark navy base with gold accents
 const C = {
-  bg:        "#0F1419", // SPR dark navy base
-  surface:   "#141820",
-  border:    "#1F2530",
-  borderLit: "#2A3640",
+  bg:        "#000000", // Registry black (Premium/Lux)
+  surface:   "#0A0A0A",
+  border:    "#141414",
+  borderLit: "#2A2A2A",
   text:      "#F8F9FA", // Compliance white
   muted:     "#B4B0AA",
   dim:       "#8F8A84",
-  accent:    "#D4AF37", // SPR gold (brighter for better contrast)
+  accent:    "#C9A86A", // Lineage gold (primary accent for Premium)
   accentDim: "#A8834D",
   green:     "#00C27A", // Verification green
-  yellow:    "#D4AF37", // SPR gold
+  yellow:    "#C9A86A", // Lineage gold
   red:       "#C5302B", // Trust low / crimson
   orange:    "#F97316",
   indigo:    "#4753E6",
-  sprGold:   "#D4AF37",
-  sprNavy:   "#0F1419",
 };
 
 const styles = {
@@ -57,17 +57,16 @@ const styles = {
     gap: 8,
   },
   logoMark: {
-    width: 32,
-    height: 32,
-    background: `linear-gradient(135deg, ${C.sprGold}, #F4D03F)`,
-    borderRadius: 8,
+    width: 24,
+    height: 24,
+    background: `linear-gradient(135deg, ${C.accent}, ${C.indigo})`,
+    borderRadius: 6,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: 16,
+    fontSize: 11,
     fontWeight: 800,
-    color: C.sprNavy,
-    boxShadow: `0 0 12px ${C.sprGold}44`,
+    color: "#fff",
   },
   navLink: (active) => ({
     fontSize: 13,
@@ -2335,267 +2334,10 @@ function PublicPassport({ passportId, onClose }) {
   );
 }
 
-// ── AI Assistant Chat Component ────────────────────────────────────────────
-function AIAssistant() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { id: 1, text: "Hi! I'm your SPR AI Assistant. How can I help you today?", sender: "bot", timestamp: new Date() }
-  ]);
-  const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
-
-    const userMessage = {
-      id: messages.length + 1,
-      text: inputValue,
-      sender: "user",
-      timestamp: new Date(),
-    };
-
-    setMessages([...messages, userMessage]);
-    setInputValue("");
-    setIsLoading(true);
-
-    try {
-      // Simulate AI response - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      const botResponse = {
-        id: messages.length + 2,
-        text: `I understand you're asking about "${inputValue}". I'm analyzing your question and would provide detailed assistance on software trust scores, asset analysis, compliance verification, and SPR passport management. What specific area would you like help with?`,
-        sender: "bot",
-        timestamp: new Date(),
-      };
-      
-      setMessages(prev => [...prev, botResponse]);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <>
-      {/* Floating Chat Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          position: "fixed",
-          bottom: 24,
-          right: 24,
-          width: 56,
-          height: 56,
-          borderRadius: "50%",
-          background: `linear-gradient(135deg, ${C.sprGold}, #F4D03F)`,
-          border: "none",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 24,
-          boxShadow: `0 4px 20px ${C.sprGold}44`,
-          zIndex: 999,
-          transition: "all 0.3s ease",
-          color: C.sprNavy,
-          fontWeight: 700,
-        }}
-        title="AI Assistant"
-      >
-        {isOpen ? "✕" : "💬"}
-      </button>
-
-      {/* Chat Panel */}
-      {isOpen && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: 100,
-            right: 24,
-            width: 380,
-            maxHeight: 600,
-            background: C.surface,
-            border: `1px solid ${C.sprGold}44`,
-            borderRadius: 12,
-            display: "flex",
-            flexDirection: "column",
-            boxShadow: `0 10px 40px rgba(0,0,0,0.5)`,
-            zIndex: 999,
-            overflow: "hidden",
-          }}
-        >
-          {/* Header */}
-          <div
-            style={{
-              background: `linear-gradient(135deg, ${C.sprGold}22, ${C.sprNavy})`,
-              borderBottom: `1px solid ${C.sprGold}44`,
-              padding: "16px",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <div style={{ fontSize: 18 }}>🤖</div>
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>SPR AI Assistant</div>
-              <div style={{ fontSize: 11, color: C.dim }}>Online</div>
-            </div>
-          </div>
-
-          {/* Messages */}
-          <div
-            style={{
-              flex: 1,
-              overflow: "auto",
-              padding: "16px",
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-            }}
-          >
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                style={{
-                  display: "flex",
-                  justifyContent: msg.sender === "user" ? "flex-end" : "flex-start",
-                  gap: 8,
-                }}
-              >
-                <div
-                  style={{
-                    maxWidth: "70%",
-                    padding: "10px 14px",
-                    borderRadius: 8,
-                    background:
-                      msg.sender === "user"
-                        ? `${C.sprGold}22`
-                        : `${C.border}`,
-                    color: C.text,
-                    fontSize: 13,
-                    lineHeight: 1.4,
-                    border:
-                      msg.sender === "user"
-                        ? `1px solid ${C.sprGold}44`
-                        : `1px solid ${C.borderLit}`,
-                  }}
-                >
-                  {msg.text}
-                  <div style={{ fontSize: 10, color: C.dim, marginTop: 4 }}>
-                    {msg.timestamp.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </div>
-                </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div style={{ display: "flex", gap: 6 }}>
-                <div
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: C.sprGold,
-                    animation: "pulse 1.4s infinite",
-                  }}
-                />
-                <div
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: C.sprGold,
-                    animation: "pulse 1.4s infinite 0.2s",
-                  }}
-                />
-                <div
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: C.sprGold,
-                    animation: "pulse 1.4s infinite 0.4s",
-                  }}
-                />
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input */}
-          <div
-            style={{
-              borderTop: `1px solid ${C.border}`,
-              padding: "12px",
-              display: "flex",
-              gap: 8,
-            }}
-          >
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-              placeholder="Ask me anything..."
-              disabled={isLoading}
-              style={{
-                flex: 1,
-                background: C.bg,
-                border: `1px solid ${C.border}`,
-                borderRadius: 6,
-                padding: "8px 12px",
-                fontSize: 12,
-                color: C.text,
-                outline: "none",
-                fontFamily: "inherit",
-              }}
-            />
-            <button
-              onClick={handleSendMessage}
-              disabled={isLoading || !inputValue.trim()}
-              style={{
-                background: C.sprGold,
-                border: "none",
-                borderRadius: 6,
-                padding: "8px 12px",
-                cursor: isLoading || !inputValue.trim() ? "not-allowed" : "pointer",
-                color: C.sprNavy,
-                fontWeight: 700,
-                fontSize: 12,
-                transition: "all 0.2s",
-                opacity: isLoading || !inputValue.trim() ? 0.5 : 1,
-              }}
-            >
-              →
-            </button>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
 export default function VentureOS() {
   const [page, setPage] = useState("dashboard");
   const [publicPassportId, setPublicPassportId] = useState(null);
+  const [selectedEvidenceAsset, setSelectedEvidenceAsset] = useState(null);
   const [generatedPassports, setGeneratedPassports] = useState([]);
   const [authenticated, setAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
@@ -2858,6 +2600,7 @@ export default function VentureOS() {
     { id: "projects", label: "Projects" },
     { id: "registry", label: "Registry" },
     { id: "passports", label: "Passports" },
+    { id: "evidence-browser", label: "Evidence" },
     { id: "reports", label: "Reports" },
     { id: "compliance", label: "Compliance" },
     { id: "billing", label: "Billing" },
@@ -2871,7 +2614,6 @@ export default function VentureOS() {
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: ${C.bg}; }
         ::-webkit-scrollbar-thumb { background: ${C.border}; border-radius: 3px; }
         button:hover { opacity: 0.88; }
@@ -3051,6 +2793,13 @@ export default function VentureOS() {
             {page === "compliance" && <ComplianceExports />}
             {page === "billing" && <BillingIntegration />}
             {page === "vendor" && <VendorRegistry />}
+            {page === "evidence-browser" && <EvidenceListPage onSelectAsset={(assetId) => {
+              setPage("evidence-report");
+              setSelectedEvidenceAsset(assetId);
+            }} />}
+            {page === "evidence-report" && selectedEvidenceAsset && (
+              <EvidenceReportPage assetId={selectedEvidenceAsset} onBack={() => setPage("evidence-browser")} />
+            )}
             {page === "passport" && <PassportDashboard workspaceId={workspaces[0]?.id || 'demo_workspace'} vendorId={(vendors && vendors[0] && vendors[0].id) || 'demo_vendor'} />}
             {page === "enterprise" && <EnterprisePortal />}
             {page === "public-registry" && <PublicRegistry />}
@@ -3075,13 +2824,9 @@ export default function VentureOS() {
           allCommands={allCommands}
         />
       )}
-
-      {/* AI Assistant Chat */}
-      {authenticated && <AIAssistant />}
     </div>
   );
 }
-
 
 
 

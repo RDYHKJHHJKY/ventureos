@@ -879,7 +879,7 @@ const createSystemCommandSet = (): Command[] => [
   },
 ];
 
-export const useCommandRegistry = (context: CommandContextState): Command[] => {
+export const useCommandRegistry = (context: CommandContextState = { workspaceId: '' }): Command[] => {
   return useMemo<Command[]>(() => {
     return [
       ...createPassportCommandSet(context),
