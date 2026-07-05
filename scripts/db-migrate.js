@@ -27,28 +27,131 @@ if (!DATABASE_URL) {
 
 const migrationsDir = path.join(__dirname, "..", "db", "migrations");
 
+function parseSqlStatements(sql) {
+  const statements = [];
+  let current = "";
+  let inSingleQuote = false;
+  let inDoubleQuote = false;
+  let inLineComment = false;
+  let inBlockComment = false;
+  let inDollarQuote = false;
+  let dollarTag = null;
+
+  for (let i = 0; i < sql.length; i += 1) {
+    const char = sql[i];
+    const next = sql[i + 1];
+
+    if (inLineComment) {
+      if (char === "\n") {
+        inLineComment = false;
+        current += char;
+      }
+      continue;
+    }
+
+    if (inBlockComment) {
+      if (char === "*" && next === "/") {
+        inBlockComment = false;
+        i += 1;
+      }
+      continue;
+    }
+
+    if (inSingleQuote) {
+      if (char === "'" && next === "'") {
+        current += "''";
+        i += 1;
+        continue;
+      }
+      if (char === "'") {
+        inSingleQuote = false;
+      }
+      current += char;
+      continue;
+    }
+
+    if (inDoubleQuote) {
+      if (char === '"') {
+        inDoubleQuote = false;
+      }
+      current += char;
+      continue;
+    }
+
+    if (inDollarQuote) {
+      if (char === "$" && sql.slice(i, i + dollarTag.length) === dollarTag) {
+        current += dollarTag;
+        i += dollarTag.length - 1;
+        inDollarQuote = false;
+        dollarTag = null;
+        continue;
+      }
+      current += char;
+      continue;
+    }
+
+    if (char === "-" && next === "-") {
+      inLineComment = true;
+      i += 1;
+      continue;
+    }
+
+    if (char === "/" && next === "*") {
+      inBlockComment = true;
+      i += 1;
+      continue;
+    }
+
+    if (char === "'") {
+      inSingleQuote = true;
+      current += char;
+      continue;
+    }
+
+    if (char === '"') {
+      inDoubleQuote = true;
+      current += char;
+      continue;
+    }
+
+    if (char === "$") {
+      const match = sql.slice(i).match(/^\$[A-Za-z0-9_]*\$/);
+      if (match) {
+        dollarTag = match[0];
+        inDollarQuote = true;
+        current += dollarTag;
+        i += dollarTag.length - 1;
+        continue;
+      }
+    }
+
+    if (char === ";") {
+      const statement = current.trim();
+      if (statement) {
+        statements.push(statement);
+      }
+      current = "";
+      continue;
+    }
+
+    current += char;
+  }
+
+  const finalStatement = current.trim();
+  if (finalStatement) {
+    statements.push(finalStatement);
+  }
+
+  return statements;
+}
+
 async function runMigration(client, migrationFile) {
   const migrationPath = path.join(migrationsDir, migrationFile);
-  let sql = fs.readFileSync(migrationPath, "utf-8");
+  const sql = fs.readFileSync(migrationPath, "utf-8");
 
   console.log(`\n🔄 Running migration: ${migrationFile}`);
   try {
-    // Remove comment-only lines and leading/trailing whitespace
-    const lines = sql
-      .split("\n")
-      .map((line) => {
-        // Remove inline comments
-        const commentIdx = line.indexOf("--");
-        return commentIdx >= 0 ? line.substring(0, commentIdx) : line;
-      })
-      .join("\n");
-
-    // Split by semicolons and execute each statement
-    const statements = lines
-      .split(";")
-      .map((s) => s.trim())
-      .filter((s) => s && !s.startsWith("--"));
-
+    const statements = parseSqlStatements(sql);
     for (const statement of statements) {
       await client.query(statement);
     }

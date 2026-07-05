@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHmac } from "node:crypto";
 import { mutateDb, createId, readDb } from "../lib/server/data-store.js";
 import { createSession, createWorkspaceForUser, registerUser } from "../lib/server/auth.js";
 import { handleApiRequest, verifyAuditChain, verifyPassportEnvelope, decryptWorkspacePayload } from "../lib/server/api-router.js";
@@ -22,11 +23,14 @@ function makeRes() {
   };
 }
 
-async function requestJson(pathname, method = "GET", payload = null, token) {
+async function requestJson(pathname, method = "GET", payload = null, token, headers = {}) {
   const req = {
     method,
     url: pathname,
-    headers: token ? { cookie: `ventureos_session=${token}` } : {},
+    headers: {
+      ...headers,
+      ...(token ? { cookie: `ventureos_session=${token}` } : {}),
+    },
   };
   if (payload) {
     req.body = JSON.stringify(payload);
@@ -79,6 +83,7 @@ async function readAuditDb() {
 }
 
 async function main() {
+  process.env.INGESTION_SECRET = process.env.INGESTION_SECRET || "test-secret";
   // Clean up PostgreSQL if in use
   await cleanupPostgresForTest();
   // Create user through registerUser which handles both PostgreSQL and file storage
@@ -163,7 +168,16 @@ async function main() {
   assert.equal(githubScanResponse.payload.evidence.type, "github");
   assert.ok(githubScanResponse.payload.evidence.summary.includes("GitHub"));
 
-  const evidenceResponse = await requestJson("/api/spr/evidence", "POST", { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "CycloneDX SBOM", summary: "Generated from release pipeline", uri: "https://example.com/sbom.json", strength: 0.9, freshnessDays: 7, verified: true }, session.token);
+  const evidencePayload = { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "CycloneDX SBOM", summary: "Generated from release pipeline", uri: "https://example.com/sbom.json", strength: 0.9, freshnessDays: 7, verified: true };
+  const rawEvidenceBody = JSON.stringify(evidencePayload);
+  const evidenceSignature = createHmac("sha256", process.env.INGESTION_SECRET).update(rawEvidenceBody).digest("hex");
+  const evidenceResponse = await requestJson(
+    "/api/spr/evidence",
+    "POST",
+    evidencePayload,
+    session.token,
+    { "x-ventureos-signature": `sha256=${evidenceSignature}` }
+  );
   assert.equal(evidenceResponse.statusCode, 201);
   assert.equal(evidenceResponse.payload.ok, true);
   assert.equal(evidenceResponse.payload.evidence.type, "sbom");
@@ -216,7 +230,7 @@ async function main() {
   assert.equal(privacyResponse.payload.ok, true);
   assert.equal(privacyResponse.payload.evidence.visibility, "restricted");
 
-  const auditDbAfterPrivacy = await readDb();
+  const auditDbAfterPrivacy = process.env.DATABASE_URL ? await readAuditDb() : await readDb();
   assert.ok((auditDbAfterPrivacy.sprAuditLogs || []).some((item) => item.type === "evidence.visibility_changed" && item.targetId === evidenceResponse.payload.evidence.id));
 
   const standardsResponse = await requestJson("/api/spr/standards", "POST", { softwareId: softwareResponse.payload.software.id, framework: "soc2", title: "SOC 2 Report", summary: "Annual attestation", uri: "https://example.com/soc2.pdf", strength: 0.85, freshnessDays: 30, verified: true }, session.token);
@@ -288,7 +302,7 @@ async function main() {
   assert.equal(restrictedViewResponse.statusCode, 200);
   assert.equal(restrictedViewResponse.payload.passportId, restrictedPassportResponse.payload.passport.id);
 
-  const auditDbAfterRestrictedAccess = await readDb();
+  const auditDbAfterRestrictedAccess = process.env.DATABASE_URL ? await readAuditDb() : await readDb();
   assert.ok((auditDbAfterRestrictedAccess.sprAuditLogs || []).some((item) => item.type === "passport.access_granted" && item.targetId === restrictedPassportResponse.payload.passport.id));
   assert.ok((auditDbAfterRestrictedAccess.sprAuditLogs || []).every((item) => item.auditHash));
   assert.equal(verifyAuditChain(auditDbAfterRestrictedAccess.sprAuditLogs), true);
