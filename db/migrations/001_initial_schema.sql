@@ -1,6 +1,7 @@
--- VentureOS PostgreSQL Database Schema
--- Production-ready schema with authentication, workspaces, and multi-tenant support
--- Deploy with: psql $DATABASE_URL -f db/schema.sql
+-- VentureOS Initial Database Schema Migration
+-- Migration ID: 001
+-- Description: Create core tables for users, workspaces, sessions, assets, scans, and SPR data
+-- Run with: psql $DATABASE_URL -f db/migrations/001_initial_schema.sql
 
 -- ============================================================================
 -- Users & Authentication
@@ -134,35 +135,6 @@ CREATE TABLE IF NOT EXISTS evidence_items (
   created_at timestamptz not null default now()
 );
 
-CREATE OR REPLACE FUNCTION prevent_provenance_mutation()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF OLD.provenance_hash IS DISTINCT FROM NEW.provenance_hash THEN
-    RAISE EXCEPTION 'FATAL: provenance_hash is immutable and cannot be modified after creation. incident_id=%', gen_random_uuid();
-  END IF;
-
-  IF OLD.discovered_by IS DISTINCT FROM NEW.discovered_by THEN
-    RAISE EXCEPTION 'FATAL: discovered_by is immutable and cannot be modified after creation.';
-  END IF;
-
-  IF OLD.source_url IS DISTINCT FROM NEW.source_url THEN
-    RAISE EXCEPTION 'FATAL: source_url is immutable and cannot be modified after creation.';
-  END IF;
-
-  IF OLD.canonical_snapshot IS DISTINCT FROM NEW.canonical_snapshot THEN
-    RAISE EXCEPTION 'FATAL: canonical_snapshot is immutable and cannot be modified after creation.';
-  END IF;
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-DROP TRIGGER IF EXISTS trg_immutable_provenance ON evidence_items;
-CREATE TRIGGER trg_immutable_provenance
-  BEFORE UPDATE ON evidence_items
-  FOR EACH ROW
-  EXECUTE FUNCTION prevent_provenance_mutation();
-
 CREATE TABLE IF NOT EXISTS passports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID not null references workspaces(id) on delete cascade,
@@ -196,6 +168,10 @@ CREATE INDEX IF NOT EXISTS idx_passports_asset_id ON passports(asset_id);
 CREATE INDEX IF NOT EXISTS idx_scan_runs_workspace_id ON scan_runs(workspace_id);
 CREATE INDEX IF NOT EXISTS idx_passports_workspace_id ON passports(workspace_id);
 
+-- ============================================================================
+-- SPR (Software Provenance & Risk) Tables
+-- ============================================================================
+
 CREATE TABLE IF NOT EXISTS spr_vendors (
   id text PRIMARY KEY,
   name text NOT NULL,
@@ -222,7 +198,7 @@ CREATE TABLE IF NOT EXISTS spr_software (
 
 CREATE TABLE IF NOT EXISTS spr_evidence (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  software_id UUID NOT NULL,
+  software_id text NOT NULL,
   type text NOT NULL,
   title text NOT NULL,
   summary text,
@@ -234,7 +210,7 @@ CREATE TABLE IF NOT EXISTS spr_evidence (
   visibility text NOT NULL DEFAULT 'public',
   access_token text,
   workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL,
-  vendor_id UUID,
+  vendor_id text,
   trust_score numeric,
   numeric_signals jsonb,
   payload text,
@@ -260,8 +236,8 @@ CREATE TABLE IF NOT EXISTS spr_evidence (
 );
 
 CREATE TABLE IF NOT EXISTS spr_signals (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  software_id UUID NOT NULL,
+  id text PRIMARY KEY,
+  software_id text NOT NULL,
   type text NOT NULL,
   severity text,
   summary text,
@@ -275,8 +251,8 @@ CREATE TABLE IF NOT EXISTS spr_signals (
 
 CREATE TABLE IF NOT EXISTS spr_passports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  software_id UUID,
-  vendor_id UUID,
+  software_id text,
+  vendor_id text,
   software_name text,
   vendor_name text,
   visibility text NOT NULL DEFAULT 'public',
@@ -305,6 +281,18 @@ CREATE TABLE IF NOT EXISTS spr_passports (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS spr_audit_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  type text NOT NULL,
+  entity_id text,
+  details jsonb,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- ============================================================================
+-- Indexes for SPR Tables
+-- ============================================================================
+
 CREATE INDEX IF NOT EXISTS idx_spr_vendors_name ON spr_vendors(name);
 CREATE INDEX IF NOT EXISTS idx_spr_software_vendor_id ON spr_software(vendor_id);
 CREATE INDEX IF NOT EXISTS idx_spr_evidence_software_id ON spr_evidence(software_id);
@@ -312,36 +300,3 @@ CREATE INDEX IF NOT EXISTS idx_spr_evidence_workspace_id ON spr_evidence(workspa
 CREATE INDEX IF NOT EXISTS idx_spr_signals_software_id ON spr_signals(software_id);
 CREATE INDEX IF NOT EXISTS idx_spr_passports_software_id ON spr_passports(software_id);
 CREATE INDEX IF NOT EXISTS idx_spr_passports_workspace_id ON spr_passports(workspace_id);
-
-CREATE TABLE IF NOT EXISTS spr_audit_logs (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type text NOT NULL,
-  target_id UUID,
-  payload jsonb NOT NULL,
-  workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL,
-  payload_hash text NOT NULL,
-  previous_audit_hash text,
-  audit_hash text NOT NULL,
-  created_at timestamptz not null default now()
-);
-
-CREATE INDEX IF NOT EXISTS idx_spr_audit_logs_target_id ON spr_audit_logs(target_id);
-CREATE INDEX IF NOT EXISTS idx_spr_audit_logs_workspace_id ON spr_audit_logs(workspace_id);
-CREATE INDEX IF NOT EXISTS idx_spr_audit_logs_created_at ON spr_audit_logs(created_at DESC);
-
-CREATE TABLE IF NOT EXISTS spr_restricted_tokens (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  token text UNIQUE NOT NULL,
-  workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL,
-  project_id text,
-  evidence_type text,
-  ttl_days integer NOT NULL,
-  issued_by text,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  expires_at timestamptz NOT NULL
-);
-
-CREATE INDEX IF NOT EXISTS idx_spr_restricted_tokens_token ON spr_restricted_tokens(token);
-CREATE INDEX IF NOT EXISTS idx_spr_restricted_tokens_workspace_id ON spr_restricted_tokens(workspace_id);
-
-
