@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ main, master ]
@@ -31,6 +34,5 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Audit dependencies (report only)
-        run: npm audit --json > audit-output.json || true
-        # Optionally upload audit-output.json as an artifact in future
+      - name: Audit dependencies
+        run: npm audit --omit=dev

@@ -1,14 +1,17 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 const projectRoot = process.cwd();
-const deployScript = join(projectRoot, 'scripts', 'validate-deploy-endpoints.mjs');
+const deployScript = resolve(projectRoot, 'scripts', 'validate-deploy-endpoints.mjs');
 if (!existsSync(deployScript)) {
   throw new Error(`Missing deploy validation script: ${deployScript}`);
 }
 
 function runDeploy(target, url) {
+  if (typeof url !== 'string' || !url.trim()) {
+    throw new Error(`Invalid deploy URL for target ${target}`);
+  }
   console.log(`\n=== RUNNING DEPLOY VALIDATION FOR ${target.toUpperCase()} ===`);
   execFileSync(process.execPath, [deployScript], {
     stdio: 'inherit',

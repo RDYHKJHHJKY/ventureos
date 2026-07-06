@@ -181,7 +181,15 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5173;
+const PORT = Number.parseInt(process.env.PORT || "5173", 10);
+if (!Number.isInteger(PORT) || PORT <= 0 || PORT > 65535) {
+  throw new Error(`Invalid PORT value: ${process.env.PORT}`);
+}
+
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET missing");
+}
+
 server.listen(PORT, () => {
   console.log(`VentureOS server listening on http://localhost:${PORT}`);
 });

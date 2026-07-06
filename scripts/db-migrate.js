@@ -190,7 +190,7 @@ async function resetDatabase(client) {
 
     for (const table of tables) {
       try {
-        await client.query(`DROP TABLE IF EXISTS ${table} CASCADE`);
+        await client.query("DROP TABLE IF EXISTS $1 CASCADE", [table]);
         console.log(`  Dropped: ${table}`);
       } catch (error) {
         // Table might not exist, ignore
