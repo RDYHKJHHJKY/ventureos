@@ -3,6 +3,9 @@
 
 import SelfAuditEngine from '../../lib/spr/self-audit.js';
 
+let latestAudit = null;
+const auditHistory = [];
+
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,13 +21,18 @@ export default async function handler(req, res) {
     // POST /api/spr/audit/trigger - Trigger a new audit
     if (req.method === 'POST' && req.url === '/api/spr/audit/trigger') {
       console.log('[API] Triggering self-audit...');
-      
       try {
         const audit = await SelfAuditEngine.runCompleteAudit();
+        latestAudit = {
+          ...audit,
+          auditDate: audit.auditDate instanceof Date ? audit.auditDate.toISOString() : String(audit.auditDate || new Date().toISOString()),
+        };
+        auditHistory.unshift(latestAudit);
+        if (auditHistory.length > 20) auditHistory.length = 20;
         res.status(200).json({
           success: true,
           message: 'Self-audit completed successfully',
-          audit,
+          audit: latestAudit,
         });
       } catch (error) {
         res.status(500).json({
@@ -38,55 +46,19 @@ export default async function handler(req, res) {
 
     // GET /api/spr/audit/status - Get latest audit status
     if (req.method === 'GET' && req.url === '/api/spr/audit/status') {
-      // This is a simple implementation - in production, query your database
-      const mockAudit = {
-        id: 'audit-' + Date.now(),
-        date: new Date().toISOString(),
-        status: 'passed',
-        trustScore: 85,
-        details: {
-          code: { score: 85, issues: 0 },
-          performance: { uptime: 99.8, responseTime: 145 },
-          security: { score: 90, vulnerabilities: 0 },
-          compliance: { score: 82, standards: 'ISO27001,SOC2,GDPR' },
-        },
+      const audit = latestAudit || {
+        auditId: null,
+        auditDate: new Date().toISOString(),
+        status: 'pending',
+        trustImpact: 0,
+        results: {},
       };
-
-      res.status(200).json({
-        success: true,
-        audit: mockAudit,
-      });
-      return;
+      return res.status(200).json({ success: true, audit });
     }
 
     // GET /api/spr/audit/history - Get audit history
     if (req.method === 'GET' && req.url === '/api/spr/audit/history') {
-      const mockHistory = [
-        {
-          id: 'audit-' + (Date.now() - 86400000),
-          date: new Date(Date.now() - 86400000).toISOString(),
-          status: 'passed',
-          trustScore: 83,
-        },
-        {
-          id: 'audit-' + (Date.now() - 172800000),
-          date: new Date(Date.now() - 172800000).toISOString(),
-          status: 'passed',
-          trustScore: 82,
-        },
-        {
-          id: 'audit-' + (Date.now() - 259200000),
-          date: new Date(Date.now() - 259200000).toISOString(),
-          status: 'warning',
-          trustScore: 78,
-        },
-      ];
-
-      res.status(200).json({
-        success: true,
-        audits: mockHistory,
-      });
-      return;
+      return res.status(200).json({ success: true, audits: auditHistory });
     }
 
     // Default 404
@@ -95,7 +67,6 @@ export default async function handler(req, res) {
       error: 'Endpoint not found',
       path: req.url,
     });
-
   } catch (error) {
     console.error('[API ERROR]', error);
     res.status(500).json({

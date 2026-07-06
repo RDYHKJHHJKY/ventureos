@@ -1,0 +1,461 @@
+count 7
+[
+  {
+    "id": "spraudit_scolfz",
+    "type": "signal.created",
+    "targetId": "sprsignal_udshro",
+    "payload": {
+      "type": "cve",
+      "source": "nvd",
+      "severity": 2,
+      "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+      "numericSignals": {
+        "severity": 2,
+        "confidence": 0
+      }
+    },
+    "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+    "payloadHash": "sha256:2d0b5706a20bd020ec794334aef6bb4e9abc7cd49da31e7f0e7c74bc30071f9d",
+    "previousAuditHash": null,
+    "auditHash": "sha256:16c7e1aa9e11d1b73118bc5fbc41de086b46c0486943bc74aff653f2feb7d7a0",
+    "createdAt": "2026-07-05T18:45:21.545Z"
+  },
+  {
+    "id": "spraudit_1fzeazj",
+    "type": "evidence.visibility_changed",
+    "targetId": "21969d9e-7e5b-45e7-91f6-05852c93e9bd",
+    "payload": {
+      "vendorId": "sprvendor_9lkjyf",
+      "visibility": "restricted",
+      "accessToken": "sprvendor_9lkjyf:workspace-1:restricted",
+      "workspaceId": null
+    },
+    "workspaceId": null,
+    "payloadHash": "sha256:84b8945ebe0fdfabad4e2fcc4d37840ec3e5ad6e6707485e1f8e2606f861f72a",
+    "previousAuditHash": "sha256:16c7e1aa9e11d1b73118bc5fbc41de086b46c0486943bc74aff653f2feb7d7a0",
+    "auditHash": "sha256:8e0921d10fed17ff92caa7a2a530e5a53c621fed36390c1c03ebd99d470bafbf",
+    "createdAt": "2026-07-05T18:45:21.619Z"
+  },
+  {
+    "id": "spraudit_12z472o",
+    "type": "evidence.visibility_changed",
+    "targetId": "21969d9e-7e5b-45e7-91f6-05852c93e9bd",
+    "payload": {
+      "vendorId": "sprvendor_9lkjyf",
+      "visibility": "restricted",
+      "accessToken": "sprvendor_9lkjyf:workspace-1:restricted",
+      "workspaceId": null
+    },
+    "workspaceId": null,
+    "payloadHash": "sha256:84b8945ebe0fdfabad4e2fcc4d37840ec3e5ad6e6707485e1f8e2606f861f72a",
+    "previousAuditHash": "sha256:8e0921d10fed17ff92caa7a2a530e5a53c621fed36390c1c03ebd99d470bafbf",
+    "auditHash": "sha256:ebc495fe0ea959ce76334dffbe46b254ec40ad8e40ba0262d2082ef4a8e2b336",
+    "createdAt": "2026-07-05T18:45:21.634Z"
+  },
+  {
+    "id": "spraudit_58klyx",
+    "type": "evidence.bundle_created",
+    "targetId": "21969d9e-7e5b-45e7-91f6-05852c93e9bd",
+    "payload": {
+      "encrypted": true,
+      "requestId": "bundle-001",
+      "recipients": [
+        "buyer-123"
+      ],
+      "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+      "selectiveDisclosure": true
+    },
+    "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+    "payloadHash": "sha256:f75ec6a2f341cdfcca0eb3f7c171a30d39a9ad0df8d7187f9db4df4c4c07b218",
+    "previousAuditHash": "sha256:ebc495fe0ea959ce76334dffbe46b254ec40ad8e40ba0262d2082ef4a8e2b336",
+    "auditHash": "sha256:518ad0226f8a01ec1286bbd5c9ecd75a5ee4973999da7ed04ad76d2ad3d8bbaf",
+    "createdAt": "2026-07-05T18:45:21.696Z"
+  },
+  {
+    "id": "spraudit_j2lpht",
+    "type": "passport.issued",
+    "targetId": "sprpassport_10svcd2",
+    "payload": {
+      "visibility": "public",
+      "accessToken": null,
+      "workspaceId": null,
+      "replaySnapshot": {
+        "type": "passport.issue",
+        "inputs": {
+          "vendor": {
+            "id": "sprvendor_9lkjyf",
+            "complianceClaims": [
+              "ISO27001",
+              "SOC2"
+            ]
+          },
+          "profile": "default",
+          "software": {
+            "id": "sprsoftware_1fpypfu",
+            "packageName": "@contoso/trust-agent",
+            "repositoryUrl": "https://github.com/contoso/trust-agent"
+          },
+          "visibility": "public",
+          "accessToken": "null",
+          "workspaceId": null,
+          "evidenceList": [
+            {
+              "id": "21969d9e-7e5b-45e7-91f6-05852c93e9bd",
+              "uri": "https://example.com/sbom.json",
+              "type": "sbom",
+              "title": "CycloneDX SBOM",
+              "bundle": null,
+              "source": "manual",
+              "summary": "Generated from release pipeline",
+              "strength": 0.9,
+              "vendorId": "sprvendor_9lkjyf",
+              "verified": true,
+              "createdAt": "2026-07-05T18:45:21.474Z",
+              "updatedAt": "2026-07-05T18:45:21.628Z",
+              "trustScore": 0,
+              "visibility": "restricted",
+              "accessToken": "sprvendor_9lkjyf:workspace-1:restricted",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 7,
+              "numericSignals": {
+                "trustScore": 0
+              }
+            },
+            {
+              "id": "2d793353-0e0d-41d4-b3a8-8e08f4e101a6",
+              "uri": "https://github.com/octocat/Hello-World",
+              "type": "github",
+              "title": "octocat/Hello-World metadata",
+              "bundle": null,
+              "source": "github",
+              "summary": "GitHub repository metadata for octocat/Hello-World.",
+              "strength": 0.8,
+              "vendorId": null,
+              "verified": true,
+              "createdAt": "2026-07-05T18:45:21.432Z",
+              "updatedAt": "2026-07-05T18:45:21.432Z",
+              "trustScore": 0,
+              "visibility": "public",
+              "accessToken": "null",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 683,
+              "numericSignals": {
+                "size": 1,
+                "forks": 6167,
+                "stars": 3660,
+                "license": null,
+                "openIssues": 6479,
+                "visibility": "public",
+                "repoAgeDays": 5638,
+                "subscribers": 1727,
+                "defaultBranch": "master",
+                "lastCommitDate": "2024-08-20T23:54:42Z",
+                "contributorCount": 0,
+                "commitCountLast30Days": 0
+              }
+            },
+            {
+              "id": "979d7892-f048-485b-8c59-e76af4be11ac",
+              "uri": null,
+              "type": "slsa",
+              "title": "SLSA Provenance",
+              "bundle": null,
+              "source": "github-actions",
+              "summary": "Provenance from github-actions",
+              "strength": 0.9,
+              "vendorId": "sprvendor_9lkjyf",
+              "verified": false,
+              "createdAt": "2026-07-05T18:45:21.585Z",
+              "updatedAt": "2026-07-05T18:45:21.585Z",
+              "trustScore": 0,
+              "visibility": "public",
+              "accessToken": "null",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 7,
+              "numericSignals": {}
+            },
+            {
+              "id": "a08ab17d-377a-46e5-a577-c63183a3d20d",
+              "uri": "https://example.com/soc2.pdf",
+              "type": "soc2",
+              "title": "SOC 2 Report",
+              "bundle": null,
+              "source": "standards",
+              "summary": "Annual attestation",
+              "strength": 0.85,
+              "vendorId": null,
+              "verified": true,
+              "createdAt": "2026-07-05T18:45:21.642Z",
+              "updatedAt": "2026-07-05T18:45:21.642Z",
+              "trustScore": 0,
+              "visibility": "public",
+              "accessToken": "null",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 30,
+              "numericSignals": {
+                "score": 0.85,
+                "framework": 0,
+                "verificationLevel": 0
+              }
+            },
+            {
+              "id": "c6ff2bc8-ff8e-46bc-b696-96ffa6371c04",
+              "uri": null,
+              "type": "sbom",
+              "title": "SBOM Ingested",
+              "bundle": null,
+              "source": "sbom",
+              "summary": "{\"components\":[{\"name\":\"left-pad\",\"version\":\"1.0.0\"}]}",
+              "strength": 0.8,
+              "vendorId": "sprvendor_9lkjyf",
+              "verified": false,
+              "createdAt": "2026-07-05T18:45:21.551Z",
+              "updatedAt": "2026-07-05T18:45:21.551Z",
+              "trustScore": 0,
+              "visibility": "public",
+              "accessToken": "null",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 7,
+              "numericSignals": {}
+            }
+          ],
+          "scoringProfile": "default"
+        },
+        "outputs": {
+          "profile": "default",
+          "verdict": "CONDITIONALLY TRUSTED",
+          "trustScore": 62,
+          "riskCategory": "Moderate",
+          "confidenceScore": 100
+        },
+        "envelope": {
+          "issuedAt": "2026-07-05",
+          "evidenceIds": [
+            "21969d9e-7e5b-45e7-91f6-05852c93e9bd",
+            "2d793353-0e0d-41d4-b3a8-8e08f4e101a6",
+            "979d7892-f048-485b-8c59-e76af4be11ac",
+            "a08ab17d-377a-46e5-a577-c63183a3d20d",
+            "c6ff2bc8-ff8e-46bc-b696-96ffa6371c04"
+          ],
+          "trustGraphHash": "sha256:c02e8d8caec1157394eb14be628805764cecfa0413e4422cda8b7d58c1877a02",
+          "evidenceSummary": "5 evidence item(s) reviewed.",
+          "evidenceBundleHash": "sha256:b565dffa91132d41a2b5c09cd96f483b221243f83755d2ba6fb7edd413758767",
+          "evidenceFreshnessHash": "sha256:b315aed1907f778a50ab1c4b8bee0022a4f111727d49364f3ccdfb55db1f709c",
+          "passportEnvelopeVersion": 1
+        },
+        "passportId": "sprpassport_10svcd2",
+        "workspaceId": null,
+        "trustScoreHash": "sha256:dc1f197da1fa130bebfaa89131b0d96d7fe494bac1cf6f6563b69854288de864",
+        "passportEnvelopeHash": "sha256:707bc738a2ac9672d512cd908f354a184ba89e756ee5921521d2f3410afa9a73"
+      },
+      "scoringProfile": "default",
+      "trustScoreHash": "sha256:dc1f197da1fa130bebfaa89131b0d96d7fe494bac1cf6f6563b69854288de864"
+    },
+    "workspaceId": null,
+    "payloadHash": "sha256:23f17128ef7e89e7052a097ac16173a98729769f852c798c10dd3d5bb67be64e",
+    "previousAuditHash": "sha256:518ad0226f8a01ec1286bbd5c9ecd75a5ee4973999da7ed04ad76d2ad3d8bbaf",
+    "auditHash": "sha256:35ebe033565525cfc053f82ce15e07d56582d7b31d3b088658f48c39a4d40cc6",
+    "createdAt": "2026-07-05T18:45:21.864Z"
+  },
+  {
+    "id": "spraudit_7xex9k",
+    "type": "passport.access_granted",
+    "targetId": "sprpassport_2ow7yt",
+    "payload": {
+      "visibility": "restricted",
+      "accessToken": "sprvendor_9lkjyf:workspace-1:restricted",
+      "workspaceId": "workspace-1",
+      "replaySnapshot": {
+        "type": "passport.issue",
+        "inputs": {
+          "vendor": {
+            "id": "sprvendor_9lkjyf",
+            "complianceClaims": [
+              "ISO27001",
+              "SOC2"
+            ]
+          },
+          "profile": "default",
+          "software": {
+            "id": "sprsoftware_1fpypfu",
+            "packageName": "@contoso/trust-agent",
+            "repositoryUrl": "https://github.com/contoso/trust-agent"
+          },
+          "visibility": "restricted",
+          "accessToken": "sprvendor_9lkjyf:workspace-1:restricted",
+          "workspaceId": "workspace-1",
+          "evidenceList": [
+            {
+              "id": "21969d9e-7e5b-45e7-91f6-05852c93e9bd",
+              "uri": "https://example.com/sbom.json",
+              "type": "sbom",
+              "title": "CycloneDX SBOM",
+              "bundle": null,
+              "source": "manual",
+              "summary": "Generated from release pipeline",
+              "strength": 0.9,
+              "vendorId": "sprvendor_9lkjyf",
+              "verified": true,
+              "createdAt": "2026-07-05T18:45:21.474Z",
+              "updatedAt": "2026-07-05T18:45:21.628Z",
+              "trustScore": 0,
+              "visibility": "restricted",
+              "accessToken": "sprvendor_9lkjyf:workspace-1:restricted",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 7,
+              "numericSignals": {
+                "trustScore": 0
+              }
+            },
+            {
+              "id": "2d793353-0e0d-41d4-b3a8-8e08f4e101a6",
+              "uri": "https://github.com/octocat/Hello-World",
+              "type": "github",
+              "title": "octocat/Hello-World metadata",
+              "bundle": null,
+              "source": "github",
+              "summary": "GitHub repository metadata for octocat/Hello-World.",
+              "strength": 0.8,
+              "vendorId": null,
+              "verified": true,
+              "createdAt": "2026-07-05T18:45:21.432Z",
+              "updatedAt": "2026-07-05T18:45:21.432Z",
+              "trustScore": 0,
+              "visibility": "public",
+              "accessToken": "null",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 683,
+              "numericSignals": {
+                "size": 1,
+                "forks": 6167,
+                "stars": 3660,
+                "license": null,
+                "openIssues": 6479,
+                "visibility": "public",
+                "repoAgeDays": 5638,
+                "subscribers": 1727,
+                "defaultBranch": "master",
+                "lastCommitDate": "2024-08-20T23:54:42Z",
+                "contributorCount": 0,
+                "commitCountLast30Days": 0
+              }
+            },
+            {
+              "id": "979d7892-f048-485b-8c59-e76af4be11ac",
+              "uri": null,
+              "type": "slsa",
+              "title": "SLSA Provenance",
+              "bundle": null,
+              "source": "github-actions",
+              "summary": "Provenance from github-actions",
+              "strength": 0.9,
+              "vendorId": "sprvendor_9lkjyf",
+              "verified": false,
+              "createdAt": "2026-07-05T18:45:21.585Z",
+              "updatedAt": "2026-07-05T18:45:21.585Z",
+              "trustScore": 0,
+              "visibility": "public",
+              "accessToken": "null",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 7,
+              "numericSignals": {}
+            },
+            {
+              "id": "a08ab17d-377a-46e5-a577-c63183a3d20d",
+              "uri": "https://example.com/soc2.pdf",
+              "type": "soc2",
+              "title": "SOC 2 Report",
+              "bundle": null,
+              "source": "standards",
+              "summary": "Annual attestation",
+              "strength": 0.85,
+              "vendorId": null,
+              "verified": true,
+              "createdAt": "2026-07-05T18:45:21.642Z",
+              "updatedAt": "2026-07-05T18:45:21.642Z",
+              "trustScore": 0,
+              "visibility": "public",
+              "accessToken": "null",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 30,
+              "numericSignals": {
+                "score": 0.85,
+                "framework": 0,
+                "verificationLevel": 0
+              }
+            },
+            {
+              "id": "c6ff2bc8-ff8e-46bc-b696-96ffa6371c04",
+              "uri": null,
+              "type": "sbom",
+              "title": "SBOM Ingested",
+              "bundle": null,
+              "source": "sbom",
+              "summary": "{\"components\":[{\"name\":\"left-pad\",\"version\":\"1.0.0\"}]}",
+              "strength": 0.8,
+              "vendorId": "sprvendor_9lkjyf",
+              "verified": false,
+              "createdAt": "2026-07-05T18:45:21.551Z",
+              "updatedAt": "2026-07-05T18:45:21.551Z",
+              "trustScore": 0,
+              "visibility": "public",
+              "accessToken": "null",
+              "workspaceId": "f0728d95-21c0-4f17-be05-a3863997b519",
+              "freshnessDays": 7,
+              "numericSignals": {}
+            }
+          ],
+          "scoringProfile": "default"
+        },
+        "outputs": {
+          "profile": "default",
+          "verdict": "CONDITIONALLY TRUSTED",
+          "trustScore": 62,
+          "riskCategory": "Moderate",
+          "confidenceScore": 100
+        },
+        "envelope": {
+          "issuedAt": "2026-07-05",
+          "evidenceIds": [
+            "21969d9e-7e5b-45e7-91f6-05852c93e9bd",
+            "2d793353-0e0d-41d4-b3a8-8e08f4e101a6",
+            "979d7892-f048-485b-8c59-e76af4be11ac",
+            "a08ab17d-377a-46e5-a577-c63183a3d20d",
+            "c6ff2bc8-ff8e-46bc-b696-96ffa6371c04"
+          ],
+          "trustGraphHash": "sha256:c02e8d8caec1157394eb14be628805764cecfa0413e4422cda8b7d58c1877a02",
+          "evidenceSummary": "5 evidence item(s) reviewed.",
+          "evidenceBundleHash": "sha256:b565dffa91132d41a2b5c09cd96f483b221243f83755d2ba6fb7edd413758767",
+          "evidenceFreshnessHash": "sha256:b315aed1907f778a50ab1c4b8bee0022a4f111727d49364f3ccdfb55db1f709c",
+          "passportEnvelopeVersion": 1
+        },
+        "passportId": "sprpassport_2ow7yt",
+        "workspaceId": "workspace-1",
+        "trustScoreHash": "sha256:67ca1eb1ce36a9be7ae1e78a39bd78d629d3d60fa7a850e8b7ebb0fbd70fe0e7",
+        "passportEnvelopeHash": "sha256:773c83a339f7e22054b88a626eae5c5dbb32ea7490ce01ad26aa4f4734e95132"
+      },
+      "scoringProfile": "default",
+      "trustScoreHash": "sha256:67ca1eb1ce36a9be7ae1e78a39bd78d629d3d60fa7a850e8b7ebb0fbd70fe0e7"
+    },
+    "workspaceId": null,
+    "payloadHash": "sha256:be5838272d4c06a2f8aa4bbfaa2ce8dc6e49c47d53c40479f2fc79e13ed1bf1c",
+    "previousAuditHash": "sha256:35ebe033565525cfc053f82ce15e07d56582d7b31d3b088658f48c39a4d40cc6",
+    "auditHash": "sha256:41cab5fcb9c46cf106295d9e1eb48a8312bd0071e927ef9530b0f42d45fdd789",
+    "createdAt": "2026-07-05T18:45:21.939Z"
+  },
+  {
+    "id": "spraudit_1v33hu0",
+    "type": "passport.access_granted",
+    "targetId": "sprpassport_2ow7yt",
+    "payload": {
+      "vendorId": "sprvendor_9lkjyf",
+      "accessToken": "sprvendor_9lkjyf:workspace-1:restricted",
+      "workspaceId": "workspace-1"
+    },
+    "workspaceId": null,
+    "payloadHash": "sha256:63e7e19d45b326714806ab6ad2894b6052e6eb909b80c1cb2d2ff5443704f8f9",
+    "previousAuditHash": "sha256:41cab5fcb9c46cf106295d9e1eb48a8312bd0071e927ef9530b0f42d45fdd789",
+    "auditHash": "sha256:b52eeaf3069c45fb2b868645ba3056be54a0dd1e0e9dc061cc8662024d7c35ff",
+    "createdAt": "2026-07-05T18:45:21.957Z"
+  }
+]

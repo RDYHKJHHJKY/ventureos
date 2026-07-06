@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Command, CommandPreviewData, CommandContextState } from '../domain/command';
+import { getSafeCommandContext } from './universalCommandBarContext';
 
 interface Props {
   command: Command | null;
@@ -16,8 +17,8 @@ const normalizePreview = async (preview: NonNullable<Command['preview']>, contex
 
 export const CommandPreview: React.FC<Props> = ({ command, context, onClose }) => {
   const [preview, setPreview] = useState<CommandPreviewData | string | null>(null);
-
   const [subMenuCommands, setSubMenuCommands] = useState<Command[] | null>(null);
+  const safeContext = getSafeCommandContext(context);
 
   useEffect(() => {
     let active = true;
@@ -26,13 +27,13 @@ export const CommandPreview: React.FC<Props> = ({ command, context, onClose }) =
         setPreview(null);
         return;
       }
-      const data = await normalizePreview(command.preview, context);
+      const data = await normalizePreview(command.preview, safeContext);
       if (!active) return;
       setPreview(data);
     };
 
     if (command?.subMenu) {
-      Promise.resolve(command.subMenu(context)).then((items) => {
+      Promise.resolve(command.subMenu(safeContext)).then((items) => {
         if (!active) return;
         setSubMenuCommands(items || []);
       }).catch(() => {
@@ -48,7 +49,7 @@ export const CommandPreview: React.FC<Props> = ({ command, context, onClose }) =
     return () => {
       active = false;
     };
-  }, [command, context, context.workspaceId, context.activeEntity?.entityId, context.activeEntity?.entityType, context.activePassportId, context.activeEvidenceId, context.activeFileId, context.activeGraphNodeId, context.activeIntegrationId, context.activeUserId, context.currentRoute, context.workspaceRefreshKey]);
+  }, [command, safeContext, safeContext.workspaceId, safeContext.activeEntity?.entityId, safeContext.activeEntity?.entityType, safeContext.activePassportId, safeContext.activeEvidenceId, safeContext.activeFileId, safeContext.activeGraphNodeId, safeContext.activeIntegrationId, safeContext.activeUserId, safeContext.currentRoute, safeContext.workspaceRefreshKey]);
 
   if (!command) {
     return (
@@ -96,7 +97,7 @@ export const CommandPreview: React.FC<Props> = ({ command, context, onClose }) =
                   onBlur={async (e) => {
                     const newValue = e.target.value.trim();
                     if (newValue !== field.value) {
-                      await field.onEdit?.(newValue, context);
+                      await field.onEdit?.(newValue, safeContext);
                     }
                   }}
                 />
@@ -114,7 +115,7 @@ export const CommandPreview: React.FC<Props> = ({ command, context, onClose }) =
               key={action.label}
               className="ucb-preview-action"
               onClick={async () => {
-                await action.run(context);
+                await action.run(safeContext);
                 onClose();
               }}
             >
@@ -130,7 +131,7 @@ export const CommandPreview: React.FC<Props> = ({ command, context, onClose }) =
               key={nav.label}
               className="ucb-preview-navigation-action"
               onClick={() => {
-                nav.navigate(context);
+                nav.navigate(safeContext);
                 onClose();
               }}
             >
@@ -148,7 +149,7 @@ export const CommandPreview: React.FC<Props> = ({ command, context, onClose }) =
               className="ucb-preview-action"
               onClick={async () => {
                 await child.run({
-                  ...context,
+                  ...safeContext,
                   onSuccess: (msg?: string) => {
                     if (msg) console.info(msg);
                   },

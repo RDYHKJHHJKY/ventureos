@@ -7,6 +7,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Command, CommandContextState } from '../domain/command';
 import { searchCommands } from '../utils/fuzzySearch';
 import { CommandPreview } from './CommandPreview';
+import { isCommandContextAvailable } from './universalCommandBarContext';
 import './UniversalCommandBar.css';
 
 interface Props {
@@ -51,35 +52,7 @@ export const UniversalCommandBar: React.FC<Props> = ({
     }
   }, [isOpen]);
 
-  const isContextAvailable = (cmd: Command) => {
-    if (cmd.requiresEntity) {
-      const requiredEntities = Array.isArray(cmd.requiresEntity) ? cmd.requiresEntity : [cmd.requiresEntity];
-      if (!context.activeEntity) return false;
-      if (!requiredEntities.includes(context.activeEntity.entityType)) return false;
-    }
-
-    if (!cmd.requiredContext || cmd.requiredContext.length === 0) return true;
-    return cmd.requiredContext.every((scope) => {
-      switch (scope) {
-        case 'passport':
-          return Boolean(context.activePassportId || context.activeEntity?.entityType === 'passport');
-        case 'evidence':
-          return Boolean(context.activeEvidenceId || context.activeEntity?.entityType === 'evidence');
-        case 'file':
-          return Boolean(context.activeFileId || context.activeEntity?.entityType === 'file');
-        case 'integration':
-          return Boolean(context.activeIntegrationId || context.activeEntity?.entityType === 'integration');
-        case 'user':
-          return Boolean(context.activeUserId || context.activeEntity?.entityType === 'user');
-        case 'workspace':
-          return Boolean(context.workspaceId);
-        case 'system':
-          return true;
-        default:
-          return true;
-      }
-    });
-  };
+  const isContextAvailable = (cmd: Command) => isCommandContextAvailable(context, cmd);
 
   // Filter commands based on query and active context
   useEffect(() => {

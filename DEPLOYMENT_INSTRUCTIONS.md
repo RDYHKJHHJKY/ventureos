@@ -40,6 +40,20 @@ NODE_ENV=production
 VITE_PUBLIC_APP_URL=your_production_url
 JWT_SECRET=your_jwt_secret
 BCRYPT_ROUNDS=12
+
+#### SPR ID Migration note
+
+If you upgrade to the latest code that uses UUID primary keys for SPR tables, run the provided conversion
+migration to update existing databases:
+
+```bash
+psql $DATABASE_URL -f db/migrations/003_convert_spr_ids_to_uuid.sql
+# or: node tmp/apply_migration_003.mjs
+```
+
+This migration converts `spr_audit_logs.id` and `spr_restricted_tokens.id` to `UUID` with
+`DEFAULT gen_random_uuid()` so the app can rely on Postgres-generated UUIDs for audit entries.
+
 ```
 
 ### Option 2: Docker Container

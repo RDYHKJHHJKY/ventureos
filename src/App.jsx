@@ -2,10 +2,16 @@ import { useEffect, useState, useRef } from "react";
 import VendorRegistry from "./modules/spr/VendorRegistry.jsx";
 import SoftwareRegistry from "./modules/spr/SoftwareRegistry.jsx";
 import PassportDashboard from "./components/PassportDashboard.jsx";
+import AdminDashboard from "./components/AdminDashboard/AdminDashboard.jsx";
 import { UniversalCommandBar } from "./components/UniversalCommandBar.tsx";
 import { useCommandRegistry } from "./hooks/useCommandRegistry.ts";
 import EvidenceListPage from "./pages/EvidenceListPage.jsx";
 import EvidenceReportPage from "./pages/EvidenceReportPage.jsx";
+import Integrations from "./components/Integrations.jsx";
+import Tutorial from "./components/Tutorial.jsx";
+import PassportViewer from "./components/PassportViewer.jsx";
+import EvidenceViewer from "./components/EvidenceViewer.jsx";
+import PassportDetail from "./components/PassportDetail.jsx";
 import "./styles/provenance.css";
 
 // ── Design tokens ──────────────────────────────────────────────────────────
@@ -206,14 +212,19 @@ async function copyText(value) {
     return true;
   }
   const textarea = document.createElement("textarea");
-  textarea.value = value;
-  textarea.style.position = "fixed";
-  textarea.style.opacity = "0";
-  document.body.appendChild(textarea);
-  textarea.select();
-  const copied = document.execCommand("copy");
-  textarea.remove();
-  return copied;
+          {window.location.pathname && window.location.pathname.startsWith('/passport/') ? (
+            <PassportDetail />
+          ) : (
+            <>
+              <TrustViz />
+              <div style={{ height: 24 }} />
+              <PassportDashboard />
+              <div style={{ height: 24 }} />
+              <PassportViewer />
+              <div style={{ height: 24 }} />
+              <EvidenceViewer />
+            </>
+          )}
 }
 function buildNarrative(asset, r) {
   const mediumFindings = r.findings.filter((f) => f.severity === "medium").map((f) => f.title);
@@ -826,6 +837,35 @@ function EnterprisePortal() {
 
 // ── Public Registry (landing) ────────────────────────────────────────────
 function PublicRegistry() {
+  const [passports, setPassports] = useState([]);
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let alive = true;
+    async function loadPublicPassports() {
+      setLoading(true);
+      setError("");
+      try {
+        const url = `/api/passports/public${query ? `?q=${encodeURIComponent(query)}` : ""}`;
+        const data = await apiJson(url);
+        if (!alive) return;
+        setPassports(data.passports || []);
+      } catch (err) {
+        if (!alive) return;
+        setError(err.message || "Unable to load public passports.");
+      } finally {
+        if (!alive) return;
+        setLoading(false);
+      }
+    }
+    loadPublicPassports();
+    return () => {
+      alive = false;
+    };
+  }, [query]);
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
@@ -837,7 +877,53 @@ function PublicRegistry() {
       </div>
       <div style={styles.card}>
         <div style={{ fontSize: 13, color: C.muted }}>Search</div>
-        <input style={{ ...styles.input, marginTop: 8 }} placeholder="Search public registry by asset, passport id, or company" />
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 8 }}>
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search public registry by asset, passport id, or company"
+            style={{ ...styles.input, flex: 1, minWidth: 240 }}
+          />
+          <button style={styles.button} onClick={() => setQuery(query.trim())}>Search</button>
+        </div>
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        {loading ? (
+          <div style={styles.card}>Loading public passports…</div>
+        ) : error ? (
+          <div style={{ ...styles.card, borderColor: C.red, color: C.red }}>{error}</div>
+        ) : passports.length === 0 ? (
+          <div style={styles.card}>No public passports found. Try a broader search.</div>
+        ) : (
+          <div style={{ display: 'grid', gap: 12 }}>
+            {passports.map((passport) => (
+              <div key={passport.passportId} style={{ ...styles.card, padding: 14, display: 'grid', gap: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 700 }}>{passport.assetName || passport.softwareName || passport.assetId || passport.softwareId}</div>
+                    <div style={{ fontSize: 12, color: C.dim }}>{passport.company || passport.vendorName || passport.visibility}</div>
+                  </div>
+                  <a href={passport.publicUrl} style={{ color: C.accent, fontSize: 13, textDecoration: 'none' }}>View</a>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10 }}>
+                  <div>
+                    <div style={{ fontSize: 11, color: C.muted }}>Passport</div>
+                    <div style={{ fontSize: 13, fontWeight: 700 }}>{passport.passportId}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 11, color: C.muted }}>Trust score</div>
+                    <div style={{ fontSize: 13, fontWeight: 700 }}>{passport.trustScore}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 11, color: C.muted }}>Status</div>
+                    <div style={{ fontSize: 13, fontWeight: 700 }}>{passport.status}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -2578,6 +2664,8 @@ export default function VentureOS() {
       projects: "Projects",
       registry: "Registry",
       passports: "Passports",
+      evidence: "Evidence",
+      passports: "Passports",
       monitoring: "Monitoring",
       reports: "Reports",
       alerts: "Alerts",
@@ -2607,6 +2695,8 @@ export default function VentureOS() {
     { id: "vendor", label: "Vendor" },
     { id: "enterprise", label: "Enterprise" },
     { id: "public-registry", label: "Public Registry" },
+    { id: "integrations", label: "Integrations" },
+    { id: "tutorial", label: "Tutorial" },
   ];
 
   return (
@@ -2687,6 +2777,15 @@ export default function VentureOS() {
                   setAuthError(err.message);
                 }
               }}>Try demo</button>
+              <button style={{ ...styles.btn(), marginLeft: 8 }} onClick={() => {
+                try {
+                  // navigate to the server OAuth start endpoint which returns a redirect URL
+                  // using a direct navigation avoids an extra fetch and potential CORS issues
+                  window.location.href = '/api/auth/google/start';
+                } catch (e) {
+                  setAuthError(e.message || String(e));
+                }
+              }}>Sign in with Google</button>
             </div>
           )}
         </div>
@@ -2759,6 +2858,7 @@ export default function VentureOS() {
               { id: "registry", icon: "◫", label: "Asset Registry" },
               { id: "passports", icon: "◈", label: "Passports" },
               { id: "msp", icon: "⚡", label: "MSP" },
+              ...(role === "Owner" || role === "Admin" ? [{ id: "admin", icon: "🔐", label: "Owner Dashboard" }] : []),
             ].map((i) => (
               <div key={i.id} style={styles.sideItem(page === i.id)} onClick={() => {
                 if (i.id === "projects") {
@@ -2805,7 +2905,12 @@ export default function VentureOS() {
             {page === "public-registry" && <PublicRegistry />}
             {page === "analyze" && <Analysis onComplete={(passport) => { if (passport) setGeneratedPassports((items) => [passport, ...items]); setPage("passports"); }} />}
             {page === "projects" && <Projects route={projectRoute} onNavigate={navigateProjectPath} />}
+            {page === "admin" && <AdminDashboard adminId={user?.id || ''} onClose={() => setPage("dashboard")} />}
             {page === "registry" && <SoftwareRegistry />}
+            {page === "integrations" && <Integrations />}
+            {page === "tutorial" && <Tutorial />}
+            {page === "passports" && <PassportViewer />}
+            {page === "evidence" && <EvidenceViewer />}
             {page === "passports" && <Passport generated={generatedPassports} />}
             {page === "msp" && <MspPage mspList={mspList} selectedMspId={selectedMspId} setSelectedMspId={setSelectedMspId} details={mspDetails} loading={mspLoading} error={mspError} />}
             {["monitoring", "reports", "alerts", "team"].includes(page) && <WorkspacePage type={page} />}
@@ -2816,9 +2921,12 @@ export default function VentureOS() {
       {/* Universal Command Bar */}
       {authenticated && (
         <UniversalCommandBar
-          workspaceId={workspace?.id || 'default'}
-          activePassportId={publicPassportId}
-          activeUserId={user?.id || 'unknown'}
+          context={{
+            workspaceId: workspace?.id || 'default',
+            activePassportId: publicPassportId,
+            activeUserId: user?.id || 'unknown',
+            refreshWorkspace: loadWorkspaces,
+          }}
           isOpen={isCommandBarOpen}
           onClose={() => setCommandBarOpen(false)}
           allCommands={allCommands}

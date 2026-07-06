@@ -1,0 +1,11 @@
+import { auditChain } from '../lib/server/audit-chain.js';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DB_PATH = join(__dirname, '..', '.data', 'ventureos-db.json');
+const db = JSON.parse(readFileSync(DB_PATH,'utf8'));
+const audits = db.sprAuditLogs || [];
+console.log('entries:', audits.length);
+const result = auditChain.verify(audits);
+console.log('verify result:', result);

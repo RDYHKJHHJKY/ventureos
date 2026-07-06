@@ -149,8 +149,13 @@ async function main() {
   assert.equal(signalResponse.payload.signal.numericSignals.severity, 2);
   assert.equal(signalResponse.payload.signal.numericSignals.confidence, 1);
 
-  const db = await readDb();
-  assert.ok((db.sprAuditLogs || []).some((item) => item.type === "signal.created"));
+  if (process.env.DATABASE_URL) {
+    const auditRes = await query(`SELECT type FROM spr_audit_logs WHERE type = $1 LIMIT 1`, ["signal.created"]);
+    assert.ok(auditRes && auditRes.rows && auditRes.rows.length > 0, 'Expected signal.created in spr_audit_logs');
+  } else {
+    const db = await readDb();
+    assert.ok((db.sprAuditLogs || []).some((item) => item.type === "signal.created"));
+  }
 
   console.log("Evidence pipeline hardening tests passed.");
 }

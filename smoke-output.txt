@@ -1,0 +1,1247 @@
+
+> ventureos@0.0.1 test:smoke
+> node scripts/validate-smoke-all.mjs
+
+Starting full smoke validation...
+
+=== RUNNING UNIT TESTS ===
+---- RUN: audit-chain.js
+Audit chain tests passed.
+---- RUN: debug-exec.js
+[data-store] getDataFile default C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json cwd C:\Users\user\Downloads\ventureos (1)
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[api-router] handleApiRequest GET /api/msp/msp_vnznfx/executive
+statusCode= 200
+body= {
+  "ok": true,
+  "mspId": "msp_vnznfx",
+  "healthScore": 62,
+  "billingStatus": "active",
+  "mode": "active",
+  "workspaceHealth": {
+    "healthy": 1,
+    "warning": 0,
+    "critical": 1,
+    "suspended": 0
+  },
+  "risk": {
+    "high": 1,
+    "medium": 0,
+    "low": 1
+  },
+  "staleness": {
+    "fresh": 1,
+    "aging": 0,
+    "stale": 1
+  },
+  "coverage": {
+    "good": 1,
+    "partial": 1,
+    "poor": 0
+  },
+  "topIssues": {
+    "criticalWorkspaces": [
+      {
+        "id": "workspace_am7djc",
+        "name": "Client A",
+        "health": "critical",
+        "riskEvents": 1,
+        "coverageScore": 70,
+        "stalenessScore": 32
+      }
+    ],
+    "staleWorkspaces": [
+      {
+        "id": "workspace_am7djc",
+        "name": "Client A",
+        "stalenessScore": 32,
+        "lastScan": "2026-05-21T15:58:38.511Z",
+        "lastPassport": null,
+        "lastTimelineEvent": "2026-05-21T15:58:38.511Z"
+      },
+      {
+        "id": "workspace_1hfxw7o",
+        "name": "Client B",
+        "stalenessScore": 100,
+        "lastScan": "2026-07-05T15:58:38.511Z",
+        "lastPassport": "2026-07-05T15:58:38.511Z",
+        "lastTimelineEvent": "2026-07-05T15:58:38.511Z"
+      }
+    ],
+    "coverageGaps": [
+      {
+        "id": "workspace_am7djc",
+        "name": "Client A",
+        "coverageScore": 70,
+        "missingPassports": 1,
+        "missingAssets": 0,
+        "missingScans": 0
+      }
+    ]
+  },
+  "meta": {
+    "generatedAt": "2026-07-05T15:58:38.677Z"
+  }
+}
+---- RUN: debug-intel.js
+[data-store] getDataFile default C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json cwd C:\Users\user\Downloads\ventureos (1)
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[api-router] handleApiRequest GET /api/msp/msp_dzuy3f/intelligence
+statusCode= 200
+body= {
+  "ok": true,
+  "mspId": "msp_dzuy3f",
+  "risk": {
+    "mspId": "msp_dzuy3f",
+    "perWorkspace": [
+      {
+        "workspaceId": "workspace_y7seyn",
+        "workspaceName": "Client A",
+        "totalRiskEvents": 1,
+        "highRiskCount": 1,
+        "mediumRiskCount": 0,
+        "lowRiskCount": 0,
+        "lastRiskEvent": "2026-07-05T15:59:08.964Z",
+        "severity": "high"
+      },
+      {
+        "workspaceId": "workspace_yvx6kd",
+        "workspaceName": "Client B",
+        "totalRiskEvents": 1,
+        "highRiskCount": 0,
+        "mediumRiskCount": 0,
+        "lowRiskCount": 1,
+        "lastRiskEvent": null,
+        "severity": "low"
+      }
+    ],
+    "totalRiskEvents": 2,
+    "riskBySeverity": {
+      "high": 1,
+      "medium": 0,
+      "low": 1
+    },
+    "riskByWorkspace": [
+      {
+        "workspaceId": "workspace_y7seyn",
+        "workspaceName": "Client A",
+        "riskEvents": 1,
+        "severity": "high"
+      },
+      {
+        "workspaceId": "workspace_yvx6kd",
+        "workspaceName": "Client B",
+        "riskEvents": 1,
+        "severity": "low"
+      }
+    ]
+  },
+  "staleness": {
+    "mspId": "msp_dzuy3f",
+    "perWorkspace": [
+      {
+        "workspaceId": "workspace_y7seyn",
+        "workspaceName": "Client A",
+        "lastScan": "2026-07-05T15:59:08.964Z",
+        "lastPassport": "2026-07-05T15:59:08.964Z",
+        "lastTimelineEvent": "2026-07-05T15:59:08.964Z",
+        "stalenessScore": 0,
+        "bucket": "stale"
+      },
+      {
+        "workspaceId": "workspace_yvx6kd",
+        "workspaceName": "Client B",
+        "lastScan": "2026-07-05T15:59:08.964Z",
+        "lastPassport": "2026-07-05T15:59:08.964Z",
+        "lastTimelineEvent": "2026-07-05T15:59:08.964Z",
+        "stalenessScore": 100,
+        "bucket": "fresh"
+      }
+    ],
+    "numberOfStaleWorkspaces": 1,
+    "averageStaleness": 50,
+    "worstOffenders": [
+      {
+        "workspaceId": "workspace_y7seyn",
+        "workspaceName": "Client A",
+        "lastScan": "2026-07-05T15:59:08.964Z",
+        "lastPassport": "2026-07-05T15:59:08.964Z",
+        "lastTimelineEvent": "2026-07-05T15:59:08.964Z",
+        "stalenessScore": 0,
+        "bucket": "stale"
+      },
+      {
+        "workspaceId": "workspace_yvx6kd",
+        "workspaceName": "Client B",
+        "lastScan": "2026-07-05T15:59:08.964Z",
+        "lastPassport": "2026-07-05T15:59:08.964Z",
+        "lastTimelineEvent": "2026-07-05T15:59:08.964Z",
+        "stalenessScore": 100,
+        "bucket": "fresh"
+      }
+    ],
+    "stalenessDistribution": {
+      "fresh": 1,
+      "aging": 0,
+      "stale": 1
+    }
+  },
+  "coverage": {
+    "mspId": "msp_dzuy3f",
+    "perWorkspace": [
+      {
+        "workspaceId": "workspace_y7seyn",
+        "workspaceName": "Client A",
+        "coverageScore": 0,
+        "missingPassports": 0,
+        "missingAssets": 0,
+        "missingScans": 0,
+        "bucket": "poor"
+      },
+      {
+        "workspaceId": "workspace_yvx6kd",
+        "workspaceName": "Client B",
+        "coverageScore": 100,
+        "missingPassports": 0,
+        "missingAssets": 0,
+        "missingScans": 0,
+        "bucket": "healthy"
+      }
+    ],
+    "averageCoverage": 50,
+    "coverageDistribution": {
+      "healthy": 1,
+      "partial": 0,
+      "poor": 1
+    },
+    "coverageGaps": []
+  }
+}
+---- RUN: debug-workspace-overview.js
+[data-store] getDataFile default C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json cwd C:\Users\user\Downloads\ventureos (1)
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+workspaces passed order: [ 'Client A', 'Client B' ]
+overview returned order: [ 'Client A', 'Client B' ]
+usage workspace0: {
+  workspaceId: 'workspace_1mtlxke',
+  assetCount: 1,
+  scanCount: 1,
+  passportCount: 1,
+  nodeCount: 2,
+  edgeCount: 1,
+  timelineEvents: 2,
+  riskEvents: 1,
+  riskHighCount: 1,
+  riskMediumCount: 0,
+  latestScan: 2026-07-05T15:59:39.339Z,
+  assets: 1,
+  scans: 1,
+  passports: 1,
+  nodes: 2,
+  edges: 1
+}
+usage workspace1: {
+  workspaceId: 'workspace_1r2lq1w',
+  assetCount: 1,
+  scanCount: 1,
+  passportCount: 1,
+  nodeCount: 2,
+  edgeCount: 1,
+  timelineEvents: 2,
+  riskEvents: 1,
+  riskHighCount: 0,
+  riskMediumCount: 0,
+  latestScan: 2026-07-05T15:59:39.339Z,
+  assets: 1,
+  scans: 1,
+  passports: 1,
+  nodes: 2,
+  edges: 1
+}
+classify workspace0: suspended
+classify workspace1: suspended
+---- RUN: evidence-pipeline-hardening.js
+PostgreSQL cleanup completed
+[api-router] handleApiRequest POST /api/spr/vendors
+[data-store] getDataFile default C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json cwd C:\Users\user\Downloads\ventureos (1)
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[api-router] handleApiRequest POST /api/spr/software
+[api-router] POST /api/spr/software env {
+  DATABASE_URL: 'postgresql://ventureos_user:password@localhost:5432/ventureos',
+  VENTUREOS_DATA_FILE: undefined,
+  cwd: 'C:\\Users\\user\\Downloads\\ventureos (1)'
+}
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x',
+  'sprsoftware_15e0qwg'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_fep0by',
+  'sprsoftware_test',
+  'sprsoftware_test2',
+  'tmp-test-software',
+  'sprsoftware_10tyvr5',
+  'audit_test_1783239262578',
+  'sprsoftware_1mqbr2m',
+  'sprsoftware_hp2wpi',
+  'sprsoftware_72bz16',
+  'sprsoftware_z8cxwn',
+  'sprsoftware_1ehqq0x',
+  'sprsoftware_15e0qwg'
+]
+[api-router] handleApiRequest POST /api/spr/evidence
+[HMAC_REJECT] INGESTION_WEBHOOK_SECRET / INGESTION_SECRET is not configured.
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+500 !== 400
+
+    at main (file:///C:/Users/user/Downloads/ventureos%20(1)/test/evidence-pipeline-hardening.js:123:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 500,
+  expected: 400,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+Test failed: evidence-pipeline-hardening.js
+node:internal/errors:998
+  const err = new Error(message);
+              ^
+
+Error: Command failed: C:\Program Files\nodejs\node.exe C:\Users\user\Downloads\ventureos (1)\scripts\run-tests.mjs
+    at genericNodeError (node:internal/errors:998:15)
+    at wrappedFn (node:internal/errors:543:14)
+    at checkExecSyncError (node:child_process:925:11)
+    at execFileSync (node:child_process:961:15)
+    at runScript (file:///C:/Users/user/Downloads/ventureos%20(1)/scripts/validate-smoke-all.mjs:20:3)
+    at main (file:///C:/Users/user/Downloads/ventureos%20(1)/scripts/validate-smoke-all.mjs:26:5)
+    at file:///C:/Users/user/Downloads/ventureos%20(1)/scripts/validate-smoke-all.mjs:31:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+    at async node:internal/modules/esm/loader:639:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 1,
+  signal: null,
+  output: [ null, null, null ],
+  pid: 19932,
+  stdout: null,
+  stderr: null
+}
+
+Node.js v25.9.0

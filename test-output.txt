@@ -1,0 +1,1014 @@
+[api-router] handleApiRequest POST /api/spr/vendors
+[data-store] getDataFile default C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json cwd C:\Users\user\Downloads\ventureos (1)
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq'
+]
+[api-router] handleApiRequest POST /api/spr/software
+[api-router] POST /api/spr/software env {
+  DATABASE_URL: 'postgresql://ventureos_user:password@localhost:5432/ventureos',
+  VENTUREOS_DATA_FILE: undefined,
+  cwd: 'C:\\Users\\user\\Downloads\\ventureos (1)'
+}
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[api-router] handleApiRequest GET /api/spr/vendors
+[api-router] handleApiRequest GET /api/spr/software
+[api-router] handleApiRequest POST /api/spr/github/scan
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[api-router] handleApiRequest POST /api/spr/evidence
+[HMAC_DEBUG] signatureHeader= sha256=08e3af9013d96d2c939ea4ec944c4d26f342c2fa1ff2c81eb2628401f9f2352d
+[HMAC_DEBUG] parsed scheme= sha256 providedSig(16)= 08e3af9013d96d2c
+[HMAC_DEBUG] expectedSig(16)= 08e3af9013d96d2c
+[HMAC_DEBUG] stringToSign.length= 205
+[HMAC_DEBUG] stringToSign(200)= {"softwareId":"sprsoftware_uu54g4","type":"sbom","title":"CycloneDX SBOM","summary":"Generated from release pipeline","uri":"https://example.com/sbom.json","strength":0.9,"freshnessDays":7,"verified":
+[HMAC_DEBUG] timestamp header= null age(ms)= null
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[api-router] handleApiRequest POST /api/spr/evidence/78ca835e-e093-45e4-b30b-066308b7ab4e/visibility
+[api-router] handleApiRequest POST /api/spr/evidence/78ca835e-e093-45e4-b30b-066308b7ab4e/verify
+[api-router] handleApiRequest GET /api/spr/software/sprsoftware_uu54g4/score
+[api-router] handleApiRequest GET /api/spr/software/sprsoftware_uu54g4/monitor
+[api-router] handleApiRequest POST /api/spr/software/sprsoftware_uu54g4/signals
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[appendSprAuditLog] Called with type= signal.created targetId= sprsignal_9gk3ri isPostgres= false isDatabaseUrl= true
+[appendSprAuditLog] Attempting Postgres append via global query
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[api-router] handleApiRequest POST /api/spr/software/sprsoftware_uu54g4/sbom
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[api-router] handleApiRequest POST /api/spr/software/sprsoftware_uu54g4/provenance
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[api-router] handleApiRequest POST /api/spr/evidence/78ca835e-e093-45e4-b30b-066308b7ab4e/verify
+[api-router] handleApiRequest POST /api/spr/evidence/78ca835e-e093-45e4-b30b-066308b7ab4e/privacy
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[appendSprAuditLog] Called with type= evidence.visibility_changed targetId= 78ca835e-e093-45e4-b30b-066308b7ab4e isPostgres= false isDatabaseUrl= true
+[appendSprAuditLog] Attempting Postgres append via global query
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[api-router] handleApiRequest POST /api/spr/standards
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[api-router] handleApiRequest POST /api/spr/software/sprsoftware_uu54g4/identity
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[api-router] handleApiRequest POST /api/spr/evidence/78ca835e-e093-45e4-b30b-066308b7ab4e/bundle
+[appendSprAuditLog] Called with type= evidence.bundle_created targetId= 78ca835e-e093-45e4-b30b-066308b7ab4e isPostgres= false isDatabaseUrl= true
+[appendSprAuditLog] Attempting Postgres append via global query
+[api-router] handleApiRequest POST /api/spr/evidence/78ca835e-e093-45e4-b30b-066308b7ab4e/zkp
+[api-router] handleApiRequest POST /api/spr/procurement/filter
+[api-router] handleApiRequest POST /api/spr/passports/issue
+[passport-issue] Starting passport issue for {
+  softwareId: 'sprsoftware_uu54g4',
+  workspaceId: null,
+  vendorId: null,
+  hasAccessToken: false,
+  isDatabaseUrl: true,
+  visibility: 'public',
+  accessTokenValue: null
+}
+[createSprPassportPostgres] evidenceIds type: object value: [
+  '1e09f93d-c79e-4ccc-a929-3d0f34fb89e8',
+  '3b772c68-92e7-4174-90b4-59ea0309c309',
+  '5552a419-3879-4891-ba6f-fc96fc49ee1c',
+  '78ca835e-e093-45e4-b30b-066308b7ab4e',
+  'a7d1665f-8339-4a43-ae5d-a3499c45db84'
+] array: [
+  '1e09f93d-c79e-4ccc-a929-3d0f34fb89e8',
+  '3b772c68-92e7-4174-90b4-59ea0309c309',
+  '5552a419-3879-4891-ba6f-fc96fc49ee1c',
+  '78ca835e-e093-45e4-b30b-066308b7ab4e',
+  'a7d1665f-8339-4a43-ae5d-a3499c45db84'
+]
+[createSprPassportPostgres] WARNING: Hash mismatch after Postgres round-trip. This may indicate a field normalization issue.
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[appendSprAuditLog] Called with type= passport.issued targetId= d7abe936-d822-4bc5-aed4-0648e61926fb isPostgres= false isDatabaseUrl= true
+[appendSprAuditLog] Attempting Postgres append
+[api-router] handleApiRequest POST /api/spr/passports/d7abe936-d822-4bc5-aed4-0648e61926fb/renew
+[api-router] handleApiRequest POST /api/spr/passports/issue
+[passport-issue] Starting passport issue for {
+  softwareId: 'sprsoftware_uu54g4',
+  workspaceId: null,
+  vendorId: null,
+  hasAccessToken: false,
+  isDatabaseUrl: true,
+  visibility: 'restricted',
+  accessTokenValue: null
+}
+[passport-issue] Error during passport issuance: Restricted passports require an access token. 
+Stack: Error: Restricted passports require an access token.
+    at file:///C:/Users/user/Downloads/ventureos%20(1)/lib/server/api-router.js:2490:33
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async withSerializedLock (file:///C:/Users/user/Downloads/ventureos%20(1)/lib/server/execution-locks.js:26:12)
+    at async withSerializedLock (file:///C:/Users/user/Downloads/ventureos%20(1)/lib/server/execution-locks.js:26:12)
+    at async handleApiRequest (file:///C:/Users/user/Downloads/ventureos%20(1)/lib/server/api-router.js:2479:20)
+    at async requestJson (file:///C:/Users/user/Downloads/ventureos%20(1)/test/spr-mvp.js:40:3)
+    at async main (file:///C:/Users/user/Downloads/ventureos%20(1)/test/spr-mvp.js:278:45)
+[api-router] handleApiRequest GET /api/spr/software/sprsoftware_uu54g4/score?profile=government
+[api-router] handleApiRequest GET /api/spr/software/sprsoftware_uu54g4/score?profile=msp
+[api-router] handleApiRequest GET /api/passports/d7abe936-d822-4bc5-aed4-0648e61926fb/public
+[api-router] handleApiRequest POST /api/spr/passports/issue
+[passport-issue] Starting passport issue for {
+  softwareId: 'sprsoftware_uu54g4',
+  workspaceId: 'workspace-1',
+  vendorId: 'sprvendor_iz7kvj',
+  hasAccessToken: true,
+  isDatabaseUrl: true,
+  visibility: 'restricted',
+  accessTokenValue: 'sprvendor_iz7kvj:workspace-1:restricted'
+}
+[createSprPassportPostgres] evidenceIds type: object value: [
+  '1e09f93d-c79e-4ccc-a929-3d0f34fb89e8',
+  '3b772c68-92e7-4174-90b4-59ea0309c309',
+  '5552a419-3879-4891-ba6f-fc96fc49ee1c',
+  '78ca835e-e093-45e4-b30b-066308b7ab4e',
+  'a7d1665f-8339-4a43-ae5d-a3499c45db84'
+] array: [
+  '1e09f93d-c79e-4ccc-a929-3d0f34fb89e8',
+  '3b772c68-92e7-4174-90b4-59ea0309c309',
+  '5552a419-3879-4891-ba6f-fc96fc49ee1c',
+  '78ca835e-e093-45e4-b30b-066308b7ab4e',
+  'a7d1665f-8339-4a43-ae5d-a3499c45db84'
+]
+[createSprPassportPostgres] WARNING: Hash mismatch after Postgres round-trip. This may indicate a field normalization issue.
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[appendSprAuditLog] Called with type= passport.access_granted targetId= e66ecd13-7f72-448c-a43b-a7ca99d2249c isPostgres= false isDatabaseUrl= true
+[appendSprAuditLog] Attempting Postgres append
+[api-router] handleApiRequest GET /api/spr/passports/e66ecd13-7f72-448c-a43b-a7ca99d2249c/restricted?accessToken=sprvendor_iz7kvj:workspace-1:restricted
+[appendSprAuditLog] Called with type= passport.access_granted targetId= e66ecd13-7f72-448c-a43b-a7ca99d2249c isPostgres= false isDatabaseUrl= true
+[appendSprAuditLog] Attempting Postgres append
+[api-router] handleApiRequest POST /api/spr/evidence/78ca835e-e093-45e4-b30b-066308b7ab4e/privacy
+[api-router] handleApiRequest POST /api/spr/passports/issue
+[passport-issue] Starting passport issue for {
+  softwareId: 'sprsoftware_uu54g4',
+  workspaceId: null,
+  vendorId: null,
+  hasAccessToken: true,
+  isDatabaseUrl: true,
+  visibility: 'restricted',
+  accessTokenValue: 'sprvendor_iz7kvj:workspace-1:restricted'
+}
+[createSprPassportPostgres] evidenceIds type: object value: [
+  '1e09f93d-c79e-4ccc-a929-3d0f34fb89e8',
+  '3b772c68-92e7-4174-90b4-59ea0309c309',
+  '5552a419-3879-4891-ba6f-fc96fc49ee1c',
+  '78ca835e-e093-45e4-b30b-066308b7ab4e',
+  'a7d1665f-8339-4a43-ae5d-a3499c45db84'
+] array: [
+  '1e09f93d-c79e-4ccc-a929-3d0f34fb89e8',
+  '3b772c68-92e7-4174-90b4-59ea0309c309',
+  '5552a419-3879-4891-ba6f-fc96fc49ee1c',
+  '78ca835e-e093-45e4-b30b-066308b7ab4e',
+  'a7d1665f-8339-4a43-ae5d-a3499c45db84'
+]
+[createSprPassportPostgres] WARNING: Hash mismatch after Postgres round-trip. This may indicate a field normalization issue.
+[data-store] mutateDb before modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] mutateDb after modification sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[data-store] saveStore writing file C:\Users\user\Downloads\ventureos (1)\.data\ventureos-db.json sprSoftware ids [
+  'sprsoftware_bcjykm',  'sprsoftware_1a3x53w',
+  'sprsoftware_98cvj8',  'sprsoftware_o7jx3n',
+  'sprsoftware_165qfsz', 'sprsoftware_528svl',
+  'sprsoftware_15gv4kb', 'sprsoftware_i0vhzc',
+  'sprsoftware_n0xg22',  'sprsoftware_hlwjxo',
+  'sprsoftware_by6kh3',  'sprsoftware_1mstnhg',
+  'sprsoftware_12v65bw', 'sprsoftware_16rr3tq',
+  'sprsoftware_f6jynp',  'sprsoftware_1aw8i75',
+  'sprsoftware_1sgninx', 'sprsoftware_1rbv6mm',
+  'sprsoftware_1a96upm', 'sprsoftware_16nx8oe',
+  'sprsoftware_1szx120', 'sprsoftware_1pzd0ts',
+  'sprsoftware_e38nlq',  'sprsoftware_1hzyppy',
+  'sprsoftware_jr7zq2',  'sprsoftware_p46jt0',
+  'sprsoftware_5j4add',  'sprsoftware_2g8ra',
+  'sprsoftware_8is0wj',  'sprsoftware_l1yspt',
+  'sprsoftware_12gg6tu', 'sprsoftware_1emjtcd',
+  'sprsoftware_1nidfdb', 'sprsoftware_d5mjlz',
+  'sprsoftware_fbelrw',  'sprsoftware_10uwqvd',
+  'sprsoftware_169imvu', 'sprsoftware_n9l17v',
+  'sprsoftware_1f0xqhq', 'sprsoftware_uu54g4'
+]
+[appendSprAuditLog] Called with type= passport.access_granted targetId= 38891102-a578-447b-b0db-8c4fae645ab5 isPostgres= false isDatabaseUrl= true
+[appendSprAuditLog] Attempting Postgres append
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+false !== true
+
+    at main (file:///C:/Users/user/Downloads/ventureos%20(1)/test/spr-mvp.js:317:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

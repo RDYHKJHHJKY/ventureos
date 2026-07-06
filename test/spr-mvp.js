@@ -167,6 +167,8 @@ async function main() {
   assert.equal(githubScanResponse.payload.ok, true);
   assert.equal(githubScanResponse.payload.evidence.type, "github");
   assert.ok(githubScanResponse.payload.evidence.summary.includes("GitHub"));
+  assert.ok(githubScanResponse.payload.classification, "GitHub scan should include a classification object");
+  assert.ok(["insufficient_data", "workflow_detected", "partial"].includes(githubScanResponse.payload.classification.status));
 
   const evidencePayload = { softwareId: softwareResponse.payload.software.id, type: "sbom", title: "CycloneDX SBOM", summary: "Generated from release pipeline", uri: "https://example.com/sbom.json", strength: 0.9, freshnessDays: 7, verified: true };
   const rawEvidenceBody = JSON.stringify(evidencePayload);
