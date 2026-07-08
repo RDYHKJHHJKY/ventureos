@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Tutorial from '../Tutorial.jsx';
 import './AdminDashboard.css';
 
 const AdminDashboard = ({ adminId, onClose }) => {
@@ -671,6 +672,12 @@ const AdminDashboard = ({ adminId, onClose }) => {
         >
           🔴 Monitoring
         </button>
+        <button
+          className={`nav-btn ${activeTab === 'quickstart' ? 'active' : ''}`}
+          onClick={() => setActiveTab('quickstart')}
+        >
+          📚 Quick Start
+        </button>
       </div>
 
       <div className="admin-content">
@@ -681,6 +688,7 @@ const AdminDashboard = ({ adminId, onClose }) => {
         {activeTab === 'referrals' && <ReferralTab />}
         {activeTab === 'reviews' && <ReviewsTab />}
         {activeTab === 'monitoring' && <MonitoringTab />}
+        {activeTab === 'quickstart' && <Tutorial />}
       </div>
     </div>
   );
