@@ -12,6 +12,7 @@ import Tutorial from "./components/Tutorial.jsx";
 import PassportViewer from "./components/PassportViewer.jsx";
 import EvidenceViewer from "./components/EvidenceViewer.jsx";
 import PassportDetail from "./components/PassportDetail.jsx";
+import { apiJson } from "./api-client.js";
 import "./styles/provenance.css";
 
 // ── Design tokens ──────────────────────────────────────────────────────────
@@ -230,8 +231,6 @@ function buildNarrative(asset, r) {
   const mediumFindings = r.findings.filter((f) => f.severity === "medium").map((f) => f.title);
   return `${asset || "This asset"} is conditionally trusted with a ${r.trust}/100 trust score and ${r.confidence}% confidence. Engineering and product signals are strong, led by active maintainers and a healthy release profile. The verdict remains conditional because ${mediumFindings.join(" and ").toLowerCase()} need remediation before unrestricted production use.`;
 }
-
-import { apiJson } from "./api-client.js";
 
 function timeAgo(value) {
   if (!value) return "Never";
@@ -2049,7 +2048,87 @@ function WorkspacePage({ type }) {
   );
 }
 
-function MspPage({ mspList, selectedMspId, setSelectedMspId, details, loading, error }) {
+function MspPage({ mspList, selectedMspId, setSelectedMspId, details, loading, error, members, membersLoading, onRegisterMsp, onOnboardWorkspace, onInviteMember }) {
+  const [showRegisterForm, setShowRegisterForm] = useState(false);
+  const [newMspName, setNewMspName] = useState("");
+  const [newMspBillingEmail, setNewMspBillingEmail] = useState("");
+  const [newMspRegion, setNewMspRegion] = useState("us-east-1");
+  const [registering, setRegistering] = useState(false);
+  const [registerError, setRegisterError] = useState("");
+  const [registerMessage, setRegisterMessage] = useState("");
+
+  const [workspaceName, setWorkspaceName] = useState("");
+  const [workspaceDescription, setWorkspaceDescription] = useState("");
+  const [workspaceIndustry, setWorkspaceIndustry] = useState("");
+  const [workspaceSize, setWorkspaceSize] = useState("small");
+  const [onboarding, setOnboarding] = useState(false);
+  const [onboardError, setOnboardError] = useState("");
+  const [onboardMessage, setOnboardMessage] = useState("");
+
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("analyst");
+  const [inviting, setInviting] = useState(false);
+  const [inviteError, setInviteError] = useState("");
+  const [inviteMessage, setInviteMessage] = useState("");
+
+  const handleRegister = async (event) => {
+    event.preventDefault();
+    setRegisterError("");
+    setRegisterMessage("");
+    setRegistering(true);
+    const result = await onRegisterMsp({ name: newMspName, billingEmail: newMspBillingEmail, region: newMspRegion });
+    setRegistering(false);
+    if (!result.ok) {
+      setRegisterError(result.error);
+      return;
+    }
+    setRegisterMessage("MSP account created successfully.");
+    setNewMspName("");
+    setNewMspBillingEmail("");
+    setShowRegisterForm(false);
+  };
+
+  const handleOnboard = async (event) => {
+    event.preventDefault();
+    if (!selectedMspId) return;
+    setOnboardError("");
+    setOnboardMessage("");
+    setOnboarding(true);
+    const result = await onOnboardWorkspace(selectedMspId, {
+      name: workspaceName,
+      description: workspaceDescription,
+      industry: workspaceIndustry,
+      size: workspaceSize,
+    });
+    setOnboarding(false);
+    if (!result.ok) {
+      setOnboardError(result.error);
+      return;
+    }
+    setOnboardMessage("Workspace onboarded successfully.");
+    setWorkspaceName("");
+    setWorkspaceDescription("");
+    setWorkspaceIndustry("");
+    setWorkspaceSize("small");
+  };
+
+  const handleInvite = async (event) => {
+    event.preventDefault();
+    if (!selectedMspId) return;
+    setInviteError("");
+    setInviteMessage("");
+    setInviting(true);
+    const result = await onInviteMember(selectedMspId, { email: inviteEmail, role: inviteRole });
+    setInviting(false);
+    if (!result.ok) {
+      setInviteError(result.error);
+      return;
+    }
+    setInviteMessage("Invite sent successfully.");
+    setInviteEmail("");
+    setInviteRole("analyst");
+  };
+
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, gap: 12 }}>
@@ -2060,10 +2139,42 @@ function MspPage({ mspList, selectedMspId, setSelectedMspId, details, loading, e
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 16 }}>
         <div style={styles.card}>
-          <div style={styles.cardTitle}>MSP accounts</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={styles.cardTitle}>MSP accounts</div>
+            <button
+              type="button"
+              style={{ ...styles.btn("secondary"), fontSize: 12, padding: "8px 10px" }}
+              onClick={() => setShowRegisterForm((value) => !value)}
+            >
+              {showRegisterForm ? "Cancel" : "Register MSP"}
+            </button>
+          </div>
+          {showRegisterForm && (
+            <form onSubmit={handleRegister} style={{ display: "grid", gap: 10, marginBottom: 12 }}>
+              <label style={{ display: "grid", gap: 6 }}>
+                <span style={{ fontSize: 12, color: C.muted }}>MSP name</span>
+                <input value={newMspName} onChange={(e) => setNewMspName(e.target.value)} style={styles.input} required />
+              </label>
+              <label style={{ display: "grid", gap: 6 }}>
+                <span style={{ fontSize: 12, color: C.muted }}>Billing email</span>
+                <input type="email" value={newMspBillingEmail} onChange={(e) => setNewMspBillingEmail(e.target.value)} style={styles.input} required />
+              </label>
+              <label style={{ display: "grid", gap: 6 }}>
+                <span style={{ fontSize: 12, color: C.muted }}>Region</span>
+                <select value={newMspRegion} onChange={(e) => setNewMspRegion(e.target.value)} style={styles.input}>
+                  <option value="us-east-1">us-east-1</option>
+                  <option value="us-west-2">us-west-2</option>
+                  <option value="eu-west-1">eu-west-1</option>
+                </select>
+              </label>
+              {registerError && <div style={{ color: C.yellow, fontSize: 12 }}>{registerError}</div>}
+              {registerMessage && <div style={{ color: C.green, fontSize: 12 }}>{registerMessage}</div>}
+              <button type="submit" style={styles.btn("primary")}>{registering ? "Creating…" : "Create MSP"}</button>
+            </form>
+          )}
           {loading && <div style={{ color: C.dim, fontSize: 13 }}>Loading MSP accounts…</div>}
           {error && <div style={{ color: C.yellow, fontSize: 13 }}>{error}</div>}
-          {mspList.length === 0 && !loading && <div style={{ fontSize: 13, color: C.dim }}>No MSP accounts assigned to your user yet.</div>}
+          {mspList.length === 0 && !loading && <div style={{ fontSize: 13, color: C.dim }}>No MSP accounts assigned to your user yet. Register one to start onboarding.</div>}
           {mspList.map((msp) => (
             <button
               key={msp.id}
@@ -2131,17 +2242,69 @@ function MspPage({ mspList, selectedMspId, setSelectedMspId, details, loading, e
                   </div>
                 </div>
               </div>
-              <div style={styles.card}>
-                <div style={styles.cardTitle}>Workspace provisioning</div>
-                <div style={{ fontSize: 13, color: C.text }}>
-                  {details.workspaces.length > 0 ? (
+              <div style={{ display: "grid", gap: 16 }}>
+                <div style={styles.card}>
+                  <div style={styles.cardTitle}>Provision MSP workspace</div>
+                  <form onSubmit={handleOnboard} style={{ display: "grid", gap: 10 }}>
+                    <label style={{ display: "grid", gap: 6 }}>
+                      <span style={{ fontSize: 12, color: C.muted }}>Workspace name</span>
+                      <input value={workspaceName} onChange={(e) => setWorkspaceName(e.target.value)} style={styles.input} required />
+                    </label>
+                    <label style={{ display: "grid", gap: 6 }}>
+                      <span style={{ fontSize: 12, color: C.muted }}>Description</span>
+                      <input value={workspaceDescription} onChange={(e) => setWorkspaceDescription(e.target.value)} style={styles.input} />
+                    </label>
+                    <label style={{ display: "grid", gap: 6 }}>
+                      <span style={{ fontSize: 12, color: C.muted }}>Industry</span>
+                      <input value={workspaceIndustry} onChange={(e) => setWorkspaceIndustry(e.target.value)} style={styles.input} />
+                    </label>
+                    <label style={{ display: "grid", gap: 6 }}>
+                      <span style={{ fontSize: 12, color: C.muted }}>Size</span>
+                      <select value={workspaceSize} onChange={(e) => setWorkspaceSize(e.target.value)} style={styles.input}>
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                      </select>
+                    </label>
+                    {onboardError && <div style={{ color: C.yellow, fontSize: 12 }}>{onboardError}</div>}
+                    {onboardMessage && <div style={{ color: C.green, fontSize: 12 }}>{onboardMessage}</div>}
+                    <button type="submit" style={styles.btn("primary")}>{onboarding ? "Provisioning…" : "Provision workspace"}</button>
+                  </form>
+                </div>
+                <div style={styles.card}>
+                  <div style={styles.cardTitle}>Invite team member</div>
+                  <form onSubmit={handleInvite} style={{ display: "grid", gap: 10 }}>
+                    <label style={{ display: "grid", gap: 6 }}>
+                      <span style={{ fontSize: 12, color: C.muted }}>Email</span>
+                      <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} style={styles.input} required />
+                    </label>
+                    <label style={{ display: "grid", gap: 6 }}>
+                      <span style={{ fontSize: 12, color: C.muted }}>Role</span>
+                      <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} style={styles.input}>
+                        <option value="admin">Admin</option>
+                        <option value="analyst">Analyst</option>
+                        <option value="viewer">Viewer</option>
+                      </select>
+                    </label>
+                    {inviteError && <div style={{ color: C.yellow, fontSize: 12 }}>{inviteError}</div>}
+                    {inviteMessage && <div style={{ color: C.green, fontSize: 12 }}>{inviteMessage}</div>}
+                    <button type="submit" style={styles.btn("primary")}>{inviting ? "Inviting…" : "Send invite"}</button>
+                  </form>
+                </div>
+                <div style={styles.card}>
+                  <div style={styles.cardTitle}>MSP members</div>
+                  {membersLoading ? (
+                    <div style={{ color: C.dim, fontSize: 13 }}>Loading members…</div>
+                  ) : members.length > 0 ? (
                     <ul style={{ paddingLeft: 18, margin: 0 }}>
-                      {details.workspaces.map((workspace) => (
-                        <li key={workspace.id} style={{ marginBottom: 6 }}>{workspace.name}</li>
+                      {members.map((member) => (
+                        <li key={member.id} style={{ marginBottom: 6 }}>
+                          {member.user?.name || member.user?.email || member.userId} — {member.role}
+                        </li>
                       ))}
                     </ul>
                   ) : (
-                    <div style={{ color: C.dim }}>No workspaces provisioned yet.</div>
+                    <div style={{ color: C.dim, fontSize: 13 }}>No members yet. Invite a team member to get started.</div>
                   )}
                 </div>
               </div>
@@ -2437,6 +2600,8 @@ export default function VentureOS() {
   const [mspDetails, setMspDetails] = useState(null);
   const [mspLoading, setMspLoading] = useState(false);
   const [mspError, setMspError] = useState("");
+  const [mspMembers, setMspMembers] = useState([]);
+  const [membersLoading, setMembersLoading] = useState(false);
   const [loadState, setLoadState] = useState("loading");
   const [authError, setAuthError] = useState("");
   const [authMode, setAuthMode] = useState("login");
@@ -2483,16 +2648,37 @@ export default function VentureOS() {
     setMspError("");
     try {
       const data = await apiJson("/api/msps");
-      setMspList(data.msps || []);
-      if (data.msps && data.msps.length && !selectedMspId) {
-        setSelectedMspId(data.msps[0].id);
+      const list = data.msps || [];
+      setMspList(list);
+      if (list.length && !selectedMspId) {
+        setSelectedMspId(list[0].id);
+      }
+      if (!list.length) {
+        setMspMembers([]);
       }
     } catch (err) {
       setMspError(err.message || "Unable to load MSPs.");
       setMspList([]);
       setSelectedMspId(null);
+      setMspMembers([]);
     } finally {
       setMspLoading(false);
+    }
+  };
+
+  const loadMspMembers = async (mspId) => {
+    if (!mspId) {
+      setMspMembers([]);
+      return;
+    }
+    setMembersLoading(true);
+    try {
+      const data = await apiJson(`/api/msp/${encodeURIComponent(mspId)}/members`);
+      setMspMembers(data.members || []);
+    } catch {
+      setMspMembers([]);
+    } finally {
+      setMembersLoading(false);
     }
   };
 
@@ -2503,11 +2689,57 @@ export default function VentureOS() {
     try {
       const data = await apiJson(`/api/msp/${encodeURIComponent(mspId)}`);
       setMspDetails(data);
+      await loadMspMembers(mspId);
     } catch (err) {
       setMspError(err.message || "Unable to load MSP details.");
       setMspDetails(null);
+      setMspMembers([]);
     } finally {
       setMspLoading(false);
+    }
+  };
+
+  const createMspAccount = async ({ name, billingEmail, region }) => {
+    try {
+      const data = await apiJson("/api/msp/register", {
+        method: "POST",
+        body: JSON.stringify({ name, billingEmail, region }),
+      });
+      const msp = data?.data?.msp;
+      if (msp) {
+        await loadMspList();
+        setSelectedMspId(msp.id);
+        await loadMspDetails(msp.id);
+      }
+      return { ok: true, msp };
+    } catch (err) {
+      return { ok: false, error: err.message || "Failed to create MSP account." };
+    }
+  };
+
+  const onboardWorkspace = async (mspId, { name, description, industry, size }) => {
+    try {
+      await apiJson(`/api/msp/${encodeURIComponent(mspId)}/onboard`, {
+        method: "POST",
+        body: JSON.stringify({ name, description, industry, size }),
+      });
+      await loadMspDetails(mspId);
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err.message || "Failed to onboard workspace." };
+    }
+  };
+
+  const inviteMspMember = async (mspId, { email, role }) => {
+    try {
+      await apiJson(`/api/msp/${encodeURIComponent(mspId)}/members`, {
+        method: "POST",
+        body: JSON.stringify({ email, role }),
+      });
+      await loadMspMembers(mspId);
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err.message || "Failed to invite MSP member." };
     }
   };
 
@@ -2912,7 +3144,21 @@ export default function VentureOS() {
             {page === "passports" && <PassportViewer />}
             {page === "evidence" && <EvidenceViewer />}
             {page === "passports" && <Passport generated={generatedPassports} />}
-            {page === "msp" && <MspPage mspList={mspList} selectedMspId={selectedMspId} setSelectedMspId={setSelectedMspId} details={mspDetails} loading={mspLoading} error={mspError} />}
+            {page === "msp" && (
+              <MspPage
+                mspList={mspList}
+                selectedMspId={selectedMspId}
+                setSelectedMspId={setSelectedMspId}
+                details={mspDetails}
+                loading={mspLoading}
+                error={mspError}
+                members={mspMembers}
+                membersLoading={membersLoading}
+                onRegisterMsp={createMspAccount}
+                onOnboardWorkspace={onboardWorkspace}
+                onInviteMember={inviteMspMember}
+              />
+            )}
             {["monitoring", "reports", "alerts", "team"].includes(page) && <WorkspacePage type={page} />}
           </main>
         </div>
